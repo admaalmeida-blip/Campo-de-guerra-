@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Plano de Futebol v8</title>
+<title>Plano de Futebol v8.5</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
 <style>
   :root{
@@ -119,7 +119,7 @@
 
   <section id="tab-situacao" class="tab-content"><div class="section-title">SITUAÇÃO ATUAL</div><div class="card"><p class="sub"><strong style="color:var(--azul2)">Diagnóstico inicial</strong><br>Perna pesada, pouco fôlego e baixa resistência são sinais de retomada. O plano prioriza mobilidade, força específica, resistência e velocidade para futebol.</p></div><div class="grid2"><div class="card"><h2>🫁 <span>FÔLEGO</span></h2><div class="progress-outer"><div class="progress-inner" style="width:15%">15%</div></div></div><div class="card"><h2>⚡ <span>ARRANQUE</span></h2><div class="progress-outer"><div class="progress-inner" style="width:18%">18%</div></div></div><div class="card"><h2>🦵 <span>PERNAS</span></h2><div class="progress-outer"><div class="progress-inner" style="width:20%">20%</div></div></div><div class="card"><h2>💪 <span>RESISTÊNCIA</span></h2><div class="progress-outer"><div class="progress-inner" style="width:12%">12%</div></div></div></div></section>
 
-  <section id="tab-treinos" class="tab-content"><div class="section-title">TREINOS DE FUTEBOL</div><div class="card"><p class="sub">Escolha um treino pronto. Ao clicar, o app pergunta se deseja iniciar. Durante o treino você marca cada série concluída, acompanha cronômetro, vê dicas e uma animação simples de execução.</p><button class="btn" onclick="openWorkoutEditor()">➕ Cadastrar treino personalizado</button></div><div class="grid2" id="workout-list"></div></section>
+  <section id="tab-treinos" class="tab-content"><div class="section-title">TREINOS DE FUTEBOL</div><div class="card"><p class="sub">Escolha um treino pronto ou crie seus próprios treinos. Agora você pode cadastrar manualmente ou importar treinos montados por texto.</p><div class="workout-actions"><button class="btn" onclick="openWorkoutEditor()">➕ Criar treino manual</button><button class="btn primary" onclick="openImportWorkout()">📥 Importar treino pronto</button><button class="btn" onclick="openGoalModal()">🎯 Definir objetivo</button></div></div><div class="grid2" id="workout-list"></div></section>
 
   <section id="tab-objetivo" class="tab-content"><div class="section-title">O QUE VOCÊ VAI GANHAR</div><div class="card"><h2>⚡ <span>MÊS 1–2: BASE</span></h2><p class="sub">Menos perna pesada, mais mobilidade e início de melhora do fôlego.</p></div><div class="card"><h2>🏋️ <span>MÊS 3–4: FORÇA E ARRANQUE</span></h2><p class="sub">Mais estabilidade, mudança de direção e potência no primeiro passo.</p></div><div class="card"><h2>🏆 <span>MÊS 5–6: CAMPO</span></h2><p class="sub">Treino mais específico, resistência e retorno gradual ao jogo.</p></div></section>
 
@@ -127,7 +127,7 @@
 </div>
 
 <div class="overlay" id="overlay" onclick="closeDrawer()"></div>
-<div class="drawer" id="drawer"><h2>MENU</h2><button class="link" onclick="switchTab('treinos');closeDrawer()">💪 Treinos</button><button class="link" onclick="openWorkoutEditor();closeDrawer()">➕ Cadastrar novo treino</button><button class="link" onclick="switchTab('diario');closeDrawer()">🏋️ Histórico de treinos</button><button class="link" onclick="switchTab('configuracoes');closeDrawer()">⚙️ Configurações</button><button class="link" onclick="logout()">🚪 Sair</button></div>
+<div class="drawer" id="drawer"><h2>MENU</h2><button class="link" onclick="switchTab('treinos');closeDrawer()">💪 Treinos</button><button class="link" onclick="openWorkoutEditor();closeDrawer()">➕ Cadastrar novo treino</button><button class="link" onclick="openImportWorkout();closeDrawer()">📥 Importar treino pronto</button><button class="link" onclick="openGoalModal();closeDrawer()">🎯 Definir objetivo</button><button class="link" onclick="switchTab('diario');closeDrawer()">🏋️ Histórico de treinos</button><button class="link" onclick="switchTab('configuracoes');closeDrawer()">⚙️ Configurações</button><button class="link" onclick="logout()">🚪 Sair</button></div>
 
 <div class="modal" id="confirm-modal"><div class="modal-card" style="max-width:420px"><div class="modal-head"><h2 id="confirm-title">Iniciar treino?</h2><button class="btn small" onclick="closeModal('confirm-modal')">X</button></div><p class="sub" id="confirm-text">Deseja iniciar treino?</p><div style="display:flex;gap:10px"><button class="btn primary full" onclick="startWorkoutConfirmed()">Sim</button><button class="btn full" onclick="closeModal('confirm-modal')">Não</button></div></div></div>
 <div class="modal" id="workout-modal"><div class="modal-card"><div class="modal-head"><h2 id="session-title">Treino</h2><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><button class="btn small danger" onclick="cancelWorkout()">Cancelar</button><button class="btn small" onclick="finishWorkout(false)">Finalizar agora</button></div></div><div class="timer" id="timer">00:00</div><div id="session-progress" class="session-progress"><strong id="session-progress-text">0/0 séries concluídas</strong><div class="bar"><div class="fill" id="session-progress-fill"></div></div><p class="sub" style="margin-top:8px">O treino finaliza automaticamente quando todas as séries forem concluídas.</p></div><div style="display:flex;gap:10px;justify-content:center;margin-bottom:16px"><button class="btn primary" onclick="toggleTimer()" id="timer-btn">▶ Play</button><button class="btn" onclick="resetTimer()">Reset</button></div><div id="session-exercises"></div></div></div>
@@ -141,20 +141,62 @@ import { getFirestore, doc, getDoc, setDoc, collection, getDocs, deleteDoc, serv
 const firebaseConfig={apiKey:'AIzaSyC6VpLlLLl_NaiKmCvrluBJlUTwwlfx89M',authDomain:'campo-de-guerra-1004c.firebaseapp.com',projectId:'campo-de-guerra-1004c',storageBucket:'campo-de-guerra-1004c.firebasestorage.app',messagingSenderId:'125353756348',appId:'1:125353756348:web:33a9d7891000e8ce9432b9'};
 const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFirestore(app);
 const TOTAL_DAYS=180; const HEIGHT=1.68;
-let user=null; let data={start:null,checkins:[],bestStreak:0,meals:[],weights:[],measures:[],sessions:[],customWorkouts:[]};
+let user=null; let data={start:null,checkins:[],bestStreak:0,meals:[],weights:[],measures:[],sessions:[],customWorkouts:[],goal:'futebol',goalNote:''};
 let activeWorkout=null, timerInt=null, seconds=0, running=false, currentTab='progresso';
 
 const presetWorkouts=[
- {id:'mobilidade',name:'Mobilidade para Futebol',type:'Base e recuperação',met:3.5,desc:'Soltar quadril, tornozelo e posterior para reduzir perna pesada.',exercises:[['Mobilidade de tornozelo','2','60s','Joelho avança sem tirar o calcanhar do chão.'],['Alongamento dinâmico de posterior','3','10 reps','Movimento controlado, sem forçar dor.'],['Mobilidade de quadril 90/90','2','8 reps','Gire o quadril mantendo coluna alta.'],['Ponte de glúteo','3','15 reps','Suba contraindo glúteo, sem arquear lombar.']]},
- {id:'forca',name:'Força Específica',type:'Pernas e core',met:6,desc:'Fortalecer pernas, glúteos e core para arranque e disputa.',exercises:[['Agachamento controlado','4','10 reps','Desça com joelhos alinhados e suba forte.'],['Avanço alternado','3','10 cada perna','Passo firme, tronco alto.'],['Panturrilha em pé','4','15 reps','Suba tudo e desça devagar.'],['Prancha','3','40s','Abdômen firme, sem deixar quadril cair.']]},
- {id:'resistencia',name:'Resistência de Jogo',type:'Fôlego e ritmo',met:7.5,desc:'Melhorar capacidade de sustentar esforço por mais tempo.',exercises:[['Caminhada rápida / trote leve','1','10 min','Ritmo que permita conversar.'],['Intervalado 30/90','8','30s forte','30s forte + 90s andando.'],['Corrida lateral','4','30s','Quadril baixo e passos curtos.'],['Volta à calma','1','5 min','Respire e reduza o ritmo aos poucos.']]},
- {id:'velocidade',name:'Velocidade e Arranque',type:'Explosão',met:8.5,desc:'Primeiro passo, mudança de direção e reação.',exercises:[['Skipping parado','3','30s','Joelhos rápidos, tronco firme.'],['Tiros de 10m','6','1 tiro','Arranque explosivo, descanso completo.'],['Zig-zag em cones','4','40s','Baixe centro de gravidade nas curvas.'],['Reação visual','4','30s','Saia rápido após comando ou sinal.']]},
- {id:'tecnico',name:'Técnico com Bola',type:'Controle e retorno ao campo',met:5.8,desc:'Toque, condução e finalização leve.',exercises:[['Condução em linha','4','45s','Toques curtos, bola perto do pé.'],['Zig-zag com bola','4','45s','Olhe para frente entre os cones.'],['Passe na parede','4','20 passes','Controle o retorno da bola.'],['Finalização leve','3','8 chutes','Priorize técnica, não força.']]}
+ {id:'mobilidade',name:'Mobilidade + Elástico para Futebol',type:'Mobilidade / Pré-treino',met:4.0,desc:'Soltar tornozelo, quadril e posterior, ativando glúteo com elástico antes de evoluir carga.',exercises:[
+  ['Mobilidade de tornozelo na parede','3','12 cada perna','Joelho avança em direção à parede sem tirar o calcanhar do chão.'],
+  ['Alongamento dinâmico de posterior','3','10 cada perna','Incline o tronco com controle e volte sem forçar dor.'],
+  ['Mobilidade 90/90 de quadril','3','8 cada lado','Gire o quadril mantendo coluna alta e respiração controlada.'],
+  ['Caminhada lateral com elástico','3','12 passos cada lado','Elástico acima dos joelhos ou tornozelos; mantenha joelhos abrindo.'],
+  ['Ponte de glúteo com elástico','3','15 reps','Suba contraindo glúteo e empurre os joelhos levemente para fora.'],
+  ['Agachamento profundo assistido','3','10 reps','Segure em apoio, desça com calma e abra o quadril.'],
+  ['Prancha com toque no ombro','3','20 toques','Quadril parado, abdômen firme, toque alternando os ombros.']
+ ]},
+ {id:'forca',name:'Força Específica para Futebol',type:'Força / Pernas / Core',met:7.0,desc:'Treino mais forte para perna, glúteo, posterior, panturrilha e estabilidade de mudança de direção.',exercises:[
+  ['Agachamento livre ou goblet squat','4','8 reps','Desça controlado, joelhos alinhados e suba forte sem perder postura.'],
+  ['Afundo búlgaro','4','8 cada perna','Pé de trás apoiado, tronco levemente inclinado e força no calcanhar da frente.'],
+  ['Levantamento terra romeno','4','10 reps','Quadril vai para trás, coluna neutra e posterior alongando.'],
+  ['Elevação pélvica unilateral','3','12 cada perna','Suba contraindo glúteo, sem rodar o quadril.'],
+  ['Panturrilha em pé','4','15 reps','Suba tudo, pause 1 segundo no topo e desça devagar.'],
+  ['Caminhada lateral com elástico','3','15 passos cada lado','Mantenha tensão constante no elástico e passos controlados.'],
+  ['Prancha lateral','3','30s cada lado','Corpo alinhado, quadril alto e abdômen firme.'],
+  ['Salto vertical controlado','4','6 reps','Aterrisse macio, joelhos alinhados e descanse bem entre saltos.']
+ ]},
+ {id:'resistencia',name:'Resistência de Jogo',type:'Cardio / Ritmo de partida',met:8.0,desc:'Simula esforço de jogo: correr, recuperar e repetir arrancadas sem morrer no meio.',exercises:[
+  ['Aquecimento leve','1','8 min','Caminhe/trote leve até elevar a temperatura do corpo.'],
+  ['Intervalado 30s forte / 60s leve','10','30s forte','Corra forte por 30s e recupere andando/trotando por 60s.'],
+  ['Corrida lateral entre cones','4','40s','Quadril baixo, passos curtos e troca rápida de direção.'],
+  ['Vai e volta 10m/20m/30m','5','1 sequência','Toque a linha, volte e controle a respiração na pausa.'],
+  ['Corda ou polichinelo','4','45s','Ritmo constante, impacto leve e postura alta.'],
+  ['Agachamento com peso corporal','3','20 reps','Sem pressa, mantenha joelho alinhado e peito aberto.'],
+  ['Prancha','3','45s','Abdômen firme e respiração curta.'],
+  ['Desaquecimento caminhada','1','5 min','Reduza o ritmo e normalize a respiração.']
+ ]},
+ {id:'velocidade',name:'Velocidade e Arranque',type:'Explosão / Primeiro passo',met:8.8,desc:'Trabalho de aceleração, reação, primeiro passo e mudança de direção para futebol.',exercises:[
+  ['Aquecimento dinâmico','1','8 min','Mobilize tornozelo, quadril e faça deslocamentos leves.'],
+  ['Skipping alto','4','20s','Joelhos rápidos, contato curto no chão e tronco firme.'],
+  ['Sprint de 10 metros','6','1 tiro','Arranque explosivo; descanse o suficiente para manter qualidade.'],
+  ['Sprint de 20 metros','5','1 tiro','Acelere progressivo e mantenha postura forte.'],
+  ['Saída parada explosiva','5','1 saída','Incline o corpo e ataque o chão nos primeiros passos.'],
+  ['Mudança de direção em L','5','1 percurso','Freie baixo, plante o pé e saia forte para o outro lado.'],
+  ['Zigue-zague entre cones','4','1 percurso','Toques curtos no chão e quadril baixo nas curvas.'],
+  ['Salto horizontal','4','5 reps','Exploda para frente e aterrisse estável.'],
+  ['Caminhada leve','1','5 min','Solte as pernas e baixe a frequência cardíaca.']
+ ]},
+ {id:'tecnico',name:'Técnico com Bola',type:'Controle / Retorno ao campo',met:6.0,desc:'Treino técnico leve para recuperar toque, condução, passe e finalização com segurança.',exercises:[
+  ['Condução em linha','4','45s','Toques curtos, bola perto do pé e cabeça alternando entre bola e frente.'],
+  ['Zig-zag com bola','4','45s','Controle o corpo nas curvas e acelere na saída.'],
+  ['Passe na parede','4','20 passes','Controle o retorno e acerte a direção do passe.'],
+  ['Domínio orientado','3','12 cada lado','Primeiro toque já prepara a próxima ação.'],
+  ['Finalização leve','3','8 chutes','Priorize técnica e equilíbrio antes de força.']
+ ]}
 ];
 
 window.togglePassword=(inputId,btn)=>{const input=document.getElementById(inputId);if(!input)return;const show=input.type==='password';input.type=show?'text':'password';btn.textContent=show?'🙈':'👁️';};
 window.login=async()=>{try{document.getElementById('login-error').textContent='';await signInWithEmailAndPassword(auth,val('login-email'),val('login-password'));}catch(e){document.getElementById('login-error').textContent='Erro ao entrar: '+friendly(e.code)}};
-window.logout=()=>signOut(auth); window.switchTab=switchTab; window.doCheckin=doCheckin; window.saveMeal=saveMeal; window.deleteMeal=deleteMeal; window.setTodayMealDate=setTodayMealDate; window.renderMeals=renderMeals; window.saveWeight=saveWeight; window.saveMeasure=saveMeasure; window.changePassword=changePassword; window.openDrawer=openDrawer; window.closeDrawer=closeDrawer; window.askStartWorkout=askStartWorkout; window.startWorkoutConfirmed=startWorkoutConfirmed; window.toggleTimer=toggleTimer; window.resetTimer=resetTimer; window.finishWorkout=finishWorkout; window.cancelWorkout=cancelWorkout; window.toggleSet=toggleSet; window.openWorkoutEditor=openWorkoutEditor; window.saveCustomWorkout=saveCustomWorkout; window.deleteWorkout=deleteWorkout; window.closeModal=closeModal;
+window.logout=()=>signOut(auth); window.switchTab=switchTab; window.doCheckin=doCheckin; window.saveMeal=saveMeal; window.deleteMeal=deleteMeal; window.setTodayMealDate=setTodayMealDate; window.renderMeals=renderMeals; window.saveWeight=saveWeight; window.saveMeasure=saveMeasure; window.changePassword=changePassword; window.openDrawer=openDrawer; window.closeDrawer=closeDrawer; window.askStartWorkout=askStartWorkout; window.startWorkoutConfirmed=startWorkoutConfirmed; window.toggleTimer=toggleTimer; window.resetTimer=resetTimer; window.finishWorkout=finishWorkout; window.cancelWorkout=cancelWorkout; window.toggleSet=toggleSet; window.openWorkoutEditor=openWorkoutEditor; window.openImportWorkout=openImportWorkout; window.saveImportedWorkout=saveImportedWorkout; window.openGoalModal=openGoalModal; window.saveGoal=saveGoal; window.saveCustomWorkout=saveCustomWorkout; window.deleteWorkout=deleteWorkout; window.closeModal=closeModal;
 
 onAuthStateChanged(auth,async(u)=>{user=u;if(!u){showAuth();return}showApp();await loadAll();renderAll();});
 function showAuth(){document.getElementById('auth').classList.remove('hidden');document.getElementById('app').classList.add('hidden')} function showApp(){document.getElementById('auth').classList.add('hidden');document.getElementById('app').classList.remove('hidden');document.getElementById('user-pill').textContent='Logado como '+user.email;document.getElementById('reset-email').value=user.email||''}
@@ -198,6 +240,13 @@ async function finishWorkout(auto=false){clearInterval(timerInt);running=false;d
 function renderSessions(){let list=[...data.sessions].sort((a,b)=>b.id.localeCompare(a.id));document.getElementById('session-list').innerHTML=list.length?list.map(s=>`<div class="item"><div><div class="item-title">${brDate(s.date)} · ${s.name}</div><div class="chips"><span class="chip">${s.minutes} min</span><span class="chip">${s.setsDone}/${s.setsTotal} séries</span><span class="chip">${s.exercisesDone||0}/${s.exercisesTotal||0} exercícios</span><span class="chip">${s.kcal} kcal estimadas</span></div></div></div>`).join(''):'<p class="sub">Nenhum treino finalizado ainda.</p>'}
 function openWorkoutEditor(){document.getElementById('editor-modal').classList.add('active')}
 async function saveCustomWorkout(){let id='custom_'+Date.now();let lines=val('custom-exercises').split('\n').filter(Boolean);let exercises=lines.map(l=>{let p=l.split('|').map(x=>x.trim());return [p[0]||'Exercício',p[1]||'3',p[2]||'10 reps',p[3]||'Execute com controle.']});let w={id,name:val('custom-name')||'Treino personalizado',type:val('custom-type')||'Personalizado',desc:'Criado por você dentro do app. Pode ser excluído quando quiser.',met:5.5,exercises};await setDoc(doc(db,'users',user.uid,'customWorkouts',id),w);data.customWorkouts.push(w);closeModal('editor-modal');renderWorkouts()}
+
+function openImportWorkout(){document.getElementById('import-modal').classList.add('active')}
+function parseImportedWorkout(txt){let lines=txt.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);let w={id:'custom_'+Date.now(),name:'Treino importado',type:'Personalizado',desc:'Treino importado por texto.',met:5.5,exercises:[]};let current=null;for(let line of lines){let [rawKey,...rest]=line.split(':');let key=(rawKey||'').trim().toUpperCase();let value=rest.join(':').trim();if(!value && line.includes('|')){let p=line.split('|').map(x=>x.trim());w.exercises.push([p[0]||'Exercício',(p[1]||'3').replace(/séries?/i,'').trim(),p[2]||'10 reps',p[3]||'Execute com controle.']);continue}if(key==='NOME')w.name=value||w.name;else if(key==='TIPO')w.type=value||w.type;else if(key==='MET')w.met=Number(value.replace(',','.'))||w.met;else if(key==='DESCRICAO'||key==='DESCRIÇÃO')w.desc=value||w.desc;else if(key==='EXERCICIO'||key==='EXERCÍCIO'){current=[value||'Exercício','3','10 reps','Execute com controle.'];w.exercises.push(current)}else if(current && (key==='SERIES'||key==='SÉRIES'))current[1]=value||'3';else if(current && (key==='REPS'||key==='REPETICOES'||key==='REPETIÇÕES'||key==='TEMPO'))current[2]=value||'10 reps';else if(current && key==='DICA')current[3]=value||'Execute com controle.'}if(!w.exercises.length)throw new Error('Nenhum exercício encontrado. Use EXERCICIO: nome ou linhas com Nome | Séries | Reps | Dica.');return w}
+async function saveImportedWorkout(){try{let txt=val('import-text');let w=parseImportedWorkout(txt);await setDoc(doc(db,'users',user.uid,'customWorkouts',w.id),w);data.customWorkouts.push(w);document.getElementById('import-text').value='';closeModal('import-modal');renderWorkouts();alert('Treino importado com sucesso!')}catch(e){alert('Não consegui importar: '+e.message)}}
+function openGoalModal(){document.getElementById('goal-select').value=data.goal||'futebol';document.getElementById('goal-note').value=data.goalNote||'';openModal('goal-modal')}
+async function saveGoal(){data.goal=val('goal-select')||'futebol';data.goalNote=val('goal-note')||'';await setDoc(ref(['profile','main']),{start:data.start||today(),bestStreak:data.bestStreak||0,goal:data.goal,goalNote:data.goalNote,updatedAt:serverTimestamp()},{merge:true});closeModal('goal-modal');alert('Objetivo salvo!')}
+
 async function changePassword(){let msg=document.getElementById('reset-msg');try{msg.className='';msg.textContent='';let cred=EmailAuthProvider.credential(val('reset-email'),val('reset-current'));await reauthenticateWithCredential(user,cred);await updatePassword(user,val('reset-new'));msg.className='oktxt';msg.textContent='Senha alterada com sucesso.'}catch(e){msg.className='error';msg.textContent='Erro: '+friendly(e.code)}}
 function switchTab(id){currentTab=id;document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));document.getElementById('tab-'+id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'}) }
 function openDrawer(){document.getElementById('drawer').classList.add('active');document.getElementById('overlay').classList.add('active')}function closeDrawer(){document.getElementById('drawer').classList.remove('active');document.getElementById('overlay').classList.remove('active')}function openModal(id){document.getElementById(id).classList.add('active')}function closeModal(id){document.getElementById(id).classList.remove('active')}
