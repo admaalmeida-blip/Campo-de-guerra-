@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Plano de Futebol v8.5</title>
+<title>Plano de Futebol v8.6</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
 <style>
   :root{
@@ -38,6 +38,8 @@
   .body-box{display:grid;grid-template-columns:250px 1fr;gap:20px}.body-visual{background:#080B0F;border:1px solid var(--borda);border-radius:18px;padding:20px;text-align:center}.body-human{font-size:165px;line-height:1}.body-metric{border:1px solid var(--borda);border-radius:12px;padding:12px;background:#080B0F;margin-bottom:10px}.body-metric strong{color:var(--azul2)}
   .drawer{position:fixed;top:0;bottom:0;left:-330px;width:320px;background:#080B0F;border-right:1px solid var(--borda);z-index:100;padding:20px;transition:.25s;overflow:auto}.drawer.active{left:0}.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:98;display:none}.overlay.active{display:block}.drawer h2{font-family:'Bebas Neue';font-size:34px;color:var(--azul2);margin-bottom:16px}.drawer a,.drawer button.link{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--borda);background:transparent;color:var(--texto);padding:14px 4px;font-weight:800;cursor:pointer;text-decoration:none}
   .settings-panel{display:none}.settings-panel.active{display:block}.auth-error,.error{color:#ff8b8b;font-size:13px;margin-top:10px}.oktxt{color:#7CFFB2;font-size:13px;margin-top:10px}
+  .auth-switch{display:flex;gap:8px;margin:18px 0 14px}.auth-switch .btn{flex:1;justify-content:center}.auth-form{display:block}.auth-form.hidden{display:none!important}.mini-note{font-size:12px;color:var(--texto2);line-height:1.5;margin:8px 0 14px}.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.profile-grid .field{margin-bottom:8px}
+
   @media(max-width:860px){.top{flex-direction:column}.top-actions{margin-top:0;justify-content:flex-start}.stats,.grid4{grid-template-columns:repeat(2,1fr)}.grid2,.grid3,.body-box{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.wide{grid-column:auto}.summary{grid-template-columns:repeat(2,1fr)}.title{font-size:62px}.checkin-area .btn{width:100%;padding:14px}.wrap{padding:24px 14px 60px}}
 </style>
 </head>
@@ -47,10 +49,32 @@
     <div class="tag">⚽ Plano de Alto Rendimento</div>
     <div class="title">PLANO<br><span>DE FUTEBOL</span></div>
     <p class="sub">Entre com seu e-mail e senha para acessar seu progresso privado, salvo na nuvem e sincronizado entre celular e computador.</p>
-    <div class="field"><label>E-mail</label><input id="login-email" type="email" autocomplete="email"></div>
-    <div class="field"><label>Senha</label><div class="password-wrap"><input id="login-password" type="password" autocomplete="current-password"><button class="toggle-pass" type="button" onclick="togglePassword('login-password', this)" aria-label="Mostrar ou ocultar senha">👁️</button></div></div>
-    <button class="btn primary full" onclick="login()">ENTRAR</button>
-    <div id="login-error" class="auth-error"></div>
+    <div class="auth-switch">
+      <button class="btn primary" id="login-tab-btn" onclick="showAuthForm('login')">Entrar</button>
+      <button class="btn" id="signup-tab-btn" onclick="showAuthForm('signup')">Criar usuário</button>
+    </div>
+
+    <div id="login-form" class="auth-form">
+      <div class="field"><label>E-mail</label><input id="login-email" type="email" autocomplete="email"></div>
+      <div class="field"><label>Senha</label><div class="password-wrap"><input id="login-password" type="password" autocomplete="current-password"><button class="toggle-pass" type="button" onclick="togglePassword('login-password', this)" aria-label="Mostrar ou ocultar senha">👁️</button></div></div>
+      <button class="btn primary full" onclick="login()">ENTRAR</button>
+      <div id="login-error" class="auth-error"></div>
+    </div>
+
+    <div id="signup-form" class="auth-form hidden">
+      <p class="mini-note">Crie um usuário para outra pessoa. Os dados ficam separados automaticamente pelo Firebase.</p>
+      <div class="field"><label>Nome</label><input id="signup-name" type="text" placeholder="Nome do usuário"></div>
+      <div class="field"><label>E-mail</label><input id="signup-email" type="email" autocomplete="email"></div>
+      <div class="field"><label>Senha</label><div class="password-wrap"><input id="signup-password" type="password" autocomplete="new-password"><button class="toggle-pass" type="button" onclick="togglePassword('signup-password', this)">👁️</button></div></div>
+      <div class="profile-grid">
+        <div class="field"><label>Sexo</label><select id="signup-sex"><option value="">Selecionar</option><option value="masculino">Masculino</option><option value="feminino">Feminino</option><option value="outro">Outro / Prefiro não informar</option></select></div>
+        <div class="field"><label>Objetivo</label><select id="signup-goal"><option value="futebol">Futebol</option><option value="musculacao">Musculação</option><option value="corrida">Corrida</option><option value="emagrecimento">Emagrecimento</option><option value="saude">Saúde</option><option value="personalizado">Personalizado</option></select></div>
+        <div class="field"><label>Altura (m)</label><input id="signup-height" type="number" step="0.01" placeholder="1.68"></div>
+        <div class="field"><label>Peso inicial (kg)</label><input id="signup-weight" type="number" step="0.1" placeholder="88"></div>
+      </div>
+      <button class="btn primary full" onclick="signup()">CRIAR USUÁRIO</button>
+      <div id="signup-error" class="auth-error"></div>
+    </div>
   </div>
 </div>
 
@@ -135,13 +159,13 @@
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
 import { getFirestore, doc, getDoc, setDoc, collection, getDocs, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
 
 const firebaseConfig={apiKey:'AIzaSyC6VpLlLLl_NaiKmCvrluBJlUTwwlfx89M',authDomain:'campo-de-guerra-1004c.firebaseapp.com',projectId:'campo-de-guerra-1004c',storageBucket:'campo-de-guerra-1004c.firebasestorage.app',messagingSenderId:'125353756348',appId:'1:125353756348:web:33a9d7891000e8ce9432b9'};
 const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFirestore(app);
-const TOTAL_DAYS=180; const HEIGHT=1.68;
-let user=null; let data={start:null,checkins:[],bestStreak:0,meals:[],weights:[],measures:[],sessions:[],customWorkouts:[],goal:'futebol',goalNote:''};
+const TOTAL_DAYS=180;
+let user=null; let data={start:null,checkins:[],bestStreak:0,meals:[],weights:[],measures:[],sessions:[],customWorkouts:[],goal:'futebol',goalNote:'',name:'',sex:'',height:1.68,initialWeight:88};
 let activeWorkout=null, timerInt=null, seconds=0, running=false, currentTab='progresso';
 
 const presetWorkouts=[
@@ -195,21 +219,24 @@ const presetWorkouts=[
 ];
 
 window.togglePassword=(inputId,btn)=>{const input=document.getElementById(inputId);if(!input)return;const show=input.type==='password';input.type=show?'text':'password';btn.textContent=show?'🙈':'👁️';};
+window.showAuthForm=showAuthForm;
 window.login=async()=>{try{document.getElementById('login-error').textContent='';await signInWithEmailAndPassword(auth,val('login-email'),val('login-password'));}catch(e){document.getElementById('login-error').textContent='Erro ao entrar: '+friendly(e.code)}};
+window.signup=async()=>{let oldUser=auth.currentUser;try{document.getElementById('signup-error').textContent='';let email=val('signup-email'), password=val('signup-password'), name=val('signup-name'), sex=val('signup-sex'), goal=val('signup-goal')||'futebol', height=Number(val('signup-height').replace(',','.'))||1.68, weight=Number(val('signup-weight').replace(',','.'))||88;if(!email||!password||!name){throw {code:'custom/missing'}}let cred=await createUserWithEmailAndPassword(auth,email,password);let uid=cred.user.uid;await setDoc(doc(db,'users',uid,'profile','main'),{name,email,sex,goal,height,initialWeight:weight,start:today(),bestStreak:0,goalNote:'',createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',uid,'weights',today()),{value:weight,date:today(),createdAt:serverTimestamp()},{merge:true});alert('Usuário criado com sucesso. Ele já pode entrar com o e-mail e senha cadastrados.');showAuthForm('login');document.getElementById('login-email').value=email;document.getElementById('login-password').value='';}catch(e){document.getElementById('signup-error').textContent='Erro ao criar usuário: '+friendly(e.code)} }; 
 window.logout=()=>signOut(auth); window.switchTab=switchTab; window.doCheckin=doCheckin; window.saveMeal=saveMeal; window.deleteMeal=deleteMeal; window.setTodayMealDate=setTodayMealDate; window.renderMeals=renderMeals; window.saveWeight=saveWeight; window.saveMeasure=saveMeasure; window.changePassword=changePassword; window.openDrawer=openDrawer; window.closeDrawer=closeDrawer; window.askStartWorkout=askStartWorkout; window.startWorkoutConfirmed=startWorkoutConfirmed; window.toggleTimer=toggleTimer; window.resetTimer=resetTimer; window.finishWorkout=finishWorkout; window.cancelWorkout=cancelWorkout; window.toggleSet=toggleSet; window.openWorkoutEditor=openWorkoutEditor; window.openImportWorkout=openImportWorkout; window.saveImportedWorkout=saveImportedWorkout; window.openGoalModal=openGoalModal; window.saveGoal=saveGoal; window.saveCustomWorkout=saveCustomWorkout; window.deleteWorkout=deleteWorkout; window.closeModal=closeModal;
 
 onAuthStateChanged(auth,async(u)=>{user=u;if(!u){showAuth();return}showApp();await loadAll();renderAll();});
-function showAuth(){document.getElementById('auth').classList.remove('hidden');document.getElementById('app').classList.add('hidden')} function showApp(){document.getElementById('auth').classList.add('hidden');document.getElementById('app').classList.remove('hidden');document.getElementById('user-pill').textContent='Logado como '+user.email;document.getElementById('reset-email').value=user.email||''}
+function showAuthForm(mode){let isSignup=mode==='signup';document.getElementById('login-form').classList.toggle('hidden',isSignup);document.getElementById('signup-form').classList.toggle('hidden',!isSignup);document.getElementById('login-tab-btn').classList.toggle('primary',!isSignup);document.getElementById('signup-tab-btn').classList.toggle('primary',isSignup)}
+function showAuth(){document.getElementById('auth').classList.remove('hidden');document.getElementById('app').classList.add('hidden');showAuthForm('login')} function showApp(){document.getElementById('auth').classList.add('hidden');document.getElementById('app').classList.remove('hidden');document.getElementById('user-pill').textContent='Logado como '+user.email;document.getElementById('reset-email').value=user.email||''}
 function ref(path){return doc(db,'users',user.uid,...path)}
-async function loadAll(){let prof=await getDoc(ref(['profile','main']));if(!prof.exists()){data.start=today();await setDoc(ref(['profile','main']),{start:data.start,bestStreak:0,createdAt:serverTimestamp()});}else{Object.assign(data,prof.data())}data.checkins=await loadCol('checkins');data.meals=await loadCol('meals');data.weights=await loadCol('weights');data.measures=await loadCol('measures');data.sessions=await loadCol('sessions');data.customWorkouts=await loadCol('customWorkouts')}
+async function loadAll(){let prof=await getDoc(ref(['profile','main']));if(!prof.exists()){data.start=today();await setDoc(ref(['profile','main']),{start:data.start,bestStreak:0,goal:data.goal,height:data.height,initialWeight:data.initialWeight,createdAt:serverTimestamp()});}else{Object.assign(data,prof.data());data.height=Number(data.height)||1.68;data.initialWeight=Number(data.initialWeight)||88}data.checkins=await loadCol('checkins');data.meals=await loadCol('meals');data.weights=await loadCol('weights');data.measures=await loadCol('measures');data.sessions=await loadCol('sessions');data.customWorkouts=await loadCol('customWorkouts')}
 async function loadCol(name){let snap=await getDocs(collection(db,'users',user.uid,name));return snap.docs.map(d=>({id:d.id,...d.data()}))}
-async function saveProfile(){await setDoc(ref(['profile','main']),{start:data.start||today(),bestStreak:data.bestStreak||0,updatedAt:serverTimestamp()},{merge:true})}
-function val(id){return document.getElementById(id).value.trim()} function num(id){return Number(document.getElementById(id).value)||0} function today(){let d=new Date();return toKey(d)} function toKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')} function brDate(s){return (s||'').split('-').reverse().join('/')} function friendly(c){return ({'auth/invalid-credential':'e-mail ou senha inválidos','auth/wrong-password':'senha atual incorreta','auth/weak-password':'senha nova muito fraca'})[c]||c}
+async function saveProfile(){await setDoc(ref(['profile','main']),{start:data.start||today(),bestStreak:data.bestStreak||0,goal:data.goal||'futebol',goalNote:data.goalNote||'',name:data.name||'',sex:data.sex||'',height:Number(data.height)||1.68,initialWeight:Number(data.initialWeight)||88,updatedAt:serverTimestamp()},{merge:true})}
+function val(id){return document.getElementById(id).value.trim()} function num(id){return Number(document.getElementById(id).value)||0} function today(){let d=new Date();return toKey(d)} function toKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')} function brDate(s){return (s||'').split('-').reverse().join('/')} function friendly(c){return ({'auth/invalid-credential':'e-mail ou senha inválidos','auth/wrong-password':'senha atual incorreta','auth/weak-password':'senha muito fraca','auth/email-already-in-use':'esse e-mail já está cadastrado','auth/invalid-email':'e-mail inválido','custom/missing':'preencha nome, e-mail e senha'})[c]||c}
 
 function renderAll(){setDefaultDates();renderStats();buildCalendar();renderMeals();renderWeights();renderMeasures();renderBody();renderWorkouts();renderSessions();}
 function setDefaultDates(){['meal-date','weight-date','measure-date'].forEach(id=>{if(!document.getElementById(id).value)document.getElementById(id).value=today()})}
 function calcStreak(){let checked=data.checkins.map(x=>x.id);let s=0,d=new Date();while(checked.includes(toKey(d))){s++;d.setDate(d.getDate()-1)}return s}
-function renderStats(){let streak=calcStreak();data.bestStreak=Math.max(data.bestStreak||0,streak);saveProfile();let pct=Math.round((data.checkins.length/TOTAL_DAYS)*100);let latest=[...data.weights].sort((a,b)=>b.id.localeCompare(a.id))[0];let weight=latest?.value||88;let mealsToday=data.meals.filter(m=>m.date===today());let kcal=mealsToday.reduce((a,b)=>a+(Number(b.kcal)||0),0);document.getElementById('stat-dias').textContent=data.checkins.length;document.getElementById('stat-streak').textContent=streak;document.getElementById('stat-pct').textContent=pct+'%';document.getElementById('streak-big').textContent=streak;document.getElementById('best-streak').textContent=data.bestStreak;document.getElementById('stat-peso').textContent=weight;document.getElementById('stat-kcal').textContent=Math.round(kcal);document.getElementById('prog-bar').style.width=Math.max(2,pct)+'%';document.getElementById('prog-bar').textContent=pct+'%';renderBody()}
+function renderStats(){let streak=calcStreak();data.bestStreak=Math.max(data.bestStreak||0,streak);saveProfile();let pct=Math.round((data.checkins.length/TOTAL_DAYS)*100);let latest=[...data.weights].sort((a,b)=>b.id.localeCompare(a.id))[0];let weight=latest?.value||data.initialWeight||88;let mealsToday=data.meals.filter(m=>m.date===today());let kcal=mealsToday.reduce((a,b)=>a+(Number(b.kcal)||0),0);document.getElementById('stat-dias').textContent=data.checkins.length;document.getElementById('stat-streak').textContent=streak;document.getElementById('stat-pct').textContent=pct+'%';document.getElementById('streak-big').textContent=streak;document.getElementById('best-streak').textContent=data.bestStreak;document.getElementById('stat-peso').textContent=weight;document.getElementById('stat-kcal').textContent=Math.round(kcal);document.getElementById('prog-bar').style.width=Math.max(2,pct)+'%';document.getElementById('prog-bar').textContent=pct+'%';renderBody()}
 function buildCalendar(){let grid=document.getElementById('calendar-grid');grid.innerHTML='';let start=new Date((data.start||today())+'T00:00:00');let checked=data.checkins.map(x=>x.id);let months=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];let days=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];let cur=-1,row,section,d=new Date(start);for(let i=0;i<TOTAL_DAYS;i++){let key=toKey(d);if(d.getMonth()!==cur){cur=d.getMonth();let lab=document.createElement('div');lab.className='week-label';lab.textContent=months[cur]+' '+d.getFullYear();grid.appendChild(lab);let hdr=document.createElement('div');hdr.className='days-grid';days.forEach(x=>{let e=document.createElement('div');e.style.cssText='text-align:center;color:var(--texto2);font-size:10px;font-weight:900';e.textContent=x;hdr.appendChild(e)});grid.appendChild(hdr);section=document.createElement('div');grid.appendChild(section);row=document.createElement('div');row.className='days-grid';section.appendChild(row);for(let p=0;p<d.getDay();p++)row.appendChild(document.createElement('div'))}if(row.children.length===7){row=document.createElement('div');row.className='days-grid';section.appendChild(row)}let cell=document.createElement('div');cell.className='day-cell';cell.textContent=checked.includes(key)?'✓':d.getDate();if(checked.includes(key))cell.classList.add('checked');if(key===today())cell.classList.add('today');if(key>today())cell.classList.add('future');else cell.onclick=()=>toggleDay(key);row.appendChild(cell);d.setDate(d.getDate()+1)}}
 async function toggleDay(key){let exists=data.checkins.find(x=>x.id===key);if(exists){await deleteDoc(doc(db,'users',user.uid,'checkins',key));data.checkins=data.checkins.filter(x=>x.id!==key)}else{await setDoc(doc(db,'users',user.uid,'checkins',key),{date:key,createdAt:serverTimestamp()});data.checkins.push({id:key,date:key})}renderAll()}
 async function doCheckin(){let key=today();if(data.checkins.find(x=>x.id===key)){document.getElementById('checkin-msg').textContent='Hoje já está marcado. Bora manter a sequência.';return}await toggleDay(key);document.getElementById('checkin-msg').textContent='✅ Check-in salvo na nuvem!'}
@@ -222,7 +249,7 @@ async function saveWeight(){let date=val('weight-date')||today(), value=num('wei
 function renderWeights(){let list=[...data.weights].sort((a,b)=>b.id.localeCompare(a.id));document.getElementById('weight-list').innerHTML=list.length?list.map(w=>`<div class="item"><strong>${brDate(w.date)}</strong><span class="chip">${w.value} kg</span></div>`).join(''):'<p class="sub">Sem peso registrado.</p>'}
 async function saveMeasure(){let date=val('measure-date')||today();let m={id:date,date,waist:num('measure-waist'),chest:num('measure-chest'),hip:num('measure-hip'),thigh:num('measure-thigh'),arm:num('measure-arm')};await setDoc(doc(db,'users',user.uid,'measures',date),m);data.measures=data.measures.filter(x=>x.id!==date);data.measures.push(m);renderAll()}
 function renderMeasures(){let list=[...data.measures].sort((a,b)=>b.id.localeCompare(a.id));document.getElementById('measure-list').innerHTML=list.length?list.map(m=>`<div class="item"><strong>${brDate(m.date)}</strong><div class="chips"><span class="chip">Cintura ${m.waist||0}</span><span class="chip">Peito ${m.chest||0}</span><span class="chip">Quadril ${m.hip||0}</span><span class="chip">Coxa ${m.thigh||0}</span><span class="chip">Braço ${m.arm||0}</span></div></div>`).join(''):'<p class="sub">Sem medidas registradas.</p>'}
-function renderBody(){let latest=[...data.weights].sort((a,b)=>b.id.localeCompare(a.id))[0];let w=latest?.value||88;let imc=w/(HEIGHT*HEIGHT);let cls=imc<25?'Bom':imc<30?'Atenção':'Atenção alta';document.getElementById('body-peso').textContent=w+'kg';document.getElementById('body-imc').textContent=imc.toFixed(1);document.getElementById('body-class').textContent=cls}
+function renderBody(){let latest=[...data.weights].sort((a,b)=>b.id.localeCompare(a.id))[0];let w=latest?.value||data.initialWeight||88;let h=Number(data.height)||1.68;let imc=w/(h*h);let cls=imc<25?'Bom':imc<30?'Atenção':'Atenção alta';document.getElementById('body-peso').textContent=w+'kg';document.getElementById('body-imc').textContent=imc.toFixed(1);document.getElementById('body-class').textContent=cls}
 
 
 function allWorkouts(){return [...presetWorkouts,...data.customWorkouts]}
