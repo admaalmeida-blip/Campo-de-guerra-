@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campo de Guerra – Plano de 6 Meses</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #00E676;
+    --verde-escuro: #00C853;
+    --laranja: #FF6D00;
+    --amarelo: #FFD600;
+    --fundo: #0A0F0A;
+    --fundo2: #111811;
+    --fundo3: #1A231A;
+    --borda: #2A3A2A;
+    --texto: #E8F5E9;
+    --texto2: #A5C8A5;
+    --danger: #FF5252;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 80% 20%, rgba(0,230,118,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 20% 80%, rgba(255,109,0,0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 0 16px 60px; }
+
+  header { padding: 32px 0 20px; display: flex; flex-direction: column; gap: 4px; }
+  header .tag { font-size: 11px; font-weight: 700; letter-spacing: 4px; color: var(--verde); text-transform: uppercase; }
+  header h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(42px, 8vw, 76px); line-height: 0.95; color: var(--texto); letter-spacing: 1px; }
+  header h1 span { color: var(--verde); }
+  header p.sub { font-size: 14px; color: var(--texto2); margin-top: 6px; }
+
+  .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0 28px; }
+  .stat-card { background: var(--fundo3); border: 1px solid var(--borda); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; }
+  .stat-card .label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--texto2); }
+  .stat-card .val { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--verde); }
+  .stat-card .unit { font-size: 11px; color: var(--texto2); }
+
+  .mega-progress { background: var(--fundo3); border: 1px solid var(--borda); border-radius: 16px; padding: 24px; margin-bottom: 28px; }
+  .mega-progress h2 { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; margin-bottom: 16px; color: var(--texto2); }
+  .mega-progress h2 span { color: var(--verde); font-size: 32px; }
+  .prog-bar-outer { background: var(--fundo); border-radius: 99px; height: 28px; overflow: hidden; position: relative; border: 1px solid var(--borda); }
+  .prog-bar-inner { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #00C853, #00E676, #69FF47); transition: width 0.8s cubic-bezier(.4,0,.2,1); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; min-width: 28px; }
+  .prog-bar-inner .pct-txt { font-size: 11px; font-weight: 700; color: #000; }
+  .prog-labels { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: var(--texto2); }
+
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; margin: 32px 0 14px; display: flex; align-items: center; gap: 10px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--borda); }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 4px; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn { padding: 8px 20px; border-radius: 99px; border: 1px solid var(--borda); background: transparent; color: var(--texto2); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all .2s; }
+  .tab-btn.active { background: var(--verde); color: #000; border-color: var(--verde); font-weight: 700; }
+  .tab-btn:hover:not(.active) { border-color: var(--verde); color: var(--verde); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .week-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--laranja); margin-bottom: 8px; font-weight: 700; }
+  .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 8px; }
+  .day-cell { aspect-ratio: 1; border-radius: 8px; border: 1.5px solid var(--borda); background: var(--fundo2); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all .2s; position: relative; overflow: hidden; min-height: 44px; }
+  .day-cell:hover { border-color: var(--verde); }
+  .day-cell.checked { background: var(--verde); border-color: var(--verde); }
+  .day-cell.checked .day-num { color: #000; font-weight: 700; }
+  .day-cell.today { border-color: var(--amarelo); }
+  .day-cell.past:not(.checked) { opacity: 0.45; }
+  .day-cell.future { cursor: default; opacity: 0.3; }
+  .day-cell .day-num { font-size: 11px; font-weight: 500; color: var(--texto2); line-height: 1; }
+  .day-cell .check-icon { font-size: 16px; display: none; }
+  .day-cell.checked .check-icon { display: block; }
+  .day-cell.checked .day-num { display: none; }
+  .week-section { margin-bottom: 18px; }
+
+  .plan-card { background: var(--fundo3); border: 1px solid var(--borda); border-radius: 14px; padding: 20px 22px; margin-bottom: 14px; position: relative; overflow: hidden; }
+  .plan-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--verde); border-radius: 4px 0 0 4px; }
+  .plan-card.orange::before { background: var(--laranja); }
+  .plan-card.yellow::before { background: var(--amarelo); }
+  .plan-card.red::before { background: var(--danger); }
+  .plan-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.5px; margin-bottom: 8px; color: var(--texto); }
+  .plan-card .phase-badge { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 3px 10px; border-radius: 99px; background: rgba(0,230,118,0.12); color: var(--verde); display: inline-block; margin-bottom: 10px; }
+  .plan-card .phase-badge.orange { background: rgba(255,109,0,.12); color: var(--laranja); }
+  .plan-card .phase-badge.yellow { background: rgba(255,214,0,.12); color: var(--amarelo); }
+  .plan-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .plan-list li { font-size: 13.5px; color: var(--texto2); padding-left: 18px; position: relative; line-height: 1.5; }
+  .plan-list li::before { content: '→'; position: absolute; left: 0; color: var(--verde); font-size: 12px; }
+
+  .meal-row { display: grid; grid-template-columns: 100px 1fr auto; gap: 12px; align-items: start; padding: 14px 0; border-bottom: 1px solid var(--borda); }
+  .meal-row:last-child { border-bottom: none; }
+  .meal-time { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--laranja); text-transform: uppercase; }
+  .meal-name { font-size: 14px; font-weight: 500; color: var(--texto); margin-bottom: 3px; }
+  .meal-items { font-size: 12px; color: var(--texto2); line-height: 1.6; }
+  .meal-kcal { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--verde); }
+  .meal-kcal span { font-family: 'DM Sans', sans-serif; font-size: 10px; color: var(--texto2); }
+
+  .evo-box { background: linear-gradient(135deg, rgba(0,230,118,0.08), rgba(0,200,83,0.04)); border: 1px solid rgba(0,230,118,0.2); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+  .evo-box h3 { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--verde); margin-bottom: 8px; }
+  .evo-box p { font-size: 13px; color: var(--texto2); line-height: 1.7; }
+
+  .checkin-area { text-align: center; margin: 24px 0 8px; }
+  #checkin-btn { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; padding: 16px 48px; border-radius: 99px; border: none; cursor: pointer; transition: all .2s; background: var(--verde); color: #000; box-shadow: 0 0 32px rgba(0,230,118,0.3); }
+  #checkin-btn:hover { transform: scale(1.04); box-shadow: 0 0 48px rgba(0,230,118,0.5); }
+  #checkin-btn.done { background: var(--fundo3); color: var(--verde); border: 1px solid var(--verde); box-shadow: none; }
+  #checkin-msg { margin-top: 10px; font-size: 13px; color: var(--texto2); min-height: 20px; }
+
+  .goal-visual { display: flex; align-items: center; gap: 20px; background: var(--fundo3); border: 1px solid var(--borda); border-radius: 14px; padding: 20px; margin-bottom: 14px; }
+  .goal-icon { font-size: 44px; flex-shrink: 0; }
+  .goal-text h4 { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--verde); }
+  .goal-text p { font-size: 13px; color: var(--texto2); line-height: 1.6; margin-top: 3px; }
+
+  .streak-bar { display: flex; gap: 10px; align-items: center; background: var(--fundo3); border: 1px solid var(--borda); border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; }
+  .streak-fire { font-size: 28px; }
+  .streak-info .big { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--laranja); line-height: 1; }
+  .streak-info .sm { font-size: 12px; color: var(--texto2); }
+
+  /* SYMPTOM BARS */
+  .sintoma-card { background: var(--fundo3); border: 1px solid var(--borda); border-radius: 14px; padding: 18px 20px; margin-bottom: 12px; }
+  .sintoma-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .sintoma-name { font-size: 14px; font-weight: 600; color: var(--texto); display: flex; align-items: center; gap: 8px; }
+  .sintoma-icon { font-size: 18px; }
+  .sintoma-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--texto2); margin-bottom: 6px; letter-spacing: 0.5px; }
+  .sintoma-track { background: var(--fundo); border-radius: 99px; height: 10px; border: 1px solid var(--borda); overflow: hidden; }
+  .sintoma-fill { height: 100%; border-radius: 99px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+  .sintoma-fill.ruim { background: linear-gradient(90deg, #FF5252, #FF1744); }
+  .sintoma-fill.medio { background: linear-gradient(90deg, #FF6D00, #FFD600); }
+  .sintoma-fill.bom { background: linear-gradient(90deg, #00C853, #00E676); }
+  .sintoma-meta { margin-top: 8px; font-size: 11px; color: var(--texto2); display: flex; gap: 6px; align-items: center; }
+  .sintoma-meta .agora { color: var(--danger); font-weight: 700; }
+  .sintoma-meta .meta { color: var(--verde); font-weight: 700; }
+  .nivel-agora-badge { font-size: 11px; padding: 2px 10px; border-radius: 99px; font-weight: 700; }
+  .nivel-agora-badge.ruim { background: rgba(255,82,82,.15); color: #FF5252; }
+  .nivel-agora-badge.medio { background: rgba(255,109,0,.15); color: var(--laranja); }
+  .nivel-agora-badge.bom { background: rgba(0,230,118,.15); color: var(--verde); }
+  .sint-intro { background: rgba(255,82,82,0.06); border: 1px solid rgba(255,82,82,0.15); border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; font-size: 13px; color: var(--texto2); line-height: 1.7; }
+  .sint-intro strong { color: #FF5252; }
+  .sint-summary { background: rgba(0,230,118,0.06); border: 1px solid rgba(0,230,118,0.15); border-radius: 12px; padding: 14px 18px; margin-top: 8px; font-size: 13px; color: var(--texto2); line-height: 1.7; }
+  .sint-summary strong { color: var(--verde); }
+
+  @media (max-width: 500px) {
+    .stats-bar { grid-template-columns: repeat(3, 1fr); }
+    .stat-card .val { font-size: 22px; }
+    .days-grid { gap: 4px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="tag">⚽ Plano de Alto Rendimento</div>
+    <h1>CAMPO<br><span>DE GUERRA</span></h1>
+    <p class="sub">6 meses para voltar a jogar no seu máximo · 88kg · 1,68m · IMC 31.2</p>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat-card">
+      <span class="label">Dias Check</span>
+      <span class="val" id="stat-dias">0</span>
+      <span class="unit">de 180 dias</span>
+    </div>
+    <div class="stat-card">
+      <span class="label">Sequência</span>
+      <span class="val" id="stat-streak">0</span>
+      <span class="unit">dias seguidos</span>
+    </div>
+    <div class="stat-card">
+      <span class="label">Progresso</span>
+      <span class="val" id="stat-pct">0%</span>
+      <span class="unit">do objetivo</span>
+    </div>
+  </div>
+
+  <div class="mega-progress">
+    <h2>OBJETIVO: <span>CAMPO EM 6 MESES</span></h2>
+    <div class="prog-bar-outer">
+      <div class="prog-bar-inner" id="prog-bar" style="width:0%">
+        <span class="pct-txt" id="prog-pct">0%</span>
+      </div>
+    </div>
+    <div class="prog-labels">
+      <span>Início</span>
+      <span>Mês 2 – Base</span>
+      <span>Mês 4 – Força</span>
+      <span>🏆 Campo!</span>
+    </div>
+  </div>
+
+  <div class="streak-bar">
+    <div class="streak-fire">🔥</div>
+    <div class="streak-info">
+      <div class="big" id="streak-big">0</div>
+      <div class="sm">dias em sequência atual</div>
+    </div>
+    <div style="flex:1"></div>
+    <div style="font-size:13px;color:var(--texto2);">Melhor: <strong id="best-streak" style="color:var(--laranja)">0</strong></div>
+  </div>
+
+  <div class="checkin-area">
+    <button id="checkin-btn" onclick="doCheckin()">✅ MARCAR HOJE</button>
+    <div id="checkin-msg"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('progresso',this)">📅 Progresso</button>
+    <button class="tab-btn" onclick="switchTab('situacao',this)">📊 Situação</button>
+    <button class="tab-btn" onclick="switchTab('treinos',this)">💪 Treinos</button>
+    <button class="tab-btn" onclick="switchTab('alimentacao',this)">🥗 Alimentação</button>
+    <button class="tab-btn" onclick="switchTab('objetivo',this)">🏆 Objetivo</button>
+  </div>
+
+  <div class="tab-content active" id="tab-progresso">
+    <div class="section-title">CALENDÁRIO 180 DIAS</div>
+    <div id="calendar-grid"></div>
+  </div>
+
+  <div class="tab-content" id="tab-situacao">
+    <div class="section-title">SITUAÇÃO ATUAL</div>
+    <div class="sint-intro">
+      <strong>Diagnóstico inicial · Junho 2026</strong><br>
+      Baseado nos seus sintomas, aqui está o seu nível de partida em cada área. As barras mostram onde você está hoje e onde vai chegar em 6 meses.
+    </div>
+    <div class="sintoma-card">
+      <div class="sintoma-header">
+        <div class="sintoma-name"><span class="sintoma-icon">🦵</span> Leveza nas Pernas</div>
+        <div class="nivel-agora-badge ruim">Crítico</div>
+      </div>
+      <div class="sintoma-labels"><span>Perna de chumbo</span><span>Leve como pena</span></div>
+      <div class="sintoma-track"><div class="sintoma-fill ruim" style="width:15%"></div></div>
+      <div class="sintoma-meta"><span class="agora">Agora: 15%</span><span>→</span><span class="meta">Meta 6 meses: 80%</span></div>
+    </div>
+    <div class="sintoma-card">
+      <div class="sintoma-header">
+        <div class="sintoma-name"><span class="sintoma-icon">🫁</span> Fôlego / Capacidade Aeróbica</div>
+        <div class="nivel-agora-badge ruim">Crítico</div>
+      </div>
+      <div class="sintoma-labels"><span>Cansa em minutos</span><span>90 min no campo</span></div>
+      <div class="sintoma-track"><div class="sintoma-fill ruim" style="width:12%"></div></div>
+      <div class="sintoma-meta"><span class="agora">Agora: 12%</span><span>→</span><span class="meta">Meta 6 meses: 75%</span></div>
+    </div>
+    <div class="sintoma-card">
+      <div class="sintoma-header">
+        <div class="sintoma-name"><span class="sintoma-icon">⚡</span> Velocidade de Arranque</div>
+        <div class="nivel-agora-badge ruim">Baixo</div>
+      </div>
+      <div class="sintoma-labels"><span>Arranque lento</span><span>Explosivo</span></div>
+      <div class="sintoma-track"><div class="sintoma-fill ruim" style="width:18%"></div></div>
+      <div class="sintoma-meta"><span class="agora">Agora: 18%</span><span>→</span><span class="meta">Meta 6 meses: 78%</span></div>
+    </div>
+    <div class="sintoma-card">
+      <div class="sintoma-header">
+        <div class="sintoma-name"><span class="sintoma-icon">↩️</span> Mudança de Direção</div>
+        <div class="nivel-agora-badge ruim">Baixo</div>
+      </div>
+      <div class="sintoma-labels"><span>Muita dificuldade</span><span>Ágil e rápido</span></div>
+      <div class="sintoma-track"><div class="sintoma-fill ruim" style="width:20%"></div></div>
+      <div class="sintoma-meta"><span class="agora">Agora: 20%</span><span>→</span><span class="meta">Meta 6 meses: 80%</span></div>
+    </div>
+    <div class="sintoma-card">
+      <div class="sintoma-header">
+        <div class="sintoma-name"><span class="sintoma-icon">🏃</span> Velocidade dos Movimentos</div>
+        <div class="nivel-agora-badge ruim">Baixo</div>
+      </div>
+      <div class="sintoma-labels"><span>Movimentos lentos</span><span>Rápido e fluido</span></div>
+      <div class="sintoma-track"><div class="sintoma-fill ruim" style="width:20%"></div></div>
+      <div class="sintoma-meta"><span class="agora">Agora: 20%</span><span>→</span><span class="meta">Meta 6 meses: 82%</span></div>
+    </div>
+    <div class="sintoma-card">
+      <div class="sintoma-header">
+        <div class="sintoma-name"><span class="sintoma-icon">💪</span> Resistência Muscular</div>
+        <div class="nivel-agora-badge ruim">Crítico</div>
+      </div>
+      <div class="sintoma-labels"><span>Sem resistência</span><span>Aguenta o jogo</span></div>
+      <div class="sintoma-track"><div class="sintoma-fill ruim" style="width:10%"></div></div>
+      <div class="sintoma-meta"><span class="agora">Agora: 10%</span><span>→</span><span class="meta">Meta 6 meses: 75%</span></div>
+    </div>
+    <div class="sintoma-card">
+      <div class="sintoma-header">
+        <div class="sintoma-name"><span class="sintoma-icon">😣</span> Nível de Dor Muscular</div>
+        <div class="nivel-agora-badge ruim">Alto</div>
+      </div>
+      <div class="sintoma-labels"><span>Muita dor</span><span>Sem dor pós-jogo</span></div>
+      <div class="sintoma-track"><div class="sintoma-fill ruim" style="width:80%"></div></div>
+      <div class="sintoma-meta"><span class="agora">Dor atual: alta (80%)</span><span>→</span><span class="meta">Meta: reduzir para 15%</span></div>
+    </div>
+    <div class="sintoma-card">
+      <div class="sintoma-header">
+        <div class="sintoma-name"><span class="sintoma-icon">⚖️</span> Peso Corporal</div>
+        <div class="nivel-agora-badge medio">Atenção</div>
+      </div>
+      <div class="sintoma-labels"><span>88kg · IMC 31.2</span><span>~76kg · IMC 26.9</span></div>
+      <div class="sintoma-track"><div class="sintoma-fill medio" style="width:45%"></div></div>
+      <div class="sintoma-meta"><span class="agora">Agora: 88kg</span><span>→</span><span class="meta">Meta: ~76–78kg em 6 meses</span></div>
+    </div>
+    <div class="sint-summary">
+      <strong>O que isso significa?</strong><br>
+      Você está num ponto de partida baixo — e isso é bom, porque o espaço para evoluir é enorme. Cada semana de treino e alimentação certa vai mover essas barras. Em 2 meses você já vai sentir a diferença no fôlego e na perna. Em 4 meses, a velocidade e o arranque. Em 6 meses, todas as barras vão estar em verde.
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-treinos">
+    <div class="section-title">PLANO DE TREINOS</div>
+    <div class="plan-card">
+      <div class="phase-badge">Fase 1 · Mês 1-2 · Base e Recuperação</div>
+      <h3>🦵 Ativação e Mobilidade</h3>
+      <ul class="plan-list">
+        <li><strong>3x por semana</strong> – Caminhada rápida 20–30 min (ritmo controlado)</li>
+        <li>Alongamento dinâmico: quadril, isquiotibiais, panturrilha – 15 min</li>
+        <li>Exercícios de mobilidade articular: tornozelo, joelho, quadril</li>
+        <li>Agachamento no TRX ou parede: 3 séries de 15 reps</li>
+        <li>Glúteo bridge: 3 × 20 reps — combate perna pesada</li>
+        <li>Prancha isométrica: 3 × 30s — fortalece core para arranque</li>
+        <li>Bicicleta ergométrica leve 15 min — sem impacto, melhora fôlego</li>
+      </ul>
+    </div>
+    <div class="plan-card orange">
+      <div class="phase-badge orange">Fase 2 · Mês 3-4 · Força e Potência</div>
+      <h3>⚡ Força Funcional para Futebol</h3>
+      <ul class="plan-list">
+        <li><strong>4x por semana</strong> – Treinos de 45–60 min</li>
+        <li>Agachamento livre: 4 × 8–10 reps (foco em explosão na subida)</li>
+        <li>Leg press unilateral: 3 × 12 reps por perna</li>
+        <li>Cadeira extensora + mesa flexora: 3 × 15</li>
+        <li>Salto em caixote (box jump): 4 × 6 — potência de arranque</li>
+        <li>Corrida intervalada: 30s sprint + 90s caminhada × 8 rodadas</li>
+        <li>Exercícios de change of direction (cone drills): 3 séries de 5 percursos</li>
+        <li>Futevôlei ou roda de passes leves: 2x/semana — retorno técnico</li>
+      </ul>
+    </div>
+    <div class="plan-card yellow">
+      <div class="phase-badge yellow">Fase 3 · Mês 5-6 · Especificidade Futebolística</div>
+      <h3>🏃 Resistência e Retorno ao Campo</h3>
+      <ul class="plan-list">
+        <li><strong>5x por semana</strong> – Treinos combinados</li>
+        <li>Treino de pré-temporada: corrida contínua 5km em Z2 (conversação)</li>
+        <li>Dribles em velocidade + finalizações: 20 min técnicos</li>
+        <li>Rachinha controlada (jogo 5×5): começar 2x/semana</li>
+        <li>HIIT futebol: tiros de 10m, 20m, 30m com bola – 6 séries</li>
+        <li>Trabalho de primeiro passo (reação): escada de agilidade – 10 min</li>
+        <li>Jogo completo de 60 min no mês 6 – META FINAL 🏆</li>
+      </ul>
+    </div>
+    <div class="evo-box">
+      <h3>💡 Regras de Ouro do Treino</h3>
+      <p>Nunca pule o aquecimento (10 min). Priorize o sono: 7–8h são quando os músculos se reconstroem. Nos dias de descanso, faça caminhada leve ou alongamento — nunca fique completamente parado. A dor muscular normal desaparece em 48h; dor articular exige atenção médica.</p>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-alimentacao">
+    <div class="section-title">PLANO ALIMENTAR</div>
+    <div class="plan-card">
+      <h3>🎯 Estratégia Nutricional</h3>
+      <ul class="plan-list">
+        <li>Meta calórica: ~2.100–2.300 kcal/dia (déficit leve para perder gordura)</li>
+        <li>Proteína: 2g por kg = ~176g/dia (recuperação muscular)</li>
+        <li>Carboidrato: 3–4g/kg — concentrar antes e depois do treino</li>
+        <li>Gorduras boas: azeite, castanhas, abacate — 20% das calorias</li>
+        <li>Hidratação: mínimo 3 litros de água por dia</li>
+        <li>Evitar: açúcar refinado, ultra-processados, álcool e frituras</li>
+      </ul>
+    </div>
+    <div style="background:var(--fundo3);border:1px solid var(--borda);border-radius:14px;padding:20px;margin-bottom:14px;">
+      <div class="meal-row">
+        <div class="meal-time">07h00</div>
+        <div><div class="meal-name">Café da Manhã</div><div class="meal-items">3 ovos mexidos com espinafre · 2 fatias de pão integral · 1 fruta (banana ou mamão) · Café sem açúcar</div></div>
+        <div class="meal-kcal">520<br><span>kcal</span></div>
+      </div>
+      <div class="meal-row">
+        <div class="meal-time">10h00</div>
+        <div><div class="meal-name">Lanche Pré-Treino</div><div class="meal-items">1 banana com pasta de amendoim (1 col.) · 1 copo de iogurte grego sem açúcar</div></div>
+        <div class="meal-kcal">280<br><span>kcal</span></div>
+      </div>
+      <div class="meal-row">
+        <div class="meal-time">13h00</div>
+        <div><div class="meal-name">Almoço</div><div class="meal-items">200g frango grelhado ou peixe · Arroz integral (4 col. sopa) · Feijão (4 col.) · Salada à vontade · Azeite</div></div>
+        <div class="meal-kcal">680<br><span>kcal</span></div>
+      </div>
+      <div class="meal-row">
+        <div class="meal-time">16h00</div>
+        <div><div class="meal-name">Lanche da Tarde</div><div class="meal-items">Mix de castanhas (30g) · 2 fatias de queijo branco · 1 maçã</div></div>
+        <div class="meal-kcal">320<br><span>kcal</span></div>
+      </div>
+      <div class="meal-row">
+        <div class="meal-time">19h30</div>
+        <div><div class="meal-name">Jantar</div><div class="meal-items">200g carne magra (patinho, filé, atum) · Batata doce (150g) · Legumes refogados · Salada</div></div>
+        <div class="meal-kcal">560<br><span>kcal</span></div>
+      </div>
+      <div class="meal-row">
+        <div class="meal-time">22h00</div>
+        <div><div class="meal-name">Ceia (opcional)</div><div class="meal-items">1 copo de iogurte grego · Ou 2 claras de ovo mexidas</div></div>
+        <div class="meal-kcal">120<br><span>kcal</span></div>
+      </div>
+    </div>
+    <div class="evo-box">
+      <h3>🥤 Suplementos Úteis (consulte médico)</h3>
+      <p><strong style="color:var(--verde)">Creatina monohidratada</strong> (3–5g/dia): melhora força e arranque. <strong style="color:var(--verde)">Whey protein</strong>: se difícil atingir proteína pela dieta. <strong style="color:var(--verde)">Magnésio</strong>: reduz câimbras e cansaço muscular. <strong style="color:var(--verde)">Vitamina D</strong>: fundamental para força muscular e recuperação.</p>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-objetivo">
+    <div class="section-title">O QUE VOCÊ VAI GANHAR</div>
+    <div class="goal-visual">
+      <div class="goal-icon">⚡</div>
+      <div class="goal-text"><h4>Mês 1–2: Fim da Perna Pesada</h4><p>Mobilidade melhorada, inflamação reduzida. Você vai sentir as pernas mais leves. A caminhada vai se tornar fácil e o fôlego vai começar a responder.</p></div>
+    </div>
+    <div class="goal-visual">
+      <div class="goal-icon">🏋️</div>
+      <div class="goal-text"><h4>Mês 3–4: Força nas Pernas e Arranque</h4><p>O primeiro passo vai ficar explosivo. Mudança de direção vai melhorar com o fortalecimento de quadril e glúteo. Resistência aeróbica começa a aparecer.</p></div>
+    </div>
+    <div class="goal-visual">
+      <div class="goal-icon">🫁</div>
+      <div class="goal-text"><h4>Mês 5: Fôlego de Atleta</h4><p>Capacidade cardiorrespiratória notavelmente melhor. Você vai conseguir jogar 30–40 minutos sem parar. A dor muscular vai ser muito menor.</p></div>
+    </div>
+    <div class="goal-visual">
+      <div class="goal-icon">🏆</div>
+      <div class="goal-text"><h4>Mês 6: DE VOLTA AO CAMPO</h4><p>Jogo completo. Arrancadas, dribles, mudança de direção e fôlego para 90 minutos. Redução de peso estimada: 8–12 kg. Você vai jogar bem novamente.</p></div>
+    </div>
+    <div class="plan-card red">
+      <h3>⚠️ Sinais de Alerta – Veja um Médico Se:</h3>
+      <ul class="plan-list">
+        <li>Dor no peito ou falta de ar em repouso</li>
+        <li>Dor articular (joelho, tornozelo) que não melhora após 72h</li>
+        <li>Tontura ou mal-estar durante os treinos</li>
+        <li>Inchaço nas pernas — pode indicar problema circulatório</li>
+        <li>Recomendação: faça um check-up cardiológico antes de começar</li>
+      </ul>
+    </div>
+    <div class="evo-box">
+      <h3>💬 Mensagem do Campo</h3>
+      <p>Você está 88kg com sintomas de sedentarismo moderado. A boa notícia: <strong style="color:var(--verde)">tudo que você descreveu é reversível.</strong> Perna pesada, pouco fôlego, movimentos lentos — são adaptações do corpo parado, não doenças. Com consistência nos 6 meses, seu corpo vai se lembrar de como jogar. O segredo está na sequência de dias marcados. Cada check é um tijolo do seu retorno.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const TOTAL_DAYS = 180;
+const START_DATE_KEY = 'cgw_start';
+const CHECKED_KEY = 'cgw_checked';
+const BEST_KEY = 'cgw_best';
+
+function getStart() {
+  let s = localStorage.getItem(START_DATE_KEY);
+  if (!s) { s = new Date().toISOString().split('T')[0]; localStorage.setItem(START_DATE_KEY, s); }
+  return new Date(s + 'T00:00:00');
+}
+
+function getChecked() {
+  try { return JSON.parse(localStorage.getItem(CHECKED_KEY) || '[]'); } catch { return []; }
+}
+
+function saveChecked(arr) { localStorage.setItem(CHECKED_KEY, JSON.stringify(arr)); }
+
+function toKey(d) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function today() { return toKey(new Date()); }
+
+function calcStreak(checked) {
+  let streak = 0, d = new Date();
+  while (true) {
+    if (checked.includes(toKey(d))) { streak++; d.setDate(d.getDate() - 1); } else break;
+  }
+  return streak;
+}
+
+function updateStats() {
+  const checked = getChecked();
+  const pct = Math.round((checked.length / TOTAL_DAYS) * 100);
+  const streak = calcStreak(checked);
+  const best = Math.max(parseInt(localStorage.getItem(BEST_KEY) || '0'), streak);
+  localStorage.setItem(BEST_KEY, best);
+  document.getElementById('stat-dias').textContent = checked.length;
+  document.getElementById('stat-streak').textContent = streak;
+  document.getElementById('stat-pct').textContent = pct + '%';
+  document.getElementById('streak-big').textContent = streak;
+  document.getElementById('best-streak').textContent = best;
+  const bar = document.getElementById('prog-bar');
+  bar.style.width = Math.max(pct, 1) + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+}
+
+function buildCalendar() {
+  const start = getStart();
+  const checked = getChecked();
+  const todayKey = today();
+  const grid = document.getElementById('calendar-grid');
+  grid.innerHTML = '';
+  const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const DAYS_LABEL = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  let dayIndex = 0, currentMonth = -1, weekSection = null, weekRow = null, dayOfWeek = 0;
+  let d = new Date(start);
+  while (dayIndex < TOTAL_DAYS) {
+    const key = toKey(d);
+    const month = d.getMonth();
+    if (month !== currentMonth) {
+      currentMonth = month;
+      const ml = document.createElement('div');
+      ml.className = 'week-label';
+      ml.textContent = MONTHS[month] + ' ' + d.getFullYear();
+      grid.appendChild(ml);
+      const hdr = document.createElement('div');
+      hdr.style.cssText = 'display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:4px;';
+      DAYS_LABEL.forEach(dl => {
+        const dh = document.createElement('div');
+        dh.style.cssText = 'text-align:center;font-size:10px;color:var(--texto2);font-weight:700;letter-spacing:1px;';
+        dh.textContent = dl;
+        hdr.appendChild(dh);
+      });
+      grid.appendChild(hdr);
+      weekSection = document.createElement('div');
+      weekSection.className = 'week-section';
+      weekRow = document.createElement('div');
+      weekRow.className = 'days-grid';
+      const startDow = d.getDay();
+      for (let p = 0; p < startDow; p++) {
+        const empty = document.createElement('div');
+        empty.style.minHeight = '44px';
+        weekRow.appendChild(empty);
+      }
+      dayOfWeek = startDow;
+      weekSection.appendChild(weekRow);
+      grid.appendChild(weekSection);
+    }
+    if (dayOfWeek === 7) {
+      weekRow = document.createElement('div');
+      weekRow.className = 'days-grid';
+      weekSection.appendChild(weekRow);
+      dayOfWeek = 0;
+    }
+    const cell = document.createElement('div');
+    cell.className = 'day-cell';
+    cell.dataset.key = key;
+    const num = document.createElement('span');
+    num.className = 'day-num';
+    num.textContent = d.getDate();
+    const chk = document.createElement('span');
+    chk.className = 'check-icon';
+    chk.textContent = '✓';
+    cell.appendChild(num);
+    cell.appendChild(chk);
+    const isPast = key < todayKey, isToday = key === todayKey, isFuture = key > todayKey, isChecked = checked.includes(key);
+    if (isChecked) cell.classList.add('checked');
+    if (isToday) cell.classList.add('today');
+    if (isPast && !isChecked) cell.classList.add('past');
+    if (isFuture) cell.classList.add('future');
+    if (!isFuture) cell.addEventListener('click', () => toggleDay(key));
+    weekRow.appendChild(cell);
+    dayOfWeek++;
+    dayIndex++;
+    d.setDate(d.getDate() + 1);
+  }
+}
+
+function toggleDay(key) {
+  if (key > today()) return;
+  let checked = getChecked();
+  checked = checked.includes(key) ? checked.filter(k => k !== key) : [...checked, key];
+  saveChecked(checked);
+  buildCalendar();
+  updateStats();
+  updateCheckinBtn();
+}
+
+function doCheckin() {
+  const key = today();
+  let checked = getChecked();
+  if (checked.includes(key)) return;
+  checked.push(key);
+  saveChecked(checked);
+  buildCalendar();
+  updateStats();
+  updateCheckinBtn();
+  const msgs = ['🔥 Mais um dia no campo! Você está no caminho certo.','💪 Check feito! O campo está chegando.','⚡ Consistência é tudo. Bom treino!','🏆 Um dia a mais rumo ao retorno!'];
+  document.getElementById('checkin-msg').textContent = msgs[Math.floor(Math.random()*msgs.length)];
+}
+
+function updateCheckinBtn() {
+  const btn = document.getElementById('checkin-btn');
+  const msg = document.getElementById('checkin-msg');
+  const checked = getChecked();
+  if (checked.includes(today())) {
+    btn.textContent = '✅ DIA MARCADO!';
+    btn.classList.add('done');
+    if (!msg.textContent) msg.textContent = '🔥 Hoje já está marcado. Bora treinar!';
+  } else {
+    btn.textContent = '✅ MARCAR HOJE';
+    btn.classList.remove('done');
+    msg.textContent = '';
+  }
+}
+
+function switchTab(id, el) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  el.classList.add('active');
+}
+
+buildCalendar();
+updateStats();
+updateCheckinBtn();
+</script>
+</body>
+</html>
