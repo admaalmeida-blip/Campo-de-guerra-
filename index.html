@@ -190,12 +190,10 @@
       <h2>CADASTRAR TREINO</h2>
       <button class="btn small" onclick="closeModal('editor-modal')">X</button>
     </div>
-    <p class="sub">Monte o treino exercício por exercício. Preencha os dados do exercício 1, clique em <strong>+ Adicionar exercício</strong> para incluir o exercício 2, e assim por diante. No final, clique em salvar.</p>
+    <p class="sub">Monte o treino exercício por exercício. Primeiro informe o nome e o tipo do treino. Depois preencha o exercício 1. Para incluir outro exercício, clique em <strong>+ Adicionar exercício</strong>. No final, clique em <strong>Salvar esse treino</strong>.</p>
     <div class="grid2">
       <div class="field"><label>Nome do treino</label><input id="custom-name" placeholder="Ex.: Treino de peito"></div>
       <div class="field"><label>Tipo / objetivo do treino</label><input id="custom-type" placeholder="Ex.: Hipertrofia / Peitoral"></div>
-      <div class="field"><label>MET estimado</label><input id="custom-met" type="number" step="0.1" placeholder="Ex.: 6.5"></div>
-      <div class="field"><label>Descrição do treino</label><input id="custom-desc" placeholder="Ex.: Treino focado em peitoral"></div>
     </div>
     <div class="section-title" style="margin-top:18px">EXERCÍCIOS DO TREINO</div>
     <div id="custom-exercise-rows"></div>
@@ -526,8 +524,6 @@ async function finishWorkout(auto=false){clearInterval(timerInt);clearInterval(r
 function renderSessions(){let list=[...data.sessions].sort((a,b)=>b.id.localeCompare(a.id));document.getElementById('session-list').innerHTML=list.length?list.map(s=>`<div class="item"><div><div class="item-title">${brDate(s.date)} · ${s.name}</div><div class="chips"><span class="chip">${s.minutes} min</span><span class="chip">${s.setsDone}/${s.setsTotal} séries</span><span class="chip">${s.exercisesDone||0}/${s.exercisesTotal||0} exercícios</span><span class="chip">${s.kcal} kcal estimadas</span></div></div></div>`).join(''):'<p class="sub">Nenhum treino finalizado ainda.</p>'}
 function openWorkoutEditor(){
   document.getElementById('custom-name').value='';document.getElementById('custom-type').value='';
-  let met=document.getElementById('custom-met'); if(met)met.value='';
-  let desc=document.getElementById('custom-desc'); if(desc)desc.value='';
   let rows=document.getElementById('custom-exercise-rows'); if(rows){rows.innerHTML='';addCustomExerciseRow();}
   document.getElementById('editor-modal').classList.add('active')
 }
@@ -542,8 +538,6 @@ function removeCustomExerciseRow(btn){let row=btn.closest('.exercise-form-row');
 function fillWorkoutExample(){
   document.getElementById('custom-name').value='Treino de peito';
   document.getElementById('custom-type').value='Hipertrofia / Peitoral';
-  let met=document.getElementById('custom-met'); if(met)met.value='6.0';
-  let desc=document.getElementById('custom-desc'); if(desc)desc.value='Treino de exemplo com descanso automático entre séries.';
   let box=document.getElementById('custom-exercise-rows'); box.innerHTML='';
   addCustomExerciseRow({name:'Flexão de braço',muscle:'Peitoral',series:'4',reps:'10',rest:'00:01:00',tip:'Corpo alinhado e descida controlada.'});
   addCustomExerciseRow({name:'Supino reto',muscle:'Peitoral',series:'4',reps:'10',rest:'00:01:00',tip:'Controle a descida e suba forte.'});
@@ -565,7 +559,7 @@ async function saveCustomWorkout(){
     }).filter(Boolean);
     if(!val('custom-name')){alert('Preencha o nome do treino.');return;}
     if(!exercises.length){alert('Adicione pelo menos um exercício com nome.');return;}
-    let w={id,name:val('custom-name'),type:val('custom-type')||'Personalizado',desc:val('custom-desc')||'Criado por você dentro do app. Pode ser excluído quando quiser.',met:Number(val('custom-met'))||5.5,exercises,createdAt:Date.now()};
+    let w={id,name:val('custom-name'),type:val('custom-type')||'Personalizado',desc:'Criado por você dentro do app. Pode ser excluído quando quiser.',met:5.5,exercises,createdAt:Date.now()};
     await setDoc(doc(db,'users',user.uid,'customWorkouts',id),w);
     data.customWorkouts.push(w);
     closeModal('editor-modal');
