@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Plano de Treino v8.7.2</title>
+<title>Plano de Treino v8.7.6</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
 <style>
   :root{
@@ -11,6 +11,19 @@
     --card:#11151B; --card2:#151B24; --borda:#26354A; --texto:#F2F7FF; --texto2:#AFC1D8;
     --ok:#00D084; --warn:#FFD166; --danger:#FF5252; --muted:#6D7F95;
   }
+  body.mode-light{
+    --fundo:#F4F7FB; --fundo2:#EAF0F8; --card:#FFFFFF; --card2:#F1F5FB; --borda:#D5DEE9;
+    --texto:#07111F; --texto2:#526073; --muted:#7B8797;
+  }
+  body.mode-dark{
+    --fundo:#07090C; --fundo2:#0B0D10; --card:#11151B; --card2:#151B24; --borda:#26354A;
+    --texto:#F2F7FF; --texto2:#AFC1D8; --muted:#6D7F95;
+  }
+  body.color-original{--azul:#034694;--azul2:#0A7CFF;--azul3:#1E90FF;}
+  body.color-green{--azul:#008A5A;--azul2:#00E676;--azul3:#45FF9A;}
+  body.color-pink{--azul:#B80F61;--azul2:#FF4FA3;--azul3:#FF86C5;}
+  body.color-dark{--azul:#334155;--azul2:#94A3B8;--azul3:#CBD5E1;}
+  body.color-light{--azul:#0A7CFF;--azul2:#2563EB;--azul3:#60A5FA;--fundo:#F7FAFF;--fundo2:#EEF4FF;--card:#FFFFFF;--card2:#F4F8FF;--borda:#D4E2F5;--texto:#07111F;--texto2:#526073;}
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--fundo);color:var(--texto);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
   body:before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 80% 18%,rgba(10,124,255,.12),transparent 60%),radial-gradient(ellipse 45% 45% at 10% 90%,rgba(3,70,148,.14),transparent 60%);pointer-events:none;z-index:-1}
@@ -43,7 +56,7 @@
   @media(max-width:860px){.top{flex-direction:column}.top-actions{margin-top:0;justify-content:flex-start}.stats,.grid4{grid-template-columns:repeat(2,1fr)}.grid2,.grid3,.body-box{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.wide{grid-column:auto}.summary{grid-template-columns:repeat(2,1fr)}.title{font-size:62px}.checkin-area .btn{width:100%;padding:14px}.wrap{padding:24px 14px 60px}}
 </style>
 </head>
-<body>
+<body class="mode-dark color-original">
 <div id="auth" class="auth-screen">
   <div class="auth-card">
     <div class="tag">⚽ Plano de Alto Rendimento</div>
@@ -139,7 +152,7 @@
 
   <section id="tab-medidas" class="tab-content"><div class="section-title">MEDIDAS CORPORAIS</div><div class="card"><div class="form-grid"><div class="field"><label>Data</label><input id="measure-date" type="date"></div><div class="field"><label>Cintura</label><input id="measure-waist" type="number" step="0.1"></div><div class="field"><label>Peito</label><input id="measure-chest" type="number" step="0.1"></div><div class="field"><label>Quadril</label><input id="measure-hip" type="number" step="0.1"></div><div class="field"><label>Coxa</label><input id="measure-thigh" type="number" step="0.1"></div><div class="field"><label>Braço</label><input id="measure-arm" type="number" step="0.1"></div></div><button class="btn primary" onclick="saveMeasure()">Salvar medidas</button></div><div class="card"><h2>📏 <span>HISTÓRICO</span></h2><div id="measure-list"></div></div></section>
 
-  <section id="tab-corpo" class="tab-content"><div class="section-title">CORPO / IMC</div><div class="card body-box"><div class="body-visual"><div class="body-human">🧍</div><p style="color:var(--texto2)">Visão corporal simples para acompanhar peso e IMC.</p></div><div><div class="body-metric">Altura: <strong>1,68m</strong></div><div class="body-metric">Peso atual: <strong id="body-peso">88kg</strong></div><div class="body-metric">IMC atual: <strong id="body-imc">31.2</strong></div><div class="body-metric">Classificação: <strong id="body-class">Atenção</strong></div><p class="sub">Use a aba Peso para atualizar. O IMC e o resumo corporal mudam automaticamente.</p></div></div></section>
+  <section id="tab-corpo" class="tab-content"><div class="section-title">CORPO / IMC</div><div class="card body-box"><div class="body-visual"><div class="body-human">🧍</div><p style="color:var(--texto2)">Visão corporal simples para acompanhar peso e IMC.</p></div><div><div class="body-metric">Altura: <strong id="body-height">--</strong></div><div class="body-metric">Peso atual: <strong id="body-peso">88kg</strong></div><div class="body-metric">IMC atual: <strong id="body-imc">31.2</strong></div><div class="body-metric">Classificação: <strong id="body-class">Atenção</strong></div><p class="sub">Use a aba Peso para atualizar. O IMC e o resumo corporal mudam automaticamente.</p></div></div></section>
 
   <section id="tab-diario" class="tab-content"><div class="section-title">DIÁRIO DE TREINOS</div><div class="card"><h2>📝 <span>REGISTROS FINALIZADOS</span></h2><div id="session-list"></div></div></section>
 
@@ -149,7 +162,7 @@
 
   <section id="tab-objetivo" class="tab-content"><div class="section-title" id="objective-title">OBJETIVO</div><div id="objective-content"></div></section>
 
-  <section id="tab-configuracoes" class="tab-content"><div class="section-title">CONFIGURAÇÕES</div><div class="grid2"><div class="card"><h2>🔐 <span>REDEFINIR SENHA</span></h2><div class="field"><label>E-mail</label><input id="reset-email" type="email"></div><div class="field"><label>Senha atual</label><div class="password-wrap"><input id="reset-current" type="password" autocomplete="current-password"><button class="toggle-pass" type="button" onclick="togglePassword('reset-current', this)" aria-label="Mostrar ou ocultar senha atual">👁️</button></div></div><div class="field"><label>Nova senha</label><div class="password-wrap"><input id="reset-new" type="password" autocomplete="new-password"><button class="toggle-pass" type="button" onclick="togglePassword('reset-new', this)" aria-label="Mostrar ou ocultar nova senha">👁️</button></div></div><button class="btn primary" onclick="changePassword()">Salvar nova senha</button><div id="reset-msg"></div></div><div class="card"><h2>⚙️ <span>APP</span></h2><p class="sub">Tema atual: Preto fosco + Azul Chelsea. Dados sincronizados no Firebase por usuário.</p><button class="btn danger" onclick="logout()">Sair da conta</button></div></div></section>
+  <section id="tab-configuracoes" class="tab-content"><div class="section-title">CONFIGURAÇÕES</div><div class="grid2"><div class="card"><h2>🔐 <span>REDEFINIR SENHA</span></h2><div class="field"><label>E-mail</label><input id="reset-email" type="email"></div><div class="field"><label>Senha atual</label><div class="password-wrap"><input id="reset-current" type="password" autocomplete="current-password"><button class="toggle-pass" type="button" onclick="togglePassword('reset-current', this)" aria-label="Mostrar ou ocultar senha atual">👁️</button></div></div><div class="field"><label>Nova senha</label><div class="password-wrap"><input id="reset-new" type="password" autocomplete="new-password"><button class="toggle-pass" type="button" onclick="togglePassword('reset-new', this)" aria-label="Mostrar ou ocultar nova senha">👁️</button></div></div><button class="btn primary" onclick="changePassword()">Salvar nova senha</button><div id="reset-msg"></div></div><div class="card"><h2>🛡️ <span>RECUPERAÇÃO ALTERNATIVA</span></h2><p class="sub">Use para deixar dados de verificação salvos. A recuperação principal continua sendo por e-mail do Firebase; estas respostas ficam como apoio de segurança e são salvas protegidas.</p><div class="field"><label>E-mail alternativo</label><input id="recovery-email" type="email" placeholder="exemplo@gmail.com"></div><div class="field"><label>Nome completo da mãe</label><div class="password-wrap"><input id="security-mother" type="password" autocomplete="off" placeholder="Digite para salvar/atualizar"><button class="toggle-pass" type="button" onclick="togglePassword('security-mother', this)">👁️</button></div></div><div class="field"><label>Data de nascimento</label><input id="security-birth" type="date"></div><button class="btn primary" onclick="saveRecoveryOptions()">Salvar recuperação alternativa</button><p class="sub" id="security-status" style="margin-top:10px">Status: não configurado</p><div id="recovery-msg"></div></div><div class="card"><h2>🎯 <span>OBJETIVO</span></h2><p class="sub">Você pode trocar o objetivo sem apagar histórico de treinos, peso, refeições ou medidas anteriores.</p><button class="btn primary" onclick="openGoalModal()">Alterar objetivo</button><p class="sub" style="margin-top:10px">Os treinos prontos serão atualizados conforme o novo objetivo. Seus treinos personalizados continuam salvos.</p></div><div class="card"><h2>🎨 <span>APARÊNCIA</span></h2><div class="field"><label>Modo</label><select id="appearance-mode"><option value="dark">Tema escuro</option><option value="light">Tema claro</option></select></div><div class="field"><label>Jogo de cores</label><select id="color-theme"><option value="original">Original — Azul e preto</option><option value="green">Verde e preto</option><option value="pink">Rosa e preto</option><option value="dark">Escuro neutro</option><option value="light">Claro azul</option></select></div><button class="btn primary" onclick="saveAppearance()">Salvar aparência</button><div id="appearance-msg"></div></div><div class="card"><h2>⚙️ <span>APP</span></h2><p class="sub">Dados sincronizados no Firebase por usuário.</p><button class="btn danger" onclick="logout()">Sair da conta</button></div></div></section>
 </div>
 
 <div class="overlay" id="overlay" onclick="closeDrawer()"></div>
@@ -172,7 +185,7 @@ import { getFirestore, doc, getDoc, setDoc, collection, getDocs, deleteDoc, serv
 const firebaseConfig={apiKey:'AIzaSyC6VpLlLLl_NaiKmCvrluBJlUTwwlfx89M',authDomain:'campo-de-guerra-1004c.firebaseapp.com',projectId:'campo-de-guerra-1004c',storageBucket:'campo-de-guerra-1004c.firebasestorage.app',messagingSenderId:'125353756348',appId:'1:125353756348:web:33a9d7891000e8ce9432b9'};
 const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFirestore(app);
 const TOTAL_DAYS=180;
-let user=null; let data={start:null,checkins:[],bestStreak:0,meals:[],weights:[],measures:[],sessions:[],customWorkouts:[],goal:'',goalNote:'',level:'iniciante',name:'',sex:'',height:null,initialWeight:null};
+let user=null; let data={start:null,checkins:[],bestStreak:0,meals:[],weights:[],measures:[],sessions:[],customWorkouts:[],goal:'',goalNote:'',level:'iniciante',name:'',sex:'',height:null,initialWeight:null,appearanceMode:'dark',colorTheme:'original',recoveryEmail:'',securityMotherHash:'',securityBirthHash:'',securityQuestionsConfigured:false};
 let activeWorkout=null, timerInt=null, seconds=0, running=false, currentTab='progresso';
 
 const goalProfiles={
@@ -217,22 +230,77 @@ window.togglePassword=(inputId,btn)=>{const input=document.getElementById(inputI
 window.showAuthForm=showAuthForm;
 window.login=async()=>{try{document.getElementById('login-error').textContent='';await signInWithEmailAndPassword(auth,val('login-email'),val('login-password'));}catch(e){document.getElementById('login-error').textContent='Erro ao entrar: '+friendly(e.code)}};
 window.forgotPassword=async()=>{let box=document.getElementById('login-error');try{box.className='auth-error oktxt';box.textContent='';let email=val('login-email');if(!email){throw {code:'custom/email'}}await sendPasswordResetEmail(auth,email);box.textContent='Enviamos um link de recuperação para seu e-mail. Confira também a caixa de spam.';}catch(e){box.className='auth-error';box.textContent=e.code==='custom/email'?'Digite seu e-mail primeiro.':'Erro ao enviar recuperação: '+friendly(e.code)}};
-window.signup=async()=>{let oldUser=auth.currentUser;try{document.getElementById('signup-error').textContent='';let email=val('signup-email'), password=val('signup-password'), name=val('signup-name'), sex=val('signup-sex'), goal=val('signup-goal')||'futebol', level=val('signup-level')||'iniciante', height=Number(val('signup-height').replace(',','.'))||1.68, weight=Number(val('signup-weight').replace(',','.'))||88;if(!email||!password||!name){throw {code:'custom/missing'}}let cred=await createUserWithEmailAndPassword(auth,email,password);let uid=cred.user.uid;await setDoc(doc(db,'users',uid,'profile','main'),{name,email,sex,goal,level,height,initialWeight:weight,start:today(),bestStreak:0,goalNote:'',createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',uid,'weights',today()),{value:weight,date:today(),createdAt:serverTimestamp()},{merge:true});alert('Usuário criado com sucesso. Ele já pode entrar com o e-mail e senha cadastrados.');showAuthForm('login');document.getElementById('login-email').value=email;document.getElementById('login-password').value='';}catch(e){document.getElementById('signup-error').textContent='Erro ao criar usuário: '+friendly(e.code)} }; 
+window.signup=async()=>{let oldUser=auth.currentUser;try{document.getElementById('signup-error').textContent='';let email=val('signup-email'), password=val('signup-password'), name=val('signup-name'), sex=val('signup-sex'), goal=val('signup-goal')||'futebol', level=val('signup-level')||'iniciante', height=Number(val('signup-height').replace(',','.'))||1.68, weight=Number(val('signup-weight').replace(',','.'))||88;if(!email||!password||!name){throw {code:'custom/missing'}}let cred=await createUserWithEmailAndPassword(auth,email,password);let uid=cred.user.uid;await setDoc(doc(db,'users',uid,'profile','main'),{name,email,sex,goal,level,height,initialWeight:weight,start:today(),bestStreak:0,goalNote:'',appearanceMode:'dark',colorTheme:'original',createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',uid,'weights',today()),{value:weight,date:today(),createdAt:serverTimestamp()},{merge:true});alert('Usuário criado com sucesso. Ele já pode entrar com o e-mail e senha cadastrados.');showAuthForm('login');document.getElementById('login-email').value=email;document.getElementById('login-password').value='';}catch(e){document.getElementById('signup-error').textContent='Erro ao criar usuário: '+friendly(e.code)} }; 
 window.logout=()=>signOut(auth); window.switchTab=switchTab; window.doCheckin=doCheckin; window.saveMeal=saveMeal; window.deleteMeal=deleteMeal; window.setTodayMealDate=setTodayMealDate; window.renderMeals=renderMeals; window.saveWeight=saveWeight; window.saveMeasure=saveMeasure; window.changePassword=changePassword; window.openDrawer=openDrawer; window.closeDrawer=closeDrawer; window.askStartWorkout=askStartWorkout; window.startWorkoutConfirmed=startWorkoutConfirmed; window.toggleTimer=toggleTimer; window.resetTimer=resetTimer; window.finishWorkout=finishWorkout; window.cancelWorkout=cancelWorkout; window.toggleSet=toggleSet; window.openWorkoutEditor=openWorkoutEditor; window.openImportWorkout=openImportWorkout; window.saveImportedWorkout=saveImportedWorkout; window.openGoalModal=openGoalModal; window.saveGoal=saveGoal; window.saveCompleteProfile=saveCompleteProfile; window.saveCustomWorkout=saveCustomWorkout; window.deleteWorkout=deleteWorkout; window.closeModal=closeModal;
 
 onAuthStateChanged(auth,async(u)=>{user=u;if(!u){showAuth();return}showApp();await loadAll();renderAll();checkProfileComplete();});
 function showAuthForm(mode){let isSignup=mode==='signup';document.getElementById('login-form').classList.toggle('hidden',isSignup);document.getElementById('signup-form').classList.toggle('hidden',!isSignup);document.getElementById('login-tab-btn').classList.toggle('primary',!isSignup);document.getElementById('signup-tab-btn').classList.toggle('primary',isSignup)}
 function showAuth(){document.getElementById('auth').classList.remove('hidden');document.getElementById('app').classList.add('hidden');showAuthForm('login')} function showApp(){document.getElementById('auth').classList.add('hidden');document.getElementById('app').classList.remove('hidden');document.getElementById('user-pill').textContent='Logado como '+user.email;document.getElementById('reset-email').value=user.email||''}
 function ref(path){return doc(db,'users',user.uid,...path)}
-async function loadAll(){let prof=await getDoc(ref(['profile','main']));if(!prof.exists()){data.start=today();await setDoc(ref(['profile','main']),{start:data.start,bestStreak:0,createdAt:serverTimestamp()},{merge:true});}else{Object.assign(data,prof.data());data.height=data.height?Number(data.height):null;data.initialWeight=data.initialWeight?Number(data.initialWeight):null;data.level=data.level||'iniciante'}data.checkins=await loadCol('checkins');data.meals=await loadCol('meals');data.weights=await loadCol('weights');data.measures=await loadCol('measures');data.sessions=await loadCol('sessions');data.customWorkouts=await loadCol('customWorkouts')}
+async function loadAll(){let prof=await getDoc(ref(['profile','main']));if(!prof.exists()){data.start=today();await setDoc(ref(['profile','main']),{start:data.start,bestStreak:0,createdAt:serverTimestamp()},{merge:true});}else{Object.assign(data,prof.data());data.height=data.height?Number(data.height):null;data.initialWeight=data.initialWeight?Number(data.initialWeight):null;data.level=data.level||'iniciante';data.appearanceMode=data.appearanceMode||'dark';data.colorTheme=data.colorTheme||'original'}data.checkins=await loadCol('checkins');data.meals=await loadCol('meals');data.weights=await loadCol('weights');data.measures=await loadCol('measures');data.sessions=await loadCol('sessions');data.customWorkouts=await loadCol('customWorkouts')}
 async function loadCol(name){let snap=await getDocs(collection(db,'users',user.uid,name));return snap.docs.map(d=>({id:d.id,...d.data()}))}
-async function saveProfile(){let payload={start:data.start||today(),bestStreak:data.bestStreak||0,goalNote:data.goalNote||'',name:data.name||'',sex:data.sex||'',level:data.level||'iniciante',updatedAt:serverTimestamp()};if(data.goal)payload.goal=data.goal;if(data.height)payload.height=Number(data.height);if(data.initialWeight)payload.initialWeight=Number(data.initialWeight);await setDoc(ref(['profile','main']),payload,{merge:true})}
-function val(id){return document.getElementById(id).value.trim()} function num(id){return Number(document.getElementById(id).value)||0} function today(){let d=new Date();return toKey(d)} function toKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')} function brDate(s){return (s||'').split('-').reverse().join('/')} function friendly(c){return ({'auth/invalid-credential':'e-mail ou senha inválidos','auth/wrong-password':'senha atual incorreta','auth/weak-password':'senha muito fraca','auth/email-already-in-use':'esse e-mail já está cadastrado','auth/invalid-email':'e-mail inválido','custom/missing':'preencha nome, e-mail e senha'})[c]||c}
+async function saveProfile(){let payload={start:data.start||today(),bestStreak:data.bestStreak||0,goalNote:data.goalNote||'',name:data.name||'',sex:data.sex||'',level:data.level||'iniciante',appearanceMode:data.appearanceMode||'dark',colorTheme:data.colorTheme||'original',recoveryEmail:data.recoveryEmail||'',securityQuestionsConfigured:!!data.securityQuestionsConfigured,updatedAt:serverTimestamp()};if(data.goal)payload.goal=data.goal;if(data.height)payload.height=Number(data.height);if(data.initialWeight)payload.initialWeight=Number(data.initialWeight);if(data.securityMotherHash)payload.securityMotherHash=data.securityMotherHash;if(data.securityBirthHash)payload.securityBirthHash=data.securityBirthHash;await setDoc(ref(['profile','main']),payload,{merge:true})}
+function val(id){return document.getElementById(id).value.trim()} function num(id){return Number(document.getElementById(id).value)||0} function today(){let d=new Date();return toKey(d)} function toKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')} function brDate(s){return (s||'').split('-').reverse().join('/')} function friendly(c){return ({'auth/invalid-credential':'e-mail ou senha inválidos','auth/wrong-password':'senha atual incorreta','auth/weak-password':'senha muito fraca','auth/email-already-in-use':'esse e-mail já está cadastrado','auth/invalid-email':'e-mail inválido','custom/missing':'preencha nome, e-mail e senha','custom/security-incomplete':'preencha as duas perguntas de segurança'})[c]||c}
 
 function goalKey(){let g=(data.goal||'personalizado').toLowerCase();if(g==='musculação')g='musculacao';return goalProfiles[g]?g:'personalizado'}
 function profile(){return goalProfiles[goalKey()]||goalProfiles.personalizado}
+function applyAppearance(){
+  const mode=data.appearanceMode||localStorage.getItem('pf_mode')||'dark';
+  const color=data.colorTheme||localStorage.getItem('pf_color')||'original';
+  document.body.classList.remove('mode-dark','mode-light','color-original','color-green','color-pink','color-dark','color-light');
+  document.body.classList.add('mode-'+mode,'color-'+color);
+  localStorage.setItem('pf_mode',mode); localStorage.setItem('pf_color',color);
+  let m=document.getElementById('appearance-mode'); if(m)m.value=mode;
+  let c=document.getElementById('color-theme'); if(c)c.value=color;
+}
+window.saveRecoveryOptions=saveRecoveryOptions;
+window.saveAppearance=async()=>{
+  data.appearanceMode=val('appearance-mode')||'dark';
+  data.colorTheme=val('color-theme')||'original';
+  applyAppearance();
+  await setDoc(ref(['profile','main']),{appearanceMode:data.appearanceMode,colorTheme:data.colorTheme,updatedAt:serverTimestamp()},{merge:true});
+  let msg=document.getElementById('appearance-msg'); if(msg){msg.className='oktxt';msg.textContent='Aparência salva com sucesso.'}
+}
 function renderGoalUI(){let p=profile();let title=document.getElementById('app-title-goal');if(title)title.textContent=p.short;let sub=document.getElementById('app-subtitle');if(sub)sub.textContent=p.subtitle;let card=document.getElementById('goal-card-title');if(card)card.textContent=p.title;let labels=document.getElementById('goal-labels');if(labels)labels.innerHTML=`<span>Início</span><span>Mês 2 – Base</span><span>Mês 4 – Evolução</span><span>${p.final}</span>`;let wt=document.getElementById('workouts-title');if(wt)wt.textContent=p.tab;let ot=document.getElementById('objective-title');if(ot)ot.textContent='OBJETIVO: '+p.title;let oc=document.getElementById('objective-content');if(oc){oc.innerHTML=p.objective.map(x=>`<div class="card"><h2>${x[0]} <span>${x[1]}</span></h2><p class="sub">${x[2]}</p></div>`).join('')+(data.goalNote?`<div class="card"><h2>📝 <span>META PESSOAL</span></h2><p class="sub">${data.goalNote}</p></div>`:'')}}
-function renderAll(){setDefaultDates();renderGoalUI();renderStats();buildCalendar();renderMeals();renderWeights();renderMeasures();renderBody();renderWorkouts();renderSessions();}
+
+function normalizeSecurityText(v){return (v||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ')}
+async function sha256Text(v){const enc=new TextEncoder().encode(v);const buf=await crypto.subtle.digest('SHA-256',enc);return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('')}
+function renderRecoverySettings(){
+  const emailEl=document.getElementById('recovery-email');
+  const status=document.getElementById('security-status');
+  if(emailEl) emailEl.value=data.recoveryEmail||'';
+  if(status) status.textContent='Status: '+(data.securityQuestionsConfigured?'perguntas de segurança configuradas':'não configurado');
+}
+async function saveRecoveryOptions(){
+  const msg=document.getElementById('recovery-msg');
+  try{
+    if(msg){msg.className='';msg.textContent=''}
+    const recEmail=val('recovery-email');
+    const mother=normalizeSecurityText(val('security-mother'));
+    const birth=val('security-birth');
+    const payload={recoveryEmail:recEmail,updatedAt:serverTimestamp()};
+    data.recoveryEmail=recEmail;
+    if(mother||birth){
+      if(!mother||!birth) throw {code:'custom/security-incomplete'};
+      const salt=user.uid+'|plano-treino';
+      payload.securityMotherHash=await sha256Text(salt+'|mother|'+mother);
+      payload.securityBirthHash=await sha256Text(salt+'|birth|'+birth);
+      payload.securityQuestionsConfigured=true;
+      data.securityMotherHash=payload.securityMotherHash;
+      data.securityBirthHash=payload.securityBirthHash;
+      data.securityQuestionsConfigured=true;
+    }
+    await setDoc(ref(['profile','main']),payload,{merge:true});
+    document.getElementById('security-mother').value='';
+    document.getElementById('security-birth').value='';
+    renderRecoverySettings();
+    if(msg){msg.className='oktxt';msg.textContent='Recuperação alternativa salva com sucesso.'}
+  }catch(e){
+    if(msg){msg.className='auth-error';msg.textContent=e.code==='custom/security-incomplete'?'Preencha as duas perguntas de segurança antes de salvar.':'Erro ao salvar recuperação: '+friendly(e.code||e.message)}
+  }
+}
+
+function renderAll(){applyAppearance();setDefaultDates();renderGoalUI();renderRecoverySettings();renderStats();buildCalendar();renderMeals();renderWeights();renderMeasures();renderBody();renderWorkouts();renderSessions();}
 function setDefaultDates(){['meal-date','weight-date','measure-date'].forEach(id=>{if(!document.getElementById(id).value)document.getElementById(id).value=today()})}
 function calcStreak(){let checked=data.checkins.map(x=>x.id);let s=0,d=new Date();while(checked.includes(toKey(d))){s++;d.setDate(d.getDate()-1)}return s}
 function renderStats(){let streak=calcStreak();data.bestStreak=Math.max(data.bestStreak||0,streak);saveProfile();let pct=Math.round((data.checkins.length/TOTAL_DAYS)*100);let latest=[...data.weights].sort((a,b)=>b.id.localeCompare(a.id))[0];let weight=latest?.value||data.initialWeight||0;let mealsToday=data.meals.filter(m=>m.date===today());let kcal=mealsToday.reduce((a,b)=>a+(Number(b.kcal)||0),0);document.getElementById('stat-dias').textContent=data.checkins.length;document.getElementById('stat-streak').textContent=streak;document.getElementById('stat-pct').textContent=pct+'%';document.getElementById('streak-big').textContent=streak;document.getElementById('best-streak').textContent=data.bestStreak;document.getElementById('stat-peso').textContent=weight;document.getElementById('stat-kcal').textContent=Math.round(kcal);document.getElementById('prog-bar').style.width=Math.max(2,pct)+'%';document.getElementById('prog-bar').textContent=pct+'%';renderBody()}
@@ -248,10 +316,7 @@ async function saveWeight(){let date=val('weight-date')||today(), value=num('wei
 function renderWeights(){let list=[...data.weights].sort((a,b)=>b.id.localeCompare(a.id));document.getElementById('weight-list').innerHTML=list.length?list.map(w=>`<div class="item"><strong>${brDate(w.date)}</strong><span class="chip">${w.value} kg</span></div>`).join(''):'<p class="sub">Sem peso registrado.</p>'}
 async function saveMeasure(){let date=val('measure-date')||today();let m={id:date,date,waist:num('measure-waist'),chest:num('measure-chest'),hip:num('measure-hip'),thigh:num('measure-thigh'),arm:num('measure-arm')};await setDoc(doc(db,'users',user.uid,'measures',date),m);data.measures=data.measures.filter(x=>x.id!==date);data.measures.push(m);renderAll()}
 function renderMeasures(){let list=[...data.measures].sort((a,b)=>b.id.localeCompare(a.id));document.getElementById('measure-list').innerHTML=list.length?list.map(m=>`<div class="item"><strong>${brDate(m.date)}</strong><div class="chips"><span class="chip">Cintura ${m.waist||0}</span><span class="chip">Peito ${m.chest||0}</span><span class="chip">Quadril ${m.hip||0}</span><span class="chip">Coxa ${m.thigh||0}</span><span class="chip">Braço ${m.arm||0}</span></div></div>`).join(''):'<p class="sub">Sem medidas registradas.</p>'}
-function renderBody(){let latest=[...data.weights].sort((a,b)=>b.id.localeCompare(a.id))[0];let w=latest?.value||data.initialWeight||88;let h=Number(data.height)||1.68;let imc=w/(h*h);let cls=imc<25?'Bom':imc<30?'Atenção':'Atenção alta';document.getElementById('body-peso').textContent=w+'kg';document.getElementById('body-imc').textContent=imc.toFixed(1);document.getElementById('body-class').textContent=cls}
-
-
-function allWorkouts(){let base=workoutLibrary[goalKey()]||[];return [...base,...data.customWorkouts]}
+function renderBody(){let latest=[...data.weights].sort((a,b)=>b.id.localeCompare(a.id))[0];let w=latest?.value||data.initialWeight||0;let h=Number(data.height)||0;let imc=h? w/(h*h):0;let cls=!imc?'Complete o perfil':imc<25?'Bom':imc<30?'Atenção':'Atenção alta';let bh=document.getElementById('body-height');if(bh)bh.textContent=h?h.toFixed(2).replace('.',',')+'m':'--';document.getElementById('body-peso').textContent=w? w+'kg':'--';document.getElementById('body-imc').textContent=imc?imc.toFixed(1):'--';document.getElementById('body-class').textContent=cls}
 function renderWorkouts(){let box=document.getElementById('workout-list');box.innerHTML=allWorkouts().map(w=>{let isCustom=String(w.id||'').startsWith('custom_');return `<div class="workout-card"><h3>${w.name}</h3><strong>${w.type||''}</strong><p class="sub">${w.desc||'Treino personalizado.'}</p><div class="chips"><span class="chip">${w.exercises.length} exercícios</span><span class="chip">${w.met||5} MET estimado</span>${isCustom?'<span class="chip">personalizado</span>':'<span class="chip">treino pronto</span>'}</div><div class="workout-actions"><button class="btn primary" onclick="askStartWorkout('${w.id}')">Iniciar treino</button><button class="btn danger" onclick="deleteWorkout('${w.id}')">Excluir treino</button></div></div>`}).join('')}
 async function deleteWorkout(id){let w=allWorkouts().find(x=>x.id===id);if(!w)return;if(!String(id).startsWith('custom_')){alert('Esse é um treino pronto do app. Por segurança ele não será excluído. Você pode criar e excluir seus treinos personalizados.');return}if(!confirm(`Excluir o treino "${w.name}"?`))return;await deleteDoc(doc(db,'users',user.uid,'customWorkouts',id));data.customWorkouts=data.customWorkouts.filter(x=>x.id!==id);renderWorkouts()}
 function askStartWorkout(id){activeWorkout=allWorkouts().find(w=>w.id===id);document.getElementById('confirm-title').textContent=activeWorkout.name;document.getElementById('confirm-text').textContent='Deseja iniciar treino?';openModal('confirm-modal')}
