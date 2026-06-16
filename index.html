@@ -184,7 +184,7 @@
 
 <div class="modal" id="confirm-modal"><div class="modal-card" style="max-width:420px"><div class="modal-head"><h2 id="confirm-title">Iniciar treino?</h2><button class="btn small" onclick="closeModal('confirm-modal')">X</button></div><p class="sub" id="confirm-text">Deseja iniciar treino?</p><div style="display:flex;gap:10px"><button class="btn primary full" onclick="startWorkoutConfirmed()">Sim</button><button class="btn full" onclick="closeModal('confirm-modal')">Não</button></div></div></div>
 <div class="modal" id="workout-modal"><div class="modal-card"><div class="modal-head"><h2 id="session-title">Treino</h2><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><button class="btn small danger" onclick="cancelWorkout()">Cancelar</button><button class="btn small" onclick="finishWorkout(false)">Finalizar agora</button></div></div><div class="timer" id="timer">00:00</div><div id="session-progress" class="session-progress"><strong id="session-progress-text">0/0 séries concluídas</strong><div class="bar"><div class="fill" id="session-progress-fill"></div></div><p class="sub" style="margin-top:8px">Clique em Play, execute a série atual e use Avançar. Entre séries, o descanso roda automaticamente.</p></div><div style="display:flex;gap:10px;justify-content:center;margin-bottom:16px"><button class="btn primary" onclick="toggleTimer()" id="timer-btn">▶ Play</button><button class="btn" onclick="resetTimer()">Reset</button></div><div id="flow-card" class="flow-card"><div class="flow-title" id="flow-title">Pronto para começar</div><div class="flow-info" id="flow-info">Clique em Play e execute a primeira série.</div><div class="rest-count hidden" id="rest-count">60</div><button class="btn primary" id="advance-set-btn" onclick="advanceSeriesFlow()">Avançar para próxima série</button></div><div id="session-exercises"></div></div></div>
-<div class="modal" id="editor-modal"><div class="modal-card"><div class="modal-head"><h2>CADASTRAR TREINO</h2><button class="btn small" onclick="closeModal('editor-modal')">X</button></div><div class="grid3"><div class="field"><label>Nome do treino</label><input id="custom-name" placeholder="Treino de peito"></div><div class="field"><label>Tipo / Objetivo</label><input id="custom-type" placeholder="Hipertrofia / Peitoral"></div><div class="field"><label>MET estimado</label><input id="custom-met" type="number" step="0.1" placeholder="6.0"></div></div><div class="field"><label>Descrição</label><input id="custom-desc" placeholder="Treino personalizado criado no app."></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px"><button class="btn" onclick="addCustomExerciseRow()">➕ Adicionar exercício</button><button class="btn" onclick="fillWorkoutExample()">⚡ Usar exemplo</button></div><div id="custom-exercise-rows"></div><button class="btn primary" onclick="saveCustomWorkout()">Salvar treino</button></div></div>
+<div class="modal" id="editor-modal"><div class="modal-card"><div class="modal-head"><h2>CADASTRAR TREINO</h2><button class="btn small" onclick="closeModal('editor-modal')">X</button></div><div class="grid2"><div class="field"><label>Nome</label><input id="custom-name" placeholder="Treino técnico com bola"></div><div class="field"><label>Tipo</label><input id="custom-type" placeholder="Técnico / Força / Velocidade"></div></div><div class="field"><label>Exercícios (um por linha)</label><textarea id="custom-exercises" placeholder="Aquecimento dinâmico | 2 séries | 6 min | dica\nCondução de bola em cones | 4 séries | 45s | mantenha cabeça erguida"></textarea></div><button class="btn primary" onclick="saveCustomWorkout()">Salvar treino</button></div></div>
 
 
 <div class="modal" id="import-modal"><div class="modal-card"><div class="modal-head"><h2>IMPORTAR TREINO</h2><button class="btn small" onclick="closeModal('import-modal')">✕</button></div><p class="sub">Cole um treino no padrão abaixo. O sistema entende campos como NOME, TIPO, MET, DESCRIÇÃO e os exercícios.</p><div class="workout-actions" style="margin-bottom:12px"><button class="btn" onclick="fillWorkoutTemplate()">📋 Colocar modelo no campo</button><button class="btn" onclick="copyWorkoutTemplate()">📄 Copiar modelo</button><button class="btn" onclick="downloadWorkoutTemplate()">⬇️ Baixar modelo TXT</button></div><div class="field"><label>Texto do treino</label><textarea id="import-text" style="min-height:320px" placeholder="NOME: Treino exemplo
@@ -526,6 +526,102 @@ async function saveCustomWorkout(){
   let w={id,name:val('custom-name')||'Treino personalizado',type:val('custom-type')||'Personalizado',desc:val('custom-desc')||'Criado por você dentro do app. Pode ser excluído quando quiser.',met:Number(val('custom-met'))||5.5,exercises};
   await setDoc(doc(db,'users',user.uid,'customWorkouts',id),w);data.customWorkouts.push(w);closeModal('editor-modal');renderWorkouts()
 }
+
+const WORKOUT_TEMPLATE = `NOME: Treino de peito
+TIPO: Hipertrofia / Peitoral
+MET: 6.5
+DESCRICAO: Treino personalizado importado por modelo.
+
+EXERCICIO: Flexão de braço
+MUSCULO ALVO: peitoral
+SERIES: 4
+REPETICOES: 10
+INTERVALO DE DESCANSO: 00:01:00
+DICA: Mantenha o corpo alinhado e desça com controle.
+
+EXERCICIO: Supino reto
+MUSCULO ALVO: peitoral
+SERIES: 4
+REPETICOES: 10
+INTERVALO DE DESCANSO: 00:01:00
+DICA: Controle a descida e empurre forte.
+
+EXERCICIO: Crucifixo
+MUSCULO ALVO: peitoral
+SERIES: 3
+REPETICOES: 12
+INTERVALO DE DESCANSO: 00:01:00
+DICA: Abra os braços sem perder o controle dos ombros.`;
+
+function openImportWorkout(){
+  const box=document.getElementById('import-text');
+  if(box && !box.value.trim()) box.value=WORKOUT_TEMPLATE;
+  openModal('import-modal');
+}
+function fillWorkoutTemplate(){
+  const box=document.getElementById('import-text');
+  if(box) box.value=WORKOUT_TEMPLATE;
+}
+async function copyWorkoutTemplate(){
+  try{await navigator.clipboard.writeText(WORKOUT_TEMPLATE);alert('Modelo copiado.');}
+  catch(e){alert('Não consegui copiar automaticamente. Use o botão de modelo e copie manualmente.')}
+}
+function downloadWorkoutTemplate(){
+  const blob=new Blob([WORKOUT_TEMPLATE],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='modelo_treino.txt';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function normalizeImportKey(k){
+  return (k||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+}
+function parseImportedWorkout(txt){
+  if(!txt || !txt.trim()) throw new Error('cole o texto do treino primeiro.');
+  const lines=txt.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  let workout={id:'import_'+Date.now(),name:'Treino importado',type:'Personalizado',met:5.5,desc:'Treino importado por texto.',exercises:[]};
+  let current=null;
+  function pushCurrent(){
+    if(!current || !current.name) return;
+    workout.exercises.push([
+      current.name,
+      String(current.series||'3'),
+      String(current.reps||'10 reps'),
+      current.tip||'Execute com controle.',
+      current.muscle||'',
+      current.rest||'00:01:00'
+    ]);
+  }
+  for(const line of lines){
+    if(line.includes('|') && !line.includes(':')){
+      const parts=line.split('|').map(x=>x.trim());
+      if(parts[0]) workout.exercises.push([parts[0],parts[1]||'3',parts[2]||'10 reps',parts[3]||'Execute com controle.',parts[4]||'',parts[5]||'00:01:00']);
+      continue;
+    }
+    const m=line.match(/^([^:]+):\s*(.*)$/);
+    if(!m) continue;
+    const key=normalizeImportKey(m[1]);
+    const value=m[2].trim();
+    if(['nome','nomedotreino','treino'].includes(key)){workout.name=value||workout.name;continue;}
+    if(['tipo','objetivo'].includes(key)){workout.type=value||workout.type;continue;}
+    if(['met'].includes(key)){workout.met=Number(String(value).replace(',','.'))||workout.met;continue;}
+    if(['descricao','descrição','desc'].includes(key)){workout.desc=value||workout.desc;continue;}
+    if(['exercicio','exercicio1','exercicio2','exercicio3','exercicio4','nomedoexercicio','nomedoexercicio1','nomedoexercicio2','nomedoexercicio3','nomedoexercicio4'].includes(key)){pushCurrent();current={name:value};continue;}
+    if(!current) current={name:'Exercício'};
+    if(['musculoalvo','musculo','músculoalvo'].includes(key)) current.muscle=value;
+    else if(['series','séries'].includes(key)) current.series=value;
+    else if(['repeticoes','repetições','reps'].includes(key)) current.reps=value;
+    else if(['intervalodedescanso','descanso','intervalo'].includes(key)) current.rest=value;
+    else if(['dica','execucao','execução'].includes(key)) current.tip=value;
+  }
+  pushCurrent();
+  if(!workout.exercises.length) throw new Error('nenhum exercício foi encontrado no padrão do modelo.');
+  return workout;
+}
+
 async function saveImportedWorkout(){try{let txt=val('import-text');let w=parseImportedWorkout(txt);await setDoc(doc(db,'users',user.uid,'customWorkouts',w.id),w);data.customWorkouts.push(w);document.getElementById('import-text').value='';closeModal('import-modal');renderWorkouts();alert('Treino importado com sucesso!')}catch(e){alert('Não consegui importar: '+e.message)}}
 function openGoalModal(){document.getElementById('goal-select').value=data.goal||'futebol';document.getElementById('goal-level').value=data.level||'iniciante';document.getElementById('goal-note').value=data.goalNote||'';openModal('goal-modal')}
 async function saveGoal(){data.goal=val('goal-select')||'futebol';data.level=val('goal-level')||'iniciante';data.goalNote=val('goal-note')||'';await setDoc(ref(['profile','main']),{start:data.start||today(),bestStreak:data.bestStreak||0,goal:data.goal,level:data.level,goalNote:data.goalNote,updatedAt:serverTimestamp()},{merge:true});closeModal('goal-modal');renderGoalUI();renderWorkouts();alert('Objetivo salvo! Os treinos prontos foram atualizados para esse objetivo.')}
