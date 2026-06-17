@@ -190,10 +190,12 @@
       <h2>CADASTRAR TREINO</h2>
       <button class="btn small" onclick="closeModal('editor-modal')">X</button>
     </div>
-    <p class="sub">Monte o treino exercício por exercício. Primeiro informe o nome e o tipo do treino. Depois preencha o exercício 1. Para incluir outro exercício, clique em <strong>+ Adicionar exercício</strong>. No final, clique em <strong>Salvar esse treino</strong>.</p>
+    <p class="sub">Monte o treino exercício por exercício. Preencha os dados do exercício 1, clique em <strong>+ Adicionar exercício</strong> para incluir o exercício 2, e assim por diante. No final, clique em salvar.</p>
     <div class="grid2">
       <div class="field"><label>Nome do treino</label><input id="custom-name" placeholder="Ex.: Treino de peito"></div>
       <div class="field"><label>Tipo / objetivo do treino</label><input id="custom-type" placeholder="Ex.: Hipertrofia / Peitoral"></div>
+      <div class="field"><label>MET estimado</label><input id="custom-met" type="number" step="0.1" placeholder="Ex.: 6.5"></div>
+      <div class="field"><label>Descrição do treino</label><input id="custom-desc" placeholder="Ex.: Treino focado em peitoral"></div>
     </div>
     <div class="section-title" style="margin-top:18px">EXERCÍCIOS DO TREINO</div>
     <div id="custom-exercise-rows"></div>
@@ -227,6 +229,30 @@ import { getFirestore, doc, getDoc, setDoc, collection, collectionGroup, getDocs
 const firebaseConfig={apiKey:'AIzaSyC6VpLlLLl_NaiKmCvrluBJlUTwwlfx89M',authDomain:'campo-de-guerra-1004c.firebaseapp.com',projectId:'campo-de-guerra-1004c',storageBucket:'campo-de-guerra-1004c.firebasestorage.app',messagingSenderId:'125353756348',appId:'1:125353756348:web:33a9d7891000e8ce9432b9'};
 const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFirestore(app);
 const TOTAL_DAYS=180;
+const DEFAULT_REST_SECONDS=60;
+function parseRestSeconds(raw){
+  if(raw===undefined || raw===null || raw==='') return DEFAULT_REST_SECONDS;
+  if(typeof raw==='number'){ return raw<=1 ? DEFAULT_REST_SECONDS : Math.max(1, Math.round(raw)); }
+  let text=String(raw).trim();
+  if(!text) return DEFAULT_REST_SECONDS;
+  if(text.includes(':')){
+    let parts=text.split(':').map(x=>Number(x));
+    let sec=0;
+    if(parts.length===3){ sec=(parts[0]||0)*3600+(parts[1]||0)*60+(parts[2]||0); }
+    else if(parts.length===2){ sec=(parts[0]||0)*60+(parts[1]||0); }
+    if(sec<=1) return DEFAULT_REST_SECONDS;
+    return sec;
+  }
+  let n=Number((text.match(/\d+/)||[''])[0]);
+  if(!n || n<=1) return DEFAULT_REST_SECONDS;
+  return Math.max(1, Math.round(n));
+}
+function formatRestSeconds(sec){
+  sec=parseRestSeconds(sec);
+  let h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function normalizeRestValue(raw){ return formatRestSeconds(parseRestSeconds(raw)); }
 let user=null; let data={start:null,checkins:[],bestStreak:0,meals:[],weights:[],measures:[],sessions:[],customWorkouts:[],goal:'',goalNote:'',level:'iniciante',name:'',sex:'',height:null,initialWeight:null,appearanceMode:'dark',colorTheme:'original',recoveryEmail:'',securityMotherHash:'',securityBirthHash:'',securityQuestionsConfigured:false,role:'user',blocked:false,blockedAt:null};
 let activeWorkout=null, timerInt=null, seconds=0, running=false, currentTab='progresso';
 let sessionFlow=null, restInt=null, restRemaining=60;
@@ -288,17 +314,33 @@ const workoutLibrary={
 };
 
 function exerciseToArray(e){
-  if(Array.isArray(e)) return [e[0]||'Exercício', String(e[1]||'3'), String(e[2]||'10 reps'), e[3]||'Execute com controle.', e[4]||'', e[5]||'00:01:00'];
+  if(Array.isArray(e)) return [e[0]||'Exercício', String(e[1]||'3'), String(e[2]||'10 reps'), e[3]||'Execute com controle.', e[4]||'', normalizeRestValue(e[5])];
   return [
     e?.name || e?.exercise || 'Exercício',
     String(e?.series || e?.sets || '3'),
     String(e?.reps || e?.repetitions || e?.time || '10 reps'),
     e?.tip || e?.dica || e?.execution || 'Execute com controle.',
     e?.muscle || e?.musculo || '',
-    e?.rest || e?.descanso || '00:01:00'
+    normalizeRestValue(e?.rest || e?.descanso)
   ];
 }
+function exerciseToObjectForSave(e){
+  const a=exerciseToArray(e);
+  return {name:a[0],series:a[1],reps:a[2],tip:a[3],muscle:a[4],rest:a[5]};
+}
 function normalizeWorkout(w){return {...w, exercises:(w.exercises||[]).map(exerciseToArray)}}
+async function migrateCustomWorkoutRests(){
+  if(!user || !data.customWorkouts) return;
+  for(const w of data.customWorkouts){
+    const oldJson=JSON.stringify(w.exercises||[]);
+    const fixed=(w.exercises||[]).map(exerciseToObjectForSave);
+    const newJson=JSON.stringify(fixed);
+    if(oldJson!==newJson){
+      w.exercises=fixed;
+      try{ await setDoc(doc(db,'users',user.uid,'customWorkouts',w.id),{exercises:fixed,updatedAt:serverTimestamp()},{merge:true}); }catch(e){ console.warn('Migração de descanso não salva:',e); }
+    }
+  }
+}
 function adaptWorkoutToLevel(w){
   const level=(data.level||'iniciante').toString().toLowerCase();
   const copy=normalizeWorkout(w);
@@ -334,7 +376,7 @@ onAuthStateChanged(auth,async(u)=>{user=u;if(!u){showAuth();return}if(!u.emailVe
 function showAuthForm(mode){let isSignup=mode==='signup';document.getElementById('login-form').classList.toggle('hidden',isSignup);document.getElementById('signup-form').classList.toggle('hidden',!isSignup);document.getElementById('login-tab-btn').classList.toggle('primary',!isSignup);document.getElementById('signup-tab-btn').classList.toggle('primary',isSignup)}
 function showAuth(){document.getElementById('auth').classList.remove('hidden');document.getElementById('app').classList.add('hidden');showAuthForm('login')} function showApp(){document.getElementById('auth').classList.add('hidden');document.getElementById('app').classList.remove('hidden');document.getElementById('user-pill').textContent='Logado como '+user.email;document.getElementById('reset-email').value=user.email||''}
 function ref(path){return doc(db,'users',user.uid,...path)}
-async function loadAll(){let prof=await getDoc(ref(['profile','main']));if(!prof.exists()){data.start=today();await setDoc(ref(['profile','main']),{start:data.start,bestStreak:0,createdAt:serverTimestamp()},{merge:true});}else{Object.assign(data,prof.data());data.height=data.height?Number(data.height):null;data.initialWeight=data.initialWeight?Number(data.initialWeight):null;data.level=data.level||'iniciante';data.appearanceMode=data.appearanceMode||'dark';data.colorTheme=data.colorTheme||'original'}data.checkins=await loadCol('checkins');data.meals=await loadCol('meals');data.weights=await loadCol('weights');data.measures=await loadCol('measures');data.sessions=await loadCol('sessions');data.customWorkouts=await loadCol('customWorkouts')}
+async function loadAll(){let prof=await getDoc(ref(['profile','main']));if(!prof.exists()){data.start=today();await setDoc(ref(['profile','main']),{start:data.start,bestStreak:0,createdAt:serverTimestamp()},{merge:true});}else{Object.assign(data,prof.data());data.height=data.height?Number(data.height):null;data.initialWeight=data.initialWeight?Number(data.initialWeight):null;data.level=data.level||'iniciante';data.appearanceMode=data.appearanceMode||'dark';data.colorTheme=data.colorTheme||'original'}data.checkins=await loadCol('checkins');data.meals=await loadCol('meals');data.weights=await loadCol('weights');data.measures=await loadCol('measures');data.sessions=await loadCol('sessions');data.customWorkouts=await loadCol('customWorkouts');await migrateCustomWorkoutRests()}
 async function loadCol(name){let snap=await getDocs(collection(db,'users',user.uid,name));return snap.docs.map(d=>({id:d.id,...d.data()}))}
 async function saveProfile(){let payload={start:data.start||today(),bestStreak:data.bestStreak||0,goalNote:data.goalNote||'',name:data.name||'',sex:data.sex||'',level:data.level||'iniciante',appearanceMode:data.appearanceMode||'dark',colorTheme:data.colorTheme||'original',recoveryEmail:data.recoveryEmail||'',securityQuestionsConfigured:!!data.securityQuestionsConfigured,updatedAt:serverTimestamp()};if(data.goal)payload.goal=data.goal;if(data.height)payload.height=Number(data.height);if(data.initialWeight)payload.initialWeight=Number(data.initialWeight);if(data.securityMotherHash)payload.securityMotherHash=data.securityMotherHash;if(data.securityBirthHash)payload.securityBirthHash=data.securityBirthHash;await setDoc(ref(['profile','main']),payload,{merge:true})}
 function val(id){return document.getElementById(id).value.trim()} function num(id){return Number(document.getElementById(id).value)||0} function today(){let d=new Date();return toKey(d)} function toKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')} function brDate(s){return (s||'').split('-').reverse().join('/')} function friendly(c){return ({'auth/invalid-credential':'e-mail ou senha inválidos','auth/wrong-password':'senha atual incorreta','auth/weak-password':'senha muito fraca','auth/email-already-in-use':'esse e-mail já está cadastrado','auth/invalid-email':'e-mail inválido','auth/too-many-requests':'muitas tentativas; aguarde alguns minutos','auth/network-request-failed':'falha de conexão','custom/missing':'preencha nome, e-mail e senha','custom/security-incomplete':'preencha as duas perguntas de segurança'})[c]||c}
@@ -452,11 +494,7 @@ function renderWorkouts(){
 async function deleteWorkout(id){let w=allWorkouts().find(x=>x.id===id);if(!w)return;if(!String(id).startsWith('custom_')){alert('Esse é um treino pronto do app. Por segurança ele não será excluído. Você pode criar e excluir seus treinos personalizados.');return}if(!confirm(`Excluir o treino "${w.name}"?`))return;await deleteDoc(doc(db,'users',user.uid,'customWorkouts',id));data.customWorkouts=data.customWorkouts.filter(x=>x.id!==id);renderWorkouts()}
 function askStartWorkout(id){activeWorkout=allWorkouts().find(w=>w.id===id);document.getElementById('confirm-title').textContent=activeWorkout.name;document.getElementById('confirm-text').textContent='Deseja iniciar treino?';openModal('confirm-modal')}
 function getRestSecondsForExercise(e){
-  let raw=(e[5]||e[4]||'60').toString();
-  let m=raw.match(/(\d{1,2}):(\d{2})(?::(\d{2}))?/);
-  if(m){return (Number(m[1]||0)*60)+Number(m[2]||0)+(m[3]?Number(m[3]):0)}
-  let n=Number((raw.match(/\d+/)||['60'])[0]);
-  return n||60;
+  return parseRestSeconds(e?.[5] || e?.rest || e?.descanso);
 }
 function startWorkoutConfirmed(){
   closeModal('confirm-modal');
@@ -538,7 +576,7 @@ function removeCustomExerciseRow(btn){let row=btn.closest('.exercise-form-row');
 function fillWorkoutExample(){
   document.getElementById('custom-name').value='Treino de peito';
   document.getElementById('custom-type').value='Hipertrofia / Peitoral';
-  let box=document.getElementById('custom-exercise-rows'); box.innerHTML='';
+let box=document.getElementById('custom-exercise-rows'); box.innerHTML='';
   addCustomExerciseRow({name:'Flexão de braço',muscle:'Peitoral',series:'4',reps:'10',rest:'00:01:00',tip:'Corpo alinhado e descida controlada.'});
   addCustomExerciseRow({name:'Supino reto',muscle:'Peitoral',series:'4',reps:'10',rest:'00:01:00',tip:'Controle a descida e suba forte.'});
   addCustomExerciseRow({name:'Crucifixo',muscle:'Peitoral',series:'3',reps:'12',rest:'00:01:00',tip:'Abra com controle sem forçar o ombro.'});
@@ -552,7 +590,7 @@ async function saveCustomWorkout(){
       let muscle=r.querySelector('.ex-muscle')?.value.trim()||'';
       let series=r.querySelector('.ex-series')?.value.trim()||'';
       let reps=r.querySelector('.ex-reps')?.value.trim()||'';
-      let rest=r.querySelector('.ex-rest')?.value.trim()||'00:01:00';
+      let rest=normalizeRestValue(r.querySelector('.ex-rest')?.value.trim()||DEFAULT_REST_SECONDS);
       let tip=r.querySelector('.ex-tip')?.value.trim()||'Execute com controle.';
       if(!name) return null;
       return {name,muscle,series:series||'3',reps:reps||'10 reps',rest,tip};
@@ -636,13 +674,13 @@ function parseImportedWorkout(txt){
       reps: String(current.reps||'10 reps'),
       tip: current.tip||'Execute com controle.',
       muscle: current.muscle||'',
-      rest: current.rest||'00:01:00'
+      rest: normalizeRestValue(current.rest||DEFAULT_REST_SECONDS)
     });
   }
   for(const line of lines){
     if(line.includes('|') && !line.includes(':')){
       const parts=line.split('|').map(x=>x.trim());
-      if(parts[0]) workout.exercises.push({name:parts[0],series:parts[1]||'3',reps:parts[2]||'10 reps',tip:parts[3]||'Execute com controle.',muscle:parts[4]||'',rest:parts[5]||'00:01:00'});
+      if(parts[0]) workout.exercises.push({name:parts[0],series:parts[1]||'3',reps:parts[2]||'10 reps',tip:parts[3]||'Execute com controle.',muscle:parts[4]||'',rest:normalizeRestValue(parts[5]||DEFAULT_REST_SECONDS)});
       continue;
     }
     const m=line.match(/^([^:]+):\s*(.*)$/);
