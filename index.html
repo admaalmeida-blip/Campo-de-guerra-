@@ -178,7 +178,7 @@
 
   <section id="tab-configuracoes" class="tab-content"><div class="section-title">CONFIGURAÇÕES</div><div class="grid2"><div class="card"><h2>🔐 <span>REDEFINIR SENHA</span></h2><div class="field"><label>E-mail</label><input id="reset-email" type="email"></div><div class="field"><label>Senha atual</label><div class="password-wrap"><input id="reset-current" type="password" autocomplete="current-password"><button class="toggle-pass" type="button" onclick="togglePassword('reset-current', this)" aria-label="Mostrar ou ocultar senha atual">👁️</button></div></div><div class="field"><label>Nova senha</label><div class="password-wrap"><input id="reset-new" type="password" autocomplete="new-password"><button class="toggle-pass" type="button" onclick="togglePassword('reset-new', this)" aria-label="Mostrar ou ocultar nova senha">👁️</button></div></div><button class="btn primary" onclick="changePassword()">Salvar nova senha</button><div id="reset-msg"></div></div><div class="card"><h2>🛡️ <span>RECUPERAÇÃO ALTERNATIVA</span></h2><p class="sub">Use para deixar dados de verificação salvos. A recuperação principal continua sendo por e-mail do Firebase; estas respostas ficam como apoio de segurança e são salvas protegidas.</p><div class="field"><label>E-mail alternativo</label><input id="recovery-email" type="email" placeholder="exemplo@gmail.com"></div><div class="field"><label>Nome completo da mãe</label><div class="password-wrap"><input id="security-mother" type="password" autocomplete="off" placeholder="Digite para salvar/atualizar"><button class="toggle-pass" type="button" onclick="togglePassword('security-mother', this)">👁️</button></div></div><div class="field"><label>Data de nascimento</label><input id="security-birth" type="date"></div><button class="btn primary" onclick="saveRecoveryOptions()">Salvar recuperação alternativa</button><p class="sub" id="security-status" style="margin-top:10px">Status: não configurado</p><div id="recovery-msg"></div></div><div class="card"><h2>🧍 <span>PERFIL FÍSICO</span></h2><p class="sub">A altura fica salva no perfil. O peso atual vem automaticamente do último peso salvo na aba Peso.</p><div class="field"><label>Altura (m)</label><input id="settings-height" type="number" step="0.01" placeholder="1.68"></div><div class="field"><label>Peso atual</label><input id="settings-current-weight" type="text" readonly></div><button class="btn primary" onclick="savePhysicalProfile()">Salvar altura</button><div id="physical-msg"></div></div><div class="card"><h2>🎯 <span>OBJETIVO</span></h2><p class="sub">Você pode trocar o objetivo sem apagar histórico de treinos, peso, refeições ou medidas anteriores.</p><button class="btn primary" onclick="openGoalModal()">Alterar objetivo</button><p class="sub" style="margin-top:10px">Os treinos prontos serão atualizados conforme o novo objetivo. Seus treinos personalizados continuam salvos.</p></div><div class="card"><h2>🎨 <span>APARÊNCIA</span></h2><div class="field"><label>Modo</label><select id="appearance-mode"><option value="dark">Tema escuro</option><option value="light">Tema claro</option></select></div><div class="field"><label>Jogo de cores</label><select id="color-theme"><option value="original">Original — Azul e preto</option><option value="green">Verde e preto</option><option value="pink">Rosa e preto</option><option value="dark">Escuro neutro</option><option value="light">Claro azul</option></select></div><button class="btn primary" onclick="saveAppearance()">Salvar aparência</button><div id="appearance-msg"></div></div><div class="card"><h2>⚙️ <span>APP</span></h2><p class="sub">Dados sincronizados no Firebase por usuário.</p><button class="btn danger" onclick="logout()">Sair da conta</button></div></div></section>
 
-  <section id="tab-admin" class="tab-content"><div class="section-title">PAINEL DO ADMINISTRADOR</div><div class="card"><h2>👥 <span>PERFIS DO SISTEMA</span></h2><p class="sub">Veja os usuários cadastrados, o objetivo escolhido e bloqueie/ative o acesso ao app. O bloqueio é aplicado dentro do sistema.</p><div id="admin-diagnostic" class="sub" style="border:1px solid var(--borda);border-radius:12px;padding:10px;margin:10px 0;background:#080B0F"></div><div class="workout-actions" style="margin:10px 0 0"><button class="btn primary" onclick="loadAdminProfiles()">Atualizar lista</button><button class="btn" onclick="exportFullBackup()">💾 Exportar tudo</button><label class="btn" style="cursor:pointer">📥 Importar backup<input id="backup-file-input" type="file" accept="application/json,.json" style="display:none" onchange="importFullBackup(event)"></label></div><div id="admin-msg" class="sub" style="margin-top:10px"></div><div id="admin-users" style="margin-top:14px"></div></div><div class="card"><h2>⚠️ <span>IMPORTANTE</span></h2><p class="sub">Para o painel conseguir listar todos os perfis, suas regras do Firestore precisam permitir leitura/escrita administrativa para o e-mail adm_aalmeida@outlook.com. Se a lista der erro de permissão, ajuste as regras do Firebase.</p></div></section>
+  <section id="tab-admin" class="tab-content"><div class="section-title">PAINEL DO ADMINISTRADOR</div><div class="card"><h2>👥 <span>PERFIS DO SISTEMA</span></h2><p class="sub">Veja os usuários cadastrados, o objetivo escolhido e bloqueie/ative o acesso ao app. O bloqueio é aplicado dentro do sistema.</p><div id="admin-diagnostic" class="sub" style="border:1px solid var(--borda);border-radius:12px;padding:10px;margin:10px 0;background:#080B0F"></div><div class="workout-actions" style="margin:10px 0 0"><button class="btn primary" onclick="loadAdminProfiles()">Atualizar lista</button><button class="btn" onclick="exportFullBackup()">💾 Exportar tudo</button><button class="btn" onclick="exportDatabaseStructure()">📊 Exportar estrutura</button><label class="btn" style="cursor:pointer">📥 Importar backup<input id="backup-file-input" type="file" accept="application/json,.json" style="display:none" onchange="importFullBackup(event)"></label></div><div id="admin-msg" class="sub" style="margin-top:10px"></div><div id="admin-users" style="margin-top:14px"></div></div><div class="card"><h2>⚠️ <span>IMPORTANTE</span></h2><p class="sub">Para o painel conseguir listar todos os perfis, suas regras do Firestore precisam permitir leitura/escrita administrativa para o e-mail adm_aalmeida@outlook.com. Se a lista der erro de permissão, ajuste as regras do Firebase.</p></div></section>
 </div>
 
 <div class="overlay" id="overlay" onclick="closeDrawer()"></div>
@@ -376,7 +376,7 @@ window.showAuthForm=showAuthForm;
 window.login=async()=>{try{document.getElementById('login-error').textContent='';await signInWithEmailAndPassword(auth,val('login-email'),val('login-password'));}catch(e){document.getElementById('login-error').textContent='Erro ao entrar: '+friendly(e.code)}};
 window.forgotPassword=async()=>{let box=document.getElementById('login-error');try{box.className='auth-error oktxt';box.textContent='';let email=val('login-email');if(!email){throw {code:'custom/email'}}await sendPasswordResetEmail(auth,email);box.textContent='Enviamos um link de recuperação para seu e-mail. Confira também a caixa de spam.';}catch(e){box.className='auth-error';box.textContent=e.code==='custom/email'?'Digite seu e-mail primeiro.':'Erro ao enviar recuperação: '+friendly(e.code)}};
 window.signup=async()=>{try{const err=document.getElementById('signup-error');err.className='auth-error';err.textContent='';let email=val('signup-email'), password=val('signup-password'), name=val('signup-name'), sex=val('signup-sex'), goal=val('signup-goal')||'futebol', level=val('signup-level')||'iniciante', height=Number(val('signup-height').replace(',','.'))||1.68, weight=Number(val('signup-weight').replace(',','.'))||88;if(!email||!password||!name){throw {code:'custom/missing'}}let cred=await createUserWithEmailAndPassword(auth,email,password);let uid=cred.user.uid;await setDoc(doc(db,'users',uid),{uid,email,name,goal,level,blocked:false,emailVerified:false,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',uid,'profile','main'),{name,email,sex,goal,level,height,initialWeight:weight,start:today(),bestStreak:0,goalNote:'',appearanceMode:'dark',colorTheme:'original',emailVerified:false,blocked:false,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',uid,'weights',today()),{value:weight,date:today(),createdAt:serverTimestamp()},{merge:true});await sendEmailVerification(cred.user);await signOut(auth);showAuthForm('login');document.getElementById('login-email').value=email;document.getElementById('login-password').value='';const loginMsg=document.getElementById('login-error');loginMsg.className='auth-error oktxt';loginMsg.textContent='Usuário criado. Enviamos um e-mail de verificação. A pessoa só conseguirá entrar depois de confirmar o e-mail.';}catch(e){document.getElementById('signup-error').textContent='Erro ao criar usuário: '+friendly(e.code)} }; 
-window.logout=()=>signOut(auth); window.switchTab=switchTab; window.doCheckin=doCheckin; window.saveMeal=saveMeal; window.deleteMeal=deleteMeal; window.setTodayMealDate=setTodayMealDate; window.renderMeals=renderMeals; window.saveWeight=saveWeight; window.saveMeasure=saveMeasure; window.changePassword=changePassword; window.openDrawer=openDrawer; window.closeDrawer=closeDrawer; window.askStartWorkout=askStartWorkout; window.startWorkoutConfirmed=startWorkoutConfirmed; window.toggleTimer=toggleTimer; window.resetTimer=resetTimer; window.finishWorkout=finishWorkout; window.cancelWorkout=cancelWorkout; window.toggleSet=toggleSet; window.openWorkoutEditor=openWorkoutEditor; window.addCustomExerciseRow=addCustomExerciseRow; window.removeCustomExerciseRow=removeCustomExerciseRow; window.fillWorkoutExample=fillWorkoutExample; window.advanceSeriesFlow=advanceSeriesFlow; window.openImportWorkout=openImportWorkout; window.saveImportedWorkout=saveImportedWorkout; window.fillWorkoutTemplate=fillWorkoutTemplate; window.copyWorkoutTemplate=copyWorkoutTemplate; window.downloadWorkoutTemplate=downloadWorkoutTemplate; window.savePhysicalProfile=savePhysicalProfile; window.loadAdminProfiles=loadAdminProfiles; window.exportFullBackup=exportFullBackup; window.importFullBackup=importFullBackup; window.toggleUserAccess=toggleUserAccess; window.openGoalModal=openGoalModal; window.openScheduleModal=openScheduleModal; window.toggleTrainingDay=toggleTrainingDay; window.addSequenceWorkout=addSequenceWorkout; window.removeSequenceWorkout=removeSequenceWorkout; window.moveSequenceWorkout=moveSequenceWorkout; window.saveTrainingSchedule=saveTrainingSchedule; window.autoFillScheduleSequence=autoFillScheduleSequence; window.saveGoal=saveGoal; window.saveCompleteProfile=saveCompleteProfile; window.saveCustomWorkout=saveCustomWorkout; window.deleteWorkout=deleteWorkout; window.closeModal=closeModal;
+window.logout=()=>signOut(auth); window.switchTab=switchTab; window.doCheckin=doCheckin; window.saveMeal=saveMeal; window.deleteMeal=deleteMeal; window.setTodayMealDate=setTodayMealDate; window.renderMeals=renderMeals; window.saveWeight=saveWeight; window.saveMeasure=saveMeasure; window.changePassword=changePassword; window.openDrawer=openDrawer; window.closeDrawer=closeDrawer; window.askStartWorkout=askStartWorkout; window.startWorkoutConfirmed=startWorkoutConfirmed; window.toggleTimer=toggleTimer; window.resetTimer=resetTimer; window.finishWorkout=finishWorkout; window.cancelWorkout=cancelWorkout; window.toggleSet=toggleSet; window.openWorkoutEditor=openWorkoutEditor; window.addCustomExerciseRow=addCustomExerciseRow; window.removeCustomExerciseRow=removeCustomExerciseRow; window.fillWorkoutExample=fillWorkoutExample; window.advanceSeriesFlow=advanceSeriesFlow; window.openImportWorkout=openImportWorkout; window.saveImportedWorkout=saveImportedWorkout; window.fillWorkoutTemplate=fillWorkoutTemplate; window.copyWorkoutTemplate=copyWorkoutTemplate; window.downloadWorkoutTemplate=downloadWorkoutTemplate; window.savePhysicalProfile=savePhysicalProfile; window.loadAdminProfiles=loadAdminProfiles; window.exportFullBackup=exportFullBackup; window.exportDatabaseStructure=exportDatabaseStructure; window.importFullBackup=importFullBackup; window.toggleUserAccess=toggleUserAccess; window.openGoalModal=openGoalModal; window.openScheduleModal=openScheduleModal; window.toggleTrainingDay=toggleTrainingDay; window.addSequenceWorkout=addSequenceWorkout; window.removeSequenceWorkout=removeSequenceWorkout; window.moveSequenceWorkout=moveSequenceWorkout; window.saveTrainingSchedule=saveTrainingSchedule; window.autoFillScheduleSequence=autoFillScheduleSequence; window.saveGoal=saveGoal; window.saveCompleteProfile=saveCompleteProfile; window.saveCustomWorkout=saveCustomWorkout; window.deleteWorkout=deleteWorkout; window.closeModal=closeModal;
 
 onAuthStateChanged(auth,async(u)=>{user=u;if(!u){showAuth();return}if(!u.emailVerified && !isAdminEmail(u.email)){try{await sendEmailVerification(u)}catch(_e){} alert('Antes de acessar, confirme seu e-mail. Enviamos um link de verificação para sua caixa de entrada. Confira também o spam.');await signOut(auth);return}showApp();await loadAll();if(isUserBlocked()){alert('Seu acesso ao sistema está bloqueado. Entre em contato com o administrador.');await signOut(auth);return}if(u.emailVerified){try{await setDoc(doc(db,'users',u.uid),{email:u.email||'',emailVerified:true,updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',u.uid,'profile','main'),{emailVerified:true,updatedAt:serverTimestamp()},{merge:true})}catch(_e){}}renderAll();checkProfileComplete();});
 function showAuthForm(mode){let isSignup=mode==='signup';document.getElementById('login-form').classList.toggle('hidden',isSignup);document.getElementById('signup-form').classList.toggle('hidden',!isSignup);document.getElementById('login-tab-btn').classList.toggle('primary',!isSignup);document.getElementById('signup-tab-btn').classList.toggle('primary',isSignup)}
@@ -1021,7 +1021,7 @@ async function exportFullBackup(){
     const ids=await getKnownUserIdsForAdmin();
     const backup={
       app:'Plano de Treino',
-      version:'10.1',
+      version:'10.2',
       exportedAt:new Date().toISOString(),
       exportedBy:user?.email||'',
       users:[]
@@ -1037,7 +1037,7 @@ async function exportFullBackup(){
     const a=document.createElement('a');
     const stamp=new Date().toISOString().slice(0,19).replaceAll(':','-');
     a.href=URL.createObjectURL(blob);
-    a.download=`backup_plano_treino_v10_1_${stamp}.json`;
+    a.download=`backup_plano_treino_v10_2_${stamp}.json`;
     document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(a.href);
     if(msg)msg.textContent='Backup exportado com '+backup.users.length+' usuário(s). Guarde o arquivo em local seguro.';
   }catch(e){
@@ -1045,6 +1045,78 @@ async function exportFullBackup(){
     alert('Erro ao exportar backup: '+(e.message||e.code));
   }
 }
+
+function collectFieldNamesFromDocs(docs){
+  const fields=new Set();
+  (docs||[]).forEach(item=>{
+    const obj=item && item.data ? item.data : item;
+    if(obj && typeof obj==='object')Object.keys(obj).forEach(k=>fields.add(k));
+  });
+  return [...fields].sort();
+}
+function downloadJsonFile(obj, filename){
+  const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=filename;
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(a.href);
+}
+async function exportDatabaseStructure(){
+  if(!isAdmin())return alert('Acesso restrito ao administrador.');
+  const msg=document.getElementById('admin-msg');
+  if(msg)msg.textContent='Gerando estrutura do banco...';
+  try{
+    const ids=await getKnownUserIdsForAdmin();
+    const subcols=['profile','weights','checkins','meals','measures','sessions','customWorkouts'];
+    const rootFields=new Set();
+    const subStructure={};
+    subcols.forEach(c=>subStructure[c]={docs:0,fields:[]});
+    const examples=[];
+    for(const uid of ids){
+      const rootSnap=await getDoc(doc(db,'users',uid));
+      if(rootSnap.exists())Object.keys(rootSnap.data()||{}).forEach(k=>rootFields.add(k));
+      const example={uid,rootExists:rootSnap.exists(),rootFields:rootSnap.exists()?Object.keys(rootSnap.data()||{}).sort():[],subcollections:{}};
+      for(const c of subcols){
+        const docs=await readUserSubcollection(uid,c);
+        subStructure[c].docs += docs.length;
+        collectFieldNamesFromDocs(docs).forEach(k=>{
+          if(!subStructure[c].fields.includes(k))subStructure[c].fields.push(k);
+        });
+        example.subcollections[c]={documents:docs.length,fields:collectFieldNamesFromDocs(docs)};
+      }
+      if(examples.length<5)examples.push(example);
+    }
+    Object.values(subStructure).forEach(v=>v.fields.sort());
+    const structure={
+      app:'Plano de Treino',
+      version:'10.2',
+      type:'database-structure',
+      exportedAt:new Date().toISOString(),
+      exportedBy:user?.email||'',
+      firestore:{
+        rootCollections:['users'],
+        users:{
+          path:'users/{uid}',
+          userCount:ids.length,
+          fields:[...rootFields].sort(),
+          subcollections:subStructure,
+          compatibilityPaths:['users/{uid}','users/{uid}/profile/main']
+        }
+      },
+      github:{files:['index.html']},
+      adminFeatures:['visualizar usuários','bloquear acesso','ativar acesso','exportar backup','importar backup','exportar estrutura do banco'],
+      notes:['Arquivo somente de documentação. Não altera o Firestore.','Backup real fica no botão Exportar tudo.'],
+      examples
+    };
+    const stamp=new Date().toISOString().slice(0,19).replaceAll(':','-');
+    downloadJsonFile(structure,`estrutura_banco_plano_treino_v10_2_${stamp}.json`);
+    if(msg)msg.textContent='Estrutura do banco exportada com sucesso. Este arquivo é só documentação.';
+  }catch(e){
+    if(msg)msg.textContent='Erro ao exportar estrutura: '+friendly(e.code||e.message);
+    alert('Erro ao exportar estrutura: '+(e.message||e.code));
+  }
+}
+
 async function importFullBackup(event){
   if(!isAdmin())return alert('Acesso restrito ao administrador.');
   const file=event?.target?.files?.[0];
