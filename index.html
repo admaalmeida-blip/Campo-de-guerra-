@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+a<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
@@ -788,7 +788,19 @@ function renderScheduleModal(){
   const dayBox=document.getElementById('schedule-days');
   if(dayBox){
     const selected=(data.trainingDays||[]).map(Number);
-    dayBox.innerHTML=WEEK_DAYS.map(([v,l])=>`<button type="button" class="day-toggle ${selected.includes(Number(v))?'active':''}" data-day="${v}" onclick="toggleTrainingDay(${v})">${l}</button>`).join('');
+    dayBox.innerHTML=WEEK_DAYS.map(([v,l])=>`<button type="button" class="day-toggle ${selected.includes(Number(v))?'active':''}" data-day="${v}">${l}</button>`).join('');
+    dayBox.querySelectorAll('.day-toggle').forEach(btn=>{
+      btn.addEventListener('click', ev=>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        toggleTrainingDay(Number(btn.dataset.day));
+      });
+      btn.addEventListener('touchend', ev=>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        toggleTrainingDay(Number(btn.dataset.day));
+      }, {passive:false});
+    });
   }
   const sel=document.getElementById('schedule-workout-select');
   if(sel){
