@@ -229,7 +229,7 @@ DICA: Desça com controle"></textarea></div><button class="btn primary full" onc
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword, EmailAuthProvider, reauthenticateWithCredential, sendPasswordResetEmail, sendEmailVerification } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
-import { getFirestore, doc, getDoc, setDoc, collection, collectionGroup, getDocs, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
 
 const firebaseConfig={apiKey:'AIzaSyC6VpLlLLl_NaiKmCvrluBJlUTwwlfx89M',authDomain:'campo-de-guerra-1004c.firebaseapp.com',projectId:'campo-de-guerra-1004c',storageBucket:'campo-de-guerra-1004c.firebasestorage.app',messagingSenderId:'125353756348',appId:'1:125353756348:web:33a9d7891000e8ce9432b9'};
 const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFirestore(app);
@@ -375,16 +375,22 @@ window.togglePassword=(inputId,btn)=>{const input=document.getElementById(inputI
 window.showAuthForm=showAuthForm;
 window.login=async()=>{try{document.getElementById('login-error').textContent='';await signInWithEmailAndPassword(auth,val('login-email'),val('login-password'));}catch(e){document.getElementById('login-error').textContent='Erro ao entrar: '+friendly(e.code)}};
 window.forgotPassword=async()=>{let box=document.getElementById('login-error');try{box.className='auth-error oktxt';box.textContent='';let email=val('login-email');if(!email){throw {code:'custom/email'}}await sendPasswordResetEmail(auth,email);box.textContent='Enviamos um link de recuperação para seu e-mail. Confira também a caixa de spam.';}catch(e){box.className='auth-error';box.textContent=e.code==='custom/email'?'Digite seu e-mail primeiro.':'Erro ao enviar recuperação: '+friendly(e.code)}};
-window.signup=async()=>{try{const err=document.getElementById('signup-error');err.className='auth-error';err.textContent='';let email=val('signup-email'), password=val('signup-password'), name=val('signup-name'), sex=val('signup-sex'), goal=val('signup-goal')||'futebol', level=val('signup-level')||'iniciante', height=Number(val('signup-height').replace(',','.'))||1.68, weight=Number(val('signup-weight').replace(',','.'))||88;if(!email||!password||!name){throw {code:'custom/missing'}}let cred=await createUserWithEmailAndPassword(auth,email,password);let uid=cred.user.uid;await setDoc(doc(db,'users',uid,'profile','main'),{name,email,sex,goal,level,height,initialWeight:weight,start:today(),bestStreak:0,goalNote:'',appearanceMode:'dark',colorTheme:'original',emailVerified:false,blocked:false,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',uid,'weights',today()),{value:weight,date:today(),createdAt:serverTimestamp()},{merge:true});await sendEmailVerification(cred.user);await signOut(auth);showAuthForm('login');document.getElementById('login-email').value=email;document.getElementById('login-password').value='';const loginMsg=document.getElementById('login-error');loginMsg.className='auth-error oktxt';loginMsg.textContent='Usuário criado. Enviamos um e-mail de verificação. A pessoa só conseguirá entrar depois de confirmar o e-mail.';}catch(e){document.getElementById('signup-error').textContent='Erro ao criar usuário: '+friendly(e.code)} }; 
+window.signup=async()=>{try{const err=document.getElementById('signup-error');err.className='auth-error';err.textContent='';let email=val('signup-email'), password=val('signup-password'), name=val('signup-name'), sex=val('signup-sex'), goal=val('signup-goal')||'futebol', level=val('signup-level')||'iniciante', height=Number(val('signup-height').replace(',','.'))||1.68, weight=Number(val('signup-weight').replace(',','.'))||88;if(!email||!password||!name){throw {code:'custom/missing'}}let cred=await createUserWithEmailAndPassword(auth,email,password);let uid=cred.user.uid;await setDoc(doc(db,'users',uid),{uid,email,name,goal,level,blocked:false,emailVerified:false,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',uid,'profile','main'),{name,email,sex,goal,level,height,initialWeight:weight,start:today(),bestStreak:0,goalNote:'',appearanceMode:'dark',colorTheme:'original',emailVerified:false,blocked:false,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',uid,'weights',today()),{value:weight,date:today(),createdAt:serverTimestamp()},{merge:true});await sendEmailVerification(cred.user);await signOut(auth);showAuthForm('login');document.getElementById('login-email').value=email;document.getElementById('login-password').value='';const loginMsg=document.getElementById('login-error');loginMsg.className='auth-error oktxt';loginMsg.textContent='Usuário criado. Enviamos um e-mail de verificação. A pessoa só conseguirá entrar depois de confirmar o e-mail.';}catch(e){document.getElementById('signup-error').textContent='Erro ao criar usuário: '+friendly(e.code)} }; 
 window.logout=()=>signOut(auth); window.switchTab=switchTab; window.doCheckin=doCheckin; window.saveMeal=saveMeal; window.deleteMeal=deleteMeal; window.setTodayMealDate=setTodayMealDate; window.renderMeals=renderMeals; window.saveWeight=saveWeight; window.saveMeasure=saveMeasure; window.changePassword=changePassword; window.openDrawer=openDrawer; window.closeDrawer=closeDrawer; window.askStartWorkout=askStartWorkout; window.startWorkoutConfirmed=startWorkoutConfirmed; window.toggleTimer=toggleTimer; window.resetTimer=resetTimer; window.finishWorkout=finishWorkout; window.cancelWorkout=cancelWorkout; window.toggleSet=toggleSet; window.openWorkoutEditor=openWorkoutEditor; window.addCustomExerciseRow=addCustomExerciseRow; window.removeCustomExerciseRow=removeCustomExerciseRow; window.fillWorkoutExample=fillWorkoutExample; window.advanceSeriesFlow=advanceSeriesFlow; window.openImportWorkout=openImportWorkout; window.saveImportedWorkout=saveImportedWorkout; window.fillWorkoutTemplate=fillWorkoutTemplate; window.copyWorkoutTemplate=copyWorkoutTemplate; window.downloadWorkoutTemplate=downloadWorkoutTemplate; window.savePhysicalProfile=savePhysicalProfile; window.loadAdminProfiles=loadAdminProfiles; window.toggleUserAccess=toggleUserAccess; window.openGoalModal=openGoalModal; window.openScheduleModal=openScheduleModal; window.toggleTrainingDay=toggleTrainingDay; window.addSequenceWorkout=addSequenceWorkout; window.removeSequenceWorkout=removeSequenceWorkout; window.moveSequenceWorkout=moveSequenceWorkout; window.saveTrainingSchedule=saveTrainingSchedule; window.autoFillScheduleSequence=autoFillScheduleSequence; window.saveGoal=saveGoal; window.saveCompleteProfile=saveCompleteProfile; window.saveCustomWorkout=saveCustomWorkout; window.deleteWorkout=deleteWorkout; window.closeModal=closeModal;
 
-onAuthStateChanged(auth,async(u)=>{user=u;if(!u){showAuth();return}if(!u.emailVerified && !isAdminEmail(u.email)){try{await sendEmailVerification(u)}catch(_e){} alert('Antes de acessar, confirme seu e-mail. Enviamos um link de verificação para sua caixa de entrada. Confira também o spam.');await signOut(auth);return}showApp();await loadAll();if(isUserBlocked()){alert('Seu acesso ao sistema está bloqueado. Entre em contato com o administrador.');await signOut(auth);return}if(u.emailVerified){try{await setDoc(doc(db,'users',u.uid,'profile','main'),{emailVerified:true,updatedAt:serverTimestamp()},{merge:true})}catch(_e){}}renderAll();checkProfileComplete();});
+onAuthStateChanged(auth,async(u)=>{user=u;if(!u){showAuth();return}if(!u.emailVerified && !isAdminEmail(u.email)){try{await sendEmailVerification(u)}catch(_e){} alert('Antes de acessar, confirme seu e-mail. Enviamos um link de verificação para sua caixa de entrada. Confira também o spam.');await signOut(auth);return}showApp();await loadAll();if(isUserBlocked()){alert('Seu acesso ao sistema está bloqueado. Entre em contato com o administrador.');await signOut(auth);return}if(u.emailVerified){try{await setDoc(doc(db,'users',u.uid),{email:u.email||'',emailVerified:true,updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',u.uid,'profile','main'),{emailVerified:true,updatedAt:serverTimestamp()},{merge:true})}catch(_e){}}renderAll();checkProfileComplete();});
 function showAuthForm(mode){let isSignup=mode==='signup';document.getElementById('login-form').classList.toggle('hidden',isSignup);document.getElementById('signup-form').classList.toggle('hidden',!isSignup);document.getElementById('login-tab-btn').classList.toggle('primary',!isSignup);document.getElementById('signup-tab-btn').classList.toggle('primary',isSignup)}
 function showAuth(){document.getElementById('auth').classList.remove('hidden');document.getElementById('app').classList.add('hidden');showAuthForm('login')} function showApp(){document.getElementById('auth').classList.add('hidden');document.getElementById('app').classList.remove('hidden');document.getElementById('user-pill').textContent='Logado como '+user.email;document.getElementById('reset-email').value=user.email||''}
 function ref(path){return doc(db,'users',user.uid,...path)}
-async function loadAll(){let prof=await getDoc(ref(['profile','main']));if(!prof.exists()){data.start=today();await setDoc(ref(['profile','main']),{start:data.start,bestStreak:0,createdAt:serverTimestamp()},{merge:true});}else{Object.assign(data,prof.data());data.height=data.height?Number(data.height):null;data.initialWeight=data.initialWeight?Number(data.initialWeight):null;data.level=data.level||'iniciante';data.appearanceMode=data.appearanceMode||'dark';data.colorTheme=data.colorTheme||'original';data.trainingDays=Array.isArray(data.trainingDays)&&data.trainingDays.length?data.trainingDays:[1,2,3,4,5];data.workoutSequence=Array.isArray(data.workoutSequence)?data.workoutSequence:[]}data.checkins=await loadCol('checkins');data.meals=await loadCol('meals');data.weights=await loadCol('weights');data.measures=await loadCol('measures');data.sessions=await loadCol('sessions');data.customWorkouts=await loadCol('customWorkouts');await migrateCustomWorkoutRests()}
+async function syncUserRootDoc(){
+  if(!user)return;
+  try{
+    await setDoc(doc(db,'users',user.uid),{uid:user.uid,email:user.email||data.email||'',name:data.name||'',goal:data.goal||'personalizado',level:data.level||'iniciante',blocked:!!data.blocked,emailVerified:!!(user.emailVerified||data.emailVerified),updatedAt:serverTimestamp()},{merge:true});
+  }catch(e){console.warn('Não foi possível sincronizar documento raiz do usuário:',e)}
+}
+async function loadAll(){let prof=await getDoc(ref(['profile','main']));if(!prof.exists()){data.start=today();await setDoc(ref(['profile','main']),{start:data.start,bestStreak:0,createdAt:serverTimestamp()},{merge:true});}else{Object.assign(data,prof.data());data.height=data.height?Number(data.height):null;data.initialWeight=data.initialWeight?Number(data.initialWeight):null;data.level=data.level||'iniciante';data.appearanceMode=data.appearanceMode||'dark';data.colorTheme=data.colorTheme||'original';data.trainingDays=Array.isArray(data.trainingDays)&&data.trainingDays.length?data.trainingDays:[1,2,3,4,5];data.workoutSequence=Array.isArray(data.workoutSequence)?data.workoutSequence:[]}data.checkins=await loadCol('checkins');data.meals=await loadCol('meals');data.weights=await loadCol('weights');data.measures=await loadCol('measures');data.sessions=await loadCol('sessions');data.customWorkouts=await loadCol('customWorkouts');await migrateCustomWorkoutRests();await syncUserRootDoc()}
 async function loadCol(name){let snap=await getDocs(collection(db,'users',user.uid,name));return snap.docs.map(d=>({id:d.id,...d.data()}))}
-async function saveProfile(){let payload={start:data.start||today(),bestStreak:data.bestStreak||0,goalNote:data.goalNote||'',name:data.name||'',sex:data.sex||'',level:data.level||'iniciante',appearanceMode:data.appearanceMode||'dark',colorTheme:data.colorTheme||'original',recoveryEmail:data.recoveryEmail||'',securityQuestionsConfigured:!!data.securityQuestionsConfigured,trainingDays:Array.isArray(data.trainingDays)?data.trainingDays:[1,2,3,4,5],workoutSequence:Array.isArray(data.workoutSequence)?data.workoutSequence:[],updatedAt:serverTimestamp()};if(data.goal)payload.goal=data.goal;if(data.height)payload.height=Number(data.height);if(data.initialWeight)payload.initialWeight=Number(data.initialWeight);if(data.securityMotherHash)payload.securityMotherHash=data.securityMotherHash;if(data.securityBirthHash)payload.securityBirthHash=data.securityBirthHash;await setDoc(ref(['profile','main']),payload,{merge:true})}
+async function saveProfile(){let payload={start:data.start||today(),bestStreak:data.bestStreak||0,goalNote:data.goalNote||'',name:data.name||'',sex:data.sex||'',level:data.level||'iniciante',appearanceMode:data.appearanceMode||'dark',colorTheme:data.colorTheme||'original',recoveryEmail:data.recoveryEmail||'',securityQuestionsConfigured:!!data.securityQuestionsConfigured,trainingDays:Array.isArray(data.trainingDays)?data.trainingDays:[1,2,3,4,5],workoutSequence:Array.isArray(data.workoutSequence)?data.workoutSequence:[],updatedAt:serverTimestamp()};if(data.goal)payload.goal=data.goal;if(data.height)payload.height=Number(data.height);if(data.initialWeight)payload.initialWeight=Number(data.initialWeight);if(data.securityMotherHash)payload.securityMotherHash=data.securityMotherHash;if(data.securityBirthHash)payload.securityBirthHash=data.securityBirthHash;await setDoc(ref(['profile','main']),payload,{merge:true});await syncUserRootDoc()}
 function val(id){return document.getElementById(id).value.trim()} function num(id){return Number(document.getElementById(id).value)||0} function today(){let d=new Date();return toKey(d)} function toKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')} function brDate(s){return (s||'').split('-').reverse().join('/')} function friendly(c){return ({'auth/invalid-credential':'e-mail ou senha inválidos','auth/wrong-password':'senha atual incorreta','auth/weak-password':'senha muito fraca','auth/email-already-in-use':'esse e-mail já está cadastrado','auth/invalid-email':'e-mail inválido','auth/too-many-requests':'muitas tentativas; aguarde alguns minutos','auth/network-request-failed':'falha de conexão','custom/missing':'preencha nome, e-mail e senha','custom/security-incomplete':'preencha as duas perguntas de segurança'})[c]||c}
 
 function goalKey(){
@@ -534,7 +540,7 @@ function renderWorkouts(){
     box.innerHTML=`<div class="card fullrow"><h2>⚠️ <span>NENHUM TREINO CARREGADO</span></h2><p class="sub">Seu objetivo atual é <strong>${escapeHtml(goalKey())}</strong>. Clique em Definir objetivo para carregar uma biblioteca de treinos prontos, ou crie/importe um treino personalizado.</p><button class="btn primary" onclick="openGoalModal()">🎯 Definir objetivo</button></div>`;
     return;
   }
-  box.innerHTML=items.map(w=>{let isCustom=String(w.id||'').startsWith('custom_');return `<div class="workout-card"><h3>${escapeHtml(w.name)}</h3><strong>${escapeHtml(w.type||'')}</strong><p class="sub">${escapeHtml(w.desc||'Treino personalizado.')}</p><div class="chips"><span class="chip">${(w.exercises||[]).length} exercícios</span><span class="chip">${escapeHtml(w.met||5)} MET estimado</span><span class="chip">nível ${escapeHtml(data.level||'iniciante')}</span>${isCustom?'<span class="chip">personalizado</span>':'<span class="chip">treino pronto</span>'}</div><div class="workout-actions"><button class="btn primary" onclick="askStartWorkout('${w.id}')">Iniciar treino</button><button class="btn" onclick="openWorkoutEditor('${w.id}')">Editar treino</button><button class="btn danger" onclick="deleteWorkout('${w.id}')">Excluir treino</button></div></div>`}).join('')
+  box.innerHTML=items.map(w=>{let isCustom=String(w.id||'').startsWith('custom_');return `<div class="workout-card"><h3>${escapeHtml(w.name)}</h3><strong>${escapeHtml(w.type||'')}</strong><p class="sub">${escapeHtml(w.desc||'Treino personalizado.')}</p><div class="chips"><span class="chip">${(w.exercises||[]).length} exercícios</span><span class="chip">${escapeHtml(w.met||5)} MET estimado</span><span class="chip">nível ${data.level||'iniciante'}</span>${isCustom?'<span class="chip">personalizado</span>':'<span class="chip">treino pronto</span>'}</div><div class="workout-actions"><button class="btn primary" onclick="askStartWorkout('${w.id}')">Iniciar treino</button><button class="btn" onclick="openWorkoutEditor('${w.id}')">Editar treino</button><button class="btn danger" onclick="deleteWorkout('${w.id}')">Excluir treino</button></div></div>`}).join('')
 }
 async function deleteWorkout(id){let w=allWorkouts().find(x=>x.id===id);if(!w)return;if(!String(id).startsWith('custom_')){alert('Esse é um treino pronto do app. Por segurança ele não será excluído. Você pode criar e excluir seus treinos personalizados.');return}if(!confirm(`Excluir o treino "${w.name}"?`))return;await deleteDoc(doc(db,'users',user.uid,'customWorkouts',id));data.customWorkouts=data.customWorkouts.filter(x=>x.id!==id);renderWorkouts()}
 function askStartWorkout(id){activeWorkout=allWorkouts().find(w=>w.id===id);document.getElementById('confirm-title').textContent=activeWorkout.name;document.getElementById('confirm-text').textContent='Deseja iniciar treino?';openModal('confirm-modal')}
@@ -552,7 +558,7 @@ function startWorkoutConfirmed(){
     for(let j=0;j<totalSets;j++){sessionFlow.flat.push({exerciseIndex:i,setIndex:j,exercise:e});}
     let muscle=e[4]?`<br><strong>Músculo alvo:</strong> ${e[4]}`:'';
     let rest=e[5]?`<br><strong>Descanso:</strong> ${e[5]}`:'<br><strong>Descanso:</strong> 60s';
-    return `<div class="exercise" data-index="${i}"><div class="exercise-head"><h3>${i+1}. ${escapeHtml(e[0])}</h3><span class="exercise-status">Pendente</span></div><p class="sub"><strong>Séries:</strong> ${e[1]} · <strong>Tempo/Reps:</strong> ${e[2]}${muscle}${rest}<br><strong>Dica:</strong> ${escapeHtml(e[3]||'Execute com controle.')}</p><div class="sets">${Array.from({length:totalSets},(_,j)=>`<button class="set-dot" data-exercise="${i}" data-set="${j}" type="button">Série ${j+1}</button>`).join('')}</div></div>`
+    return `<div class="exercise" data-index="${i}"><div class="exercise-head"><h3>${i+1}. ${e[0]}</h3><span class="exercise-status">Pendente</span></div><p class="sub"><strong>Séries:</strong> ${e[1]} · <strong>Tempo/Reps:</strong> ${e[2]}${muscle}${rest}<br><strong>Dica:</strong> ${escapeHtml(e[3]||'Execute com controle.')}</p><div class="sets">${Array.from({length:totalSets},(_,j)=>`<button class="set-dot" data-exercise="${i}" data-set="${j}" type="button">Série ${j+1}</button>`).join('')}</div></div>`
   }).join('');
   document.getElementById('session-title').textContent=activeWorkout.name;
   document.getElementById('session-exercises').innerHTML=ex;
@@ -905,7 +911,7 @@ function isAdminEmail(email){return String(email||'').toLowerCase()==='adm_aalme
 function isAdmin(){const email=(user&&user.email?user.email.toLowerCase():'');return isAdminEmail(email)||data.role==='admin'}
 function isUserBlocked(){return !!data.blocked && !isAdmin()}
 function updateAdminVisibility(){let btn=document.getElementById('admin-menu-btn');if(btn)btn.classList.toggle('hidden',!isAdmin());renderAdminDiagnostic()}
-function renderAdminDiagnostic(extra=''){const el=document.getElementById('admin-diagnostic');if(!el)return;const email=(user&&user.email)||'não logado';el.innerHTML=`<strong>Diagnóstico admin</strong><br>E-mail logado: <strong>${escapeHtml(email)}</strong><br>Reconhecido como admin: <strong>${isAdmin()?'✅ SIM':'❌ NÃO'}</strong><br>Caminho usado: <code>users/{uid}/profile/main</code> via <code>collectionGroup('profile')</code>${extra?'<br>'+extra:''}`;}
+function renderAdminDiagnostic(extra=''){const el=document.getElementById('admin-diagnostic');if(!el)return;const email=(user&&user.email)||'não logado';el.innerHTML=`<strong>Diagnóstico admin</strong><br>E-mail logado: <strong>${escapeHtml(email)}</strong><br>Reconhecido como admin: <strong>${isAdmin()?'✅ SIM':'❌ NÃO'}</strong><br>Caminho usado: <code>users</code> + <code>users/{uid}/profile/main</code> sem collectionGroup${extra?'<br>'+extra:''}`;}
 function getGoalLabel(g){let key=(g||'personalizado').toString();return (goalProfiles[key]?.title||key||'Não definido')}
 async function loadAdminProfiles(){
   const box=document.getElementById('admin-users'), msg=document.getElementById('admin-msg');
@@ -915,18 +921,33 @@ async function loadAdminProfiles(){
   msg.textContent='Carregando perfis...';
   box.innerHTML='';
   try{
-    const snap=await getDocs(collectionGroup(db,'profile'));
+    const usersSnap=await getDocs(collection(db,'users'));
     let rows=[];
-    snap.forEach(d=>{
-      if(d.id!=='main')return;
-      const parent=d.ref.parent.parent;
-      if(!parent)return;
-      const uid=parent.id;
-      const p=d.data()||{};
-      rows.push({uid,...p,email:p.email||'',name:p.name||'Sem nome',goal:p.goal||'personalizado',level:p.level||'',blocked:!!p.blocked});
-    });
+    for(const userDoc of usersSnap.docs){
+      const uid=userDoc.id;
+      let root=userDoc.data()||{};
+      let p={};
+      try{
+        const prof=await getDoc(doc(db,'users',uid,'profile','main'));
+        if(prof.exists())p=prof.data()||{};
+      }catch(_e){}
+      const merged={...root,...p};
+      rows.push({
+        uid,
+        ...merged,
+        email:merged.email||root.email||'',
+        name:merged.name||root.name||'Sem nome',
+        goal:merged.goal||root.goal||'personalizado',
+        level:merged.level||root.level||'',
+        blocked:!!merged.blocked
+      });
+    }
     rows.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
-    if(!rows.length){msg.textContent='Nenhum perfil encontrado.';return}
+    if(!rows.length){
+      msg.textContent='Nenhum perfil encontrado. Usuários antigos podem aparecer após entrarem uma vez na nova versão.';
+      box.innerHTML='<p class="sub">A lista agora usa documentos raiz em <code>users/{uid}</code>. Quando cada usuário entrar novamente, o sistema cria/atualiza esse resumo automaticamente.</p>';
+      return;
+    }
     msg.textContent=rows.length+' perfil(is) encontrado(s).';
     box.innerHTML=`<div class="admin-row admin-head"><div>Nome</div><div>E-mail</div><div>Objetivo</div><div>Status</div><div>Ação</div></div>`+rows.map(r=>{
       const current=user&&r.uid===user.uid;
@@ -934,13 +955,17 @@ async function loadAdminProfiles(){
       const btn=current?'<span class="chip">Você</span>':`<button class="btn small ${r.blocked?'primary':'danger'}" onclick="toggleUserAccess('${r.uid}',${r.blocked?'false':'true'})">${r.blocked?'Ativar acesso':'Bloquear acesso'}</button>`;
       return `<div class="admin-row"><div><strong>${escapeHtml(r.name)}</strong></div><div>${escapeHtml(r.email||'Sem e-mail')}</div><div>${escapeHtml(getGoalLabel(r.goal))}${r.level?`<br><span class="chip">${escapeHtml(r.level)}</span>`:''}</div><div>${status}</div><div>${btn}</div></div>`;
     }).join('');
-  }catch(e){const err=friendly(e.code||e.message);renderAdminDiagnostic('Erro Firestore: <strong>'+escapeHtml(err)+'</strong>');msg.textContent='Erro ao carregar perfis: '+err+'. Verifique as regras do Firestore para permitir acesso administrativo.';}
+  }catch(e){
+    const err=friendly(e.code||e.message);
+    renderAdminDiagnostic('Erro Firestore: <strong>'+escapeHtml(err)+'</strong>');
+    msg.textContent='Erro ao carregar perfis: '+err+'. Confira se as regras permitem admin ler a coleção users.';
+  }
 }
 async function toggleUserAccess(uid,blocked){
   if(!isAdmin())return alert('Acesso restrito.');
   const action=blocked?'bloquear':'ativar';
   if(!confirm(`Deseja ${action} o acesso deste usuário?`))return;
-  await setDoc(doc(db,'users',uid,'profile','main'),{blocked:!!blocked,blockedAt:blocked?serverTimestamp():null,blockedBy:user.email||'',updatedAt:serverTimestamp()},{merge:true});
+  await setDoc(doc(db,'users',uid),{blocked:!!blocked,blockedAt:blocked?serverTimestamp():null,blockedBy:user.email||'',updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',uid,'profile','main'),{blocked:!!blocked,blockedAt:blocked?serverTimestamp():null,blockedBy:user.email||'',updatedAt:serverTimestamp()},{merge:true});
   await loadAdminProfiles();
 }
 function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
