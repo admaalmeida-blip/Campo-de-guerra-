@@ -229,7 +229,7 @@ DICA: Desça com controle"></textarea></div><button class="btn primary full" onc
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword, EmailAuthProvider, reauthenticateWithCredential, sendPasswordResetEmail, sendEmailVerification } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
-import { getFirestore, doc, getDoc, setDoc, collection, getDocs, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
+import { getFirestore, doc, getDoc, setDoc, collection, collectionGroup, getDocs, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
 
 const firebaseConfig={apiKey:'AIzaSyC6VpLlLLl_NaiKmCvrluBJlUTwwlfx89M',authDomain:'campo-de-guerra-1004c.firebaseapp.com',projectId:'campo-de-guerra-1004c',storageBucket:'campo-de-guerra-1004c.firebasestorage.app',messagingSenderId:'125353756348',appId:'1:125353756348:web:33a9d7891000e8ce9432b9'};
 const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFirestore(app);
@@ -382,12 +382,6 @@ onAuthStateChanged(auth,async(u)=>{user=u;if(!u){showAuth();return}if(!u.emailVe
 function showAuthForm(mode){let isSignup=mode==='signup';document.getElementById('login-form').classList.toggle('hidden',isSignup);document.getElementById('signup-form').classList.toggle('hidden',!isSignup);document.getElementById('login-tab-btn').classList.toggle('primary',!isSignup);document.getElementById('signup-tab-btn').classList.toggle('primary',isSignup)}
 function showAuth(){document.getElementById('auth').classList.remove('hidden');document.getElementById('app').classList.add('hidden');showAuthForm('login')} function showApp(){document.getElementById('auth').classList.add('hidden');document.getElementById('app').classList.remove('hidden');document.getElementById('user-pill').textContent='Logado como '+user.email;document.getElementById('reset-email').value=user.email||''}
 function ref(path){return doc(db,'users',user.uid,...path)}
-async function syncUserRootDoc(){
-  if(!user)return;
-  try{
-    await setDoc(doc(db,'users',user.uid),{uid:user.uid,email:user.email||data.email||'',name:data.name||'',goal:data.goal||'personalizado',level:data.level||'iniciante',blocked:!!data.blocked,emailVerified:!!(user.emailVerified||data.emailVerified),updatedAt:serverTimestamp()},{merge:true});
-  }catch(e){console.warn('Não foi possível sincronizar documento raiz do usuário:',e)}
-}
 async function loadAll(){let prof=await getDoc(ref(['profile','main']));if(!prof.exists()){data.start=today();await setDoc(ref(['profile','main']),{start:data.start,bestStreak:0,createdAt:serverTimestamp()},{merge:true});}else{Object.assign(data,prof.data());data.height=data.height?Number(data.height):null;data.initialWeight=data.initialWeight?Number(data.initialWeight):null;data.level=data.level||'iniciante';data.appearanceMode=data.appearanceMode||'dark';data.colorTheme=data.colorTheme||'original';data.trainingDays=Array.isArray(data.trainingDays)&&data.trainingDays.length?data.trainingDays:[1,2,3,4,5];data.workoutSequence=Array.isArray(data.workoutSequence)?data.workoutSequence:[]}data.checkins=await loadCol('checkins');data.meals=await loadCol('meals');data.weights=await loadCol('weights');data.measures=await loadCol('measures');data.sessions=await loadCol('sessions');data.customWorkouts=await loadCol('customWorkouts');await migrateCustomWorkoutRests();await syncUserRootDoc()}
 async function loadCol(name){let snap=await getDocs(collection(db,'users',user.uid,name));return snap.docs.map(d=>({id:d.id,...d.data()}))}
 async function saveProfile(){let payload={start:data.start||today(),bestStreak:data.bestStreak||0,goalNote:data.goalNote||'',name:data.name||'',sex:data.sex||'',level:data.level||'iniciante',appearanceMode:data.appearanceMode||'dark',colorTheme:data.colorTheme||'original',recoveryEmail:data.recoveryEmail||'',securityQuestionsConfigured:!!data.securityQuestionsConfigured,trainingDays:Array.isArray(data.trainingDays)?data.trainingDays:[1,2,3,4,5],workoutSequence:Array.isArray(data.workoutSequence)?data.workoutSequence:[],updatedAt:serverTimestamp()};if(data.goal)payload.goal=data.goal;if(data.height)payload.height=Number(data.height);if(data.initialWeight)payload.initialWeight=Number(data.initialWeight);if(data.securityMotherHash)payload.securityMotherHash=data.securityMotherHash;if(data.securityBirthHash)payload.securityBirthHash=data.securityBirthHash;await setDoc(ref(['profile','main']),payload,{merge:true});await syncUserRootDoc()}
@@ -911,7 +905,7 @@ function isAdminEmail(email){return String(email||'').toLowerCase()==='adm_aalme
 function isAdmin(){const email=(user&&user.email?user.email.toLowerCase():'');return isAdminEmail(email)||data.role==='admin'}
 function isUserBlocked(){return !!data.blocked && !isAdmin()}
 function updateAdminVisibility(){let btn=document.getElementById('admin-menu-btn');if(btn)btn.classList.toggle('hidden',!isAdmin());renderAdminDiagnostic()}
-function renderAdminDiagnostic(extra=''){const el=document.getElementById('admin-diagnostic');if(!el)return;const email=(user&&user.email)||'não logado';el.innerHTML=`<strong>Diagnóstico admin</strong><br>E-mail logado: <strong>${escapeHtml(email)}</strong><br>Reconhecido como admin: <strong>${isAdmin()?'✅ SIM':'❌ NÃO'}</strong><br>Caminho usado: <code>users</code> + <code>users/{uid}/profile/main</code> sem collectionGroup${extra?'<br>'+extra:''}`;}
+function renderAdminDiagnostic(extra=''){const el=document.getElementById('admin-diagnostic');if(!el)return;const email=(user&&user.email)||'não logado';el.innerHTML=`<strong>Diagnóstico admin</strong><br>E-mail logado: <strong>${escapeHtml(email)}</strong><br>Reconhecido como admin: <strong>${isAdmin()?'✅ SIM':'❌ NÃO'}</strong><br>Caminho usado: <code>users</code> + <code>collectionGroup('profile')</code> + migração automática${extra?'<br>'+extra:''}`;}
 function getGoalLabel(g){let key=(g||'personalizado').toString();return (goalProfiles[key]?.title||key||'Não definido')}
 async function loadAdminProfiles(){
   const box=document.getElementById('admin-users'), msg=document.getElementById('admin-msg');
@@ -921,31 +915,58 @@ async function loadAdminProfiles(){
   msg.textContent='Carregando perfis...';
   box.innerHTML='';
   try{
+    const map=new Map();
+
+    // 1) Perfis no formato novo: users/{uid}
     const usersSnap=await getDocs(collection(db,'users'));
-    let rows=[];
-    for(const userDoc of usersSnap.docs){
-      const uid=userDoc.id;
-      let root=userDoc.data()||{};
-      let p={};
+    usersSnap.docs.forEach(d=>{
+      const root=d.data()||{};
+      map.set(d.id,{uid:d.id,...root,source:'users/{uid}'});
+    });
+
+    // 2) Perfis no formato antigo: users/{uid}/profile/main
+    // Necessita da regra: match /{path=**}/profile/{profileId} { allow read, write: if isAdmin(); }
+    const profileSnap=await getDocs(collectionGroup(db,'profile'));
+    for(const pdoc of profileSnap.docs){
+      if(pdoc.id!=='main') continue;
+      const pdata=pdoc.data()||{};
+      const uid=pdoc.ref.parent.parent ? pdoc.ref.parent.parent.id : (pdata.uid||'');
+      if(!uid) continue;
+      const previous=map.get(uid)||{uid};
+      const merged={...previous,...pdata,uid,source:previous.source?previous.source+' + profile/main':'profile/main'};
+      map.set(uid,merged);
+
+      // Migra resumo para o documento raiz, sem apagar o formato antigo.
+      // Isso faz o painel ficar mais rápido nas próximas aberturas.
       try{
-        const prof=await getDoc(doc(db,'users',uid,'profile','main'));
-        if(prof.exists())p=prof.data()||{};
-      }catch(_e){}
-      const merged={...root,...p};
-      rows.push({
-        uid,
-        ...merged,
-        email:merged.email||root.email||'',
-        name:merged.name||root.name||'Sem nome',
-        goal:merged.goal||root.goal||'personalizado',
-        level:merged.level||root.level||'',
-        blocked:!!merged.blocked
-      });
+        await setDoc(doc(db,'users',uid),{
+          uid,
+          name:pdata.name||previous.name||'Sem nome',
+          email:pdata.email||previous.email||'',
+          goal:pdata.goal||previous.goal||'personalizado',
+          level:pdata.level||previous.level||'',
+          blocked:!!(pdata.blocked||previous.blocked),
+          emailVerified:!!(pdata.emailVerified||previous.emailVerified),
+          migratedAt:serverTimestamp(),
+          updatedAt:serverTimestamp()
+        },{merge:true});
+      }catch(migErr){console.warn('Não foi possível migrar resumo do usuário',uid,migErr)}
     }
+
+    let rows=[...map.values()].map(r=>({
+      uid:r.uid,
+      email:r.email||'',
+      name:r.name||'Sem nome',
+      goal:r.goal||'personalizado',
+      level:r.level||'',
+      blocked:!!r.blocked,
+      source:r.source||''
+    }));
+
     rows.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
     if(!rows.length){
-      msg.textContent='Nenhum perfil encontrado. Usuários antigos podem aparecer após entrarem uma vez na nova versão.';
-      box.innerHTML='<p class="sub">A lista agora usa documentos raiz em <code>users/{uid}</code>. Quando cada usuário entrar novamente, o sistema cria/atualiza esse resumo automaticamente.</p>';
+      msg.textContent='Nenhum perfil encontrado.';
+      box.innerHTML='<p class="sub">Nenhum documento de perfil foi localizado.</p>';
       return;
     }
     msg.textContent=rows.length+' perfil(is) encontrado(s).';
@@ -953,14 +974,16 @@ async function loadAdminProfiles(){
       const current=user&&r.uid===user.uid;
       const status=r.blocked?'<span class="status-block">Bloqueado</span>':'<span class="status-ok">Ativo</span>';
       const btn=current?'<span class="chip">Você</span>':`<button class="btn small ${r.blocked?'primary':'danger'}" onclick="toggleUserAccess('${r.uid}',${r.blocked?'false':'true'})">${r.blocked?'Ativar acesso':'Bloquear acesso'}</button>`;
-      return `<div class="admin-row"><div><strong>${escapeHtml(r.name)}</strong></div><div>${escapeHtml(r.email||'Sem e-mail')}</div><div>${escapeHtml(getGoalLabel(r.goal))}${r.level?`<br><span class="chip">${escapeHtml(r.level)}</span>`:''}</div><div>${status}</div><div>${btn}</div></div>`;
+      return `<div class="admin-row"><div><strong>${escapeHtml(r.name)}</strong>${r.source?`<br><span class="chip">${escapeHtml(r.source)}</span>`:''}</div><div>${escapeHtml(r.email||'Sem e-mail')}</div><div>${escapeHtml(getGoalLabel(r.goal))}${r.level?`<br><span class="chip">${escapeHtml(r.level)}</span>`:''}</div><div>${status}</div><div>${btn}</div></div>`;
     }).join('');
   }catch(e){
     const err=friendly(e.code||e.message);
     renderAdminDiagnostic('Erro Firestore: <strong>'+escapeHtml(err)+'</strong>');
-    msg.textContent='Erro ao carregar perfis: '+err+'. Confira se as regras permitem admin ler a coleção users.';
+    msg.textContent='Erro ao carregar perfis: '+err+'. Confira se as regras permitem admin ler users e collectionGroup profile.';
+    box.innerHTML='';
   }
 }
+
 async function toggleUserAccess(uid,blocked){
   if(!isAdmin())return alert('Acesso restrito.');
   const action=blocked?'bloquear':'ativar';
