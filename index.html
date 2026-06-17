@@ -376,7 +376,7 @@ window.showAuthForm=showAuthForm;
 window.login=async()=>{try{document.getElementById('login-error').textContent='';await signInWithEmailAndPassword(auth,val('login-email'),val('login-password'));}catch(e){document.getElementById('login-error').textContent='Erro ao entrar: '+friendly(e.code)}};
 window.forgotPassword=async()=>{let box=document.getElementById('login-error');try{box.className='auth-error oktxt';box.textContent='';let email=val('login-email');if(!email){throw {code:'custom/email'}}await sendPasswordResetEmail(auth,email);box.textContent='Enviamos um link de recuperação para seu e-mail. Confira também a caixa de spam.';}catch(e){box.className='auth-error';box.textContent=e.code==='custom/email'?'Digite seu e-mail primeiro.':'Erro ao enviar recuperação: '+friendly(e.code)}};
 window.signup=async()=>{try{const err=document.getElementById('signup-error');err.className='auth-error';err.textContent='';let email=val('signup-email'), password=val('signup-password'), name=val('signup-name'), sex=val('signup-sex'), goal=val('signup-goal')||'futebol', level=val('signup-level')||'iniciante', height=Number(val('signup-height').replace(',','.'))||1.68, weight=Number(val('signup-weight').replace(',','.'))||88;if(!email||!password||!name){throw {code:'custom/missing'}}let cred=await createUserWithEmailAndPassword(auth,email,password);let uid=cred.user.uid;await setDoc(doc(db,'users',uid,'profile','main'),{name,email,sex,goal,level,height,initialWeight:weight,start:today(),bestStreak:0,goalNote:'',appearanceMode:'dark',colorTheme:'original',emailVerified:false,blocked:false,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',uid,'weights',today()),{value:weight,date:today(),createdAt:serverTimestamp()},{merge:true});await sendEmailVerification(cred.user);await signOut(auth);showAuthForm('login');document.getElementById('login-email').value=email;document.getElementById('login-password').value='';const loginMsg=document.getElementById('login-error');loginMsg.className='auth-error oktxt';loginMsg.textContent='Usuário criado. Enviamos um e-mail de verificação. A pessoa só conseguirá entrar depois de confirmar o e-mail.';}catch(e){document.getElementById('signup-error').textContent='Erro ao criar usuário: '+friendly(e.code)} }; 
-window.logout=()=>signOut(auth); window.switchTab=switchTab; window.doCheckin=doCheckin; window.saveMeal=saveMeal; window.deleteMeal=deleteMeal; window.setTodayMealDate=setTodayMealDate; window.renderMeals=renderMeals; window.saveWeight=saveWeight; window.saveMeasure=saveMeasure; window.changePassword=changePassword; window.openDrawer=openDrawer; window.closeDrawer=closeDrawer; window.askStartWorkout=askStartWorkout; window.startWorkoutConfirmed=startWorkoutConfirmed; window.toggleTimer=toggleTimer; window.resetTimer=resetTimer; window.finishWorkout=finishWorkout; window.cancelWorkout=cancelWorkout; window.toggleSet=toggleSet; window.openWorkoutEditor=openWorkoutEditor; window.addCustomExerciseRow=addCustomExerciseRow; window.removeCustomExerciseRow=removeCustomExerciseRow; window.fillWorkoutExample=fillWorkoutExample; window.advanceSeriesFlow=advanceSeriesFlow; window.openImportWorkout=openImportWorkout; window.saveImportedWorkout=saveImportedWorkout; window.fillWorkoutTemplate=fillWorkoutTemplate; window.copyWorkoutTemplate=copyWorkoutTemplate; window.downloadWorkoutTemplate=downloadWorkoutTemplate; window.savePhysicalProfile=savePhysicalProfile; window.loadAdminProfiles=loadAdminProfiles; window.toggleUserAccess=toggleUserAccess; window.openGoalModal=openGoalModal; window.openScheduleModal=openScheduleModal; window.addSequenceWorkout=addSequenceWorkout; window.removeSequenceWorkout=removeSequenceWorkout; window.moveSequenceWorkout=moveSequenceWorkout; window.saveTrainingSchedule=saveTrainingSchedule; window.autoFillScheduleSequence=autoFillScheduleSequence; window.saveGoal=saveGoal; window.saveCompleteProfile=saveCompleteProfile; window.saveCustomWorkout=saveCustomWorkout; window.deleteWorkout=deleteWorkout; window.closeModal=closeModal;
+window.logout=()=>signOut(auth); window.switchTab=switchTab; window.doCheckin=doCheckin; window.saveMeal=saveMeal; window.deleteMeal=deleteMeal; window.setTodayMealDate=setTodayMealDate; window.renderMeals=renderMeals; window.saveWeight=saveWeight; window.saveMeasure=saveMeasure; window.changePassword=changePassword; window.openDrawer=openDrawer; window.closeDrawer=closeDrawer; window.askStartWorkout=askStartWorkout; window.startWorkoutConfirmed=startWorkoutConfirmed; window.toggleTimer=toggleTimer; window.resetTimer=resetTimer; window.finishWorkout=finishWorkout; window.cancelWorkout=cancelWorkout; window.toggleSet=toggleSet; window.openWorkoutEditor=openWorkoutEditor; window.addCustomExerciseRow=addCustomExerciseRow; window.removeCustomExerciseRow=removeCustomExerciseRow; window.fillWorkoutExample=fillWorkoutExample; window.advanceSeriesFlow=advanceSeriesFlow; window.openImportWorkout=openImportWorkout; window.saveImportedWorkout=saveImportedWorkout; window.fillWorkoutTemplate=fillWorkoutTemplate; window.copyWorkoutTemplate=copyWorkoutTemplate; window.downloadWorkoutTemplate=downloadWorkoutTemplate; window.savePhysicalProfile=savePhysicalProfile; window.loadAdminProfiles=loadAdminProfiles; window.toggleUserAccess=toggleUserAccess; window.openGoalModal=openGoalModal; window.openScheduleModal=openScheduleModal; window.toggleTrainingDay=toggleTrainingDay; window.addSequenceWorkout=addSequenceWorkout; window.removeSequenceWorkout=removeSequenceWorkout; window.moveSequenceWorkout=moveSequenceWorkout; window.saveTrainingSchedule=saveTrainingSchedule; window.autoFillScheduleSequence=autoFillScheduleSequence; window.saveGoal=saveGoal; window.saveCompleteProfile=saveCompleteProfile; window.saveCustomWorkout=saveCustomWorkout; window.deleteWorkout=deleteWorkout; window.closeModal=closeModal;
 
 onAuthStateChanged(auth,async(u)=>{user=u;if(!u){showAuth();return}if(!u.emailVerified && !isAdminEmail(u.email)){try{await sendEmailVerification(u)}catch(_e){} alert('Antes de acessar, confirme seu e-mail. Enviamos um link de verificação para sua caixa de entrada. Confira também o spam.');await signOut(auth);return}showApp();await loadAll();if(isUserBlocked()){alert('Seu acesso ao sistema está bloqueado. Entre em contato com o administrador.');await signOut(auth);return}if(u.emailVerified){try{await setDoc(doc(db,'users',u.uid,'profile','main'),{emailVerified:true,updatedAt:serverTimestamp()},{merge:true})}catch(_e){}}renderAll();checkProfileComplete();});
 function showAuthForm(mode){let isSignup=mode==='signup';document.getElementById('login-form').classList.toggle('hidden',isSignup);document.getElementById('signup-form').classList.toggle('hidden',!isSignup);document.getElementById('login-tab-btn').classList.toggle('primary',!isSignup);document.getElementById('signup-tab-btn').classList.toggle('primary',isSignup)}
@@ -788,7 +788,7 @@ function renderScheduleModal(){
   const dayBox=document.getElementById('schedule-days');
   if(dayBox){
     const selected=(data.trainingDays||[]).map(Number);
-    dayBox.innerHTML=WEEK_DAYS.map(([v,l])=>`<label class="day-toggle ${selected.includes(Number(v))?'active':''}" onclick="this.classList.toggle('active')"><input type="checkbox" value="${v}" ${selected.includes(Number(v))?'checked':''}>${l}</label>`).join('');
+    dayBox.innerHTML=WEEK_DAYS.map(([v,l])=>`<button type="button" class="day-toggle ${selected.includes(Number(v))?'active':''}" data-day="${v}" onclick="toggleTrainingDay(${v})">${l}</button>`).join('');
   }
   const sel=document.getElementById('schedule-workout-select');
   if(sel){
@@ -796,6 +796,17 @@ function renderScheduleModal(){
     sel.innerHTML=workouts.map(w=>`<option value="${w.id}">${w.name}</option>`).join('');
   }
   renderSequenceList();
+}
+function toggleTrainingDay(day){
+  day=Number(day);
+  if(!Array.isArray(data.trainingDays))data.trainingDays=[];
+  const i=data.trainingDays.map(Number).indexOf(day);
+  if(i>=0){data.trainingDays.splice(i,1);}else{data.trainingDays.push(day);} 
+  data.trainingDays=[...new Set(data.trainingDays.map(Number))].sort((a,b)=>a-b);
+  const btn=document.querySelector(`#schedule-days .day-toggle[data-day="${day}"]`);
+  if(btn)btn.classList.toggle('active',data.trainingDays.includes(day));
+  const msg=document.getElementById('schedule-msg');
+  if(msg){msg.textContent='';msg.className='msg';}
 }
 function sequenceWorkouts(){
   const workouts=allWorkouts().filter(w=>(w.exercises||[]).length);
@@ -834,10 +845,10 @@ function autoFillScheduleSequence(){
 }
 async function saveTrainingSchedule(){
   const msg=document.getElementById('schedule-msg');
-  const checked=[...document.querySelectorAll('#schedule-days input[type="checkbox"]')].filter(x=>x.closest('.day-toggle')?.classList.contains('active')).map(x=>Number(x.value));
+  const checked=[...document.querySelectorAll('#schedule-days .day-toggle.active')].map(x=>Number(x.dataset.day)).filter(x=>!Number.isNaN(x));
   if(!checked.length){if(msg){msg.className='auth-error';msg.textContent='Escolha pelo menos um dia de treino.'}return;}
   if(!Array.isArray(data.workoutSequence)||!data.workoutSequence.length){autoFillScheduleSequence();}
-  data.trainingDays=checked.sort((a,b)=>a-b);
+  data.trainingDays=[...new Set(checked)].sort((a,b)=>a-b);
   await setDoc(ref(['profile','main']),{trainingDays:data.trainingDays,workoutSequence:data.workoutSequence,updatedAt:serverTimestamp()},{merge:true});
   if(msg){msg.className='oktxt';msg.textContent='Agenda salva. O calendário foi atualizado.'}
   buildCalendar();
