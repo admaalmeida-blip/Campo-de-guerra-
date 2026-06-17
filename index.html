@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Plano de Treino v8.7.7</title>
+<title>Plano de Treino v10.1</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
 <style>
   :root{
@@ -178,7 +178,7 @@
 
   <section id="tab-configuracoes" class="tab-content"><div class="section-title">CONFIGURAÇÕES</div><div class="grid2"><div class="card"><h2>🔐 <span>REDEFINIR SENHA</span></h2><div class="field"><label>E-mail</label><input id="reset-email" type="email"></div><div class="field"><label>Senha atual</label><div class="password-wrap"><input id="reset-current" type="password" autocomplete="current-password"><button class="toggle-pass" type="button" onclick="togglePassword('reset-current', this)" aria-label="Mostrar ou ocultar senha atual">👁️</button></div></div><div class="field"><label>Nova senha</label><div class="password-wrap"><input id="reset-new" type="password" autocomplete="new-password"><button class="toggle-pass" type="button" onclick="togglePassword('reset-new', this)" aria-label="Mostrar ou ocultar nova senha">👁️</button></div></div><button class="btn primary" onclick="changePassword()">Salvar nova senha</button><div id="reset-msg"></div></div><div class="card"><h2>🛡️ <span>RECUPERAÇÃO ALTERNATIVA</span></h2><p class="sub">Use para deixar dados de verificação salvos. A recuperação principal continua sendo por e-mail do Firebase; estas respostas ficam como apoio de segurança e são salvas protegidas.</p><div class="field"><label>E-mail alternativo</label><input id="recovery-email" type="email" placeholder="exemplo@gmail.com"></div><div class="field"><label>Nome completo da mãe</label><div class="password-wrap"><input id="security-mother" type="password" autocomplete="off" placeholder="Digite para salvar/atualizar"><button class="toggle-pass" type="button" onclick="togglePassword('security-mother', this)">👁️</button></div></div><div class="field"><label>Data de nascimento</label><input id="security-birth" type="date"></div><button class="btn primary" onclick="saveRecoveryOptions()">Salvar recuperação alternativa</button><p class="sub" id="security-status" style="margin-top:10px">Status: não configurado</p><div id="recovery-msg"></div></div><div class="card"><h2>🧍 <span>PERFIL FÍSICO</span></h2><p class="sub">A altura fica salva no perfil. O peso atual vem automaticamente do último peso salvo na aba Peso.</p><div class="field"><label>Altura (m)</label><input id="settings-height" type="number" step="0.01" placeholder="1.68"></div><div class="field"><label>Peso atual</label><input id="settings-current-weight" type="text" readonly></div><button class="btn primary" onclick="savePhysicalProfile()">Salvar altura</button><div id="physical-msg"></div></div><div class="card"><h2>🎯 <span>OBJETIVO</span></h2><p class="sub">Você pode trocar o objetivo sem apagar histórico de treinos, peso, refeições ou medidas anteriores.</p><button class="btn primary" onclick="openGoalModal()">Alterar objetivo</button><p class="sub" style="margin-top:10px">Os treinos prontos serão atualizados conforme o novo objetivo. Seus treinos personalizados continuam salvos.</p></div><div class="card"><h2>🎨 <span>APARÊNCIA</span></h2><div class="field"><label>Modo</label><select id="appearance-mode"><option value="dark">Tema escuro</option><option value="light">Tema claro</option></select></div><div class="field"><label>Jogo de cores</label><select id="color-theme"><option value="original">Original — Azul e preto</option><option value="green">Verde e preto</option><option value="pink">Rosa e preto</option><option value="dark">Escuro neutro</option><option value="light">Claro azul</option></select></div><button class="btn primary" onclick="saveAppearance()">Salvar aparência</button><div id="appearance-msg"></div></div><div class="card"><h2>⚙️ <span>APP</span></h2><p class="sub">Dados sincronizados no Firebase por usuário.</p><button class="btn danger" onclick="logout()">Sair da conta</button></div></div></section>
 
-  <section id="tab-admin" class="tab-content"><div class="section-title">PAINEL DO ADMINISTRADOR</div><div class="card"><h2>👥 <span>PERFIS DO SISTEMA</span></h2><p class="sub">Veja os usuários cadastrados, o objetivo escolhido e bloqueie/ative o acesso ao app. O bloqueio é aplicado dentro do sistema.</p><div id="admin-diagnostic" class="sub" style="border:1px solid var(--borda);border-radius:12px;padding:10px;margin:10px 0;background:#080B0F"></div><button class="btn primary" onclick="loadAdminProfiles()">Atualizar lista</button><div id="admin-msg" class="sub" style="margin-top:10px"></div><div id="admin-users" style="margin-top:14px"></div></div><div class="card"><h2>⚠️ <span>IMPORTANTE</span></h2><p class="sub">Para o painel conseguir listar todos os perfis, suas regras do Firestore precisam permitir leitura/escrita administrativa para o e-mail adm_aalmeida@outlook.com. Se a lista der erro de permissão, ajuste as regras do Firebase.</p></div></section>
+  <section id="tab-admin" class="tab-content"><div class="section-title">PAINEL DO ADMINISTRADOR</div><div class="card"><h2>👥 <span>PERFIS DO SISTEMA</span></h2><p class="sub">Veja os usuários cadastrados, o objetivo escolhido e bloqueie/ative o acesso ao app. O bloqueio é aplicado dentro do sistema.</p><div id="admin-diagnostic" class="sub" style="border:1px solid var(--borda);border-radius:12px;padding:10px;margin:10px 0;background:#080B0F"></div><div class="workout-actions" style="margin:10px 0 0"><button class="btn primary" onclick="loadAdminProfiles()">Atualizar lista</button><button class="btn" onclick="exportFullBackup()">💾 Exportar tudo</button><label class="btn" style="cursor:pointer">📥 Importar backup<input id="backup-file-input" type="file" accept="application/json,.json" style="display:none" onchange="importFullBackup(event)"></label></div><div id="admin-msg" class="sub" style="margin-top:10px"></div><div id="admin-users" style="margin-top:14px"></div></div><div class="card"><h2>⚠️ <span>IMPORTANTE</span></h2><p class="sub">Para o painel conseguir listar todos os perfis, suas regras do Firestore precisam permitir leitura/escrita administrativa para o e-mail adm_aalmeida@outlook.com. Se a lista der erro de permissão, ajuste as regras do Firebase.</p></div></section>
 </div>
 
 <div class="overlay" id="overlay" onclick="closeDrawer()"></div>
@@ -375,16 +375,22 @@ window.togglePassword=(inputId,btn)=>{const input=document.getElementById(inputI
 window.showAuthForm=showAuthForm;
 window.login=async()=>{try{document.getElementById('login-error').textContent='';await signInWithEmailAndPassword(auth,val('login-email'),val('login-password'));}catch(e){document.getElementById('login-error').textContent='Erro ao entrar: '+friendly(e.code)}};
 window.forgotPassword=async()=>{let box=document.getElementById('login-error');try{box.className='auth-error oktxt';box.textContent='';let email=val('login-email');if(!email){throw {code:'custom/email'}}await sendPasswordResetEmail(auth,email);box.textContent='Enviamos um link de recuperação para seu e-mail. Confira também a caixa de spam.';}catch(e){box.className='auth-error';box.textContent=e.code==='custom/email'?'Digite seu e-mail primeiro.':'Erro ao enviar recuperação: '+friendly(e.code)}};
-window.signup=async()=>{try{const err=document.getElementById('signup-error');err.className='auth-error';err.textContent='';let email=val('signup-email'), password=val('signup-password'), name=val('signup-name'), sex=val('signup-sex'), goal=val('signup-goal')||'futebol', level=val('signup-level')||'iniciante', height=Number(val('signup-height').replace(',','.'))||1.68, weight=Number(val('signup-weight').replace(',','.'))||88;if(!email||!password||!name){throw {code:'custom/missing'}}let cred=await createUserWithEmailAndPassword(auth,email,password);let uid=cred.user.uid;await setDoc(doc(db,'users',uid,'profile','main'),{name,email,sex,goal,level,height,initialWeight:weight,start:today(),bestStreak:0,goalNote:'',appearanceMode:'dark',colorTheme:'original',emailVerified:false,blocked:false,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',uid,'weights',today()),{value:weight,date:today(),createdAt:serverTimestamp()},{merge:true});await sendEmailVerification(cred.user);await signOut(auth);showAuthForm('login');document.getElementById('login-email').value=email;document.getElementById('login-password').value='';const loginMsg=document.getElementById('login-error');loginMsg.className='auth-error oktxt';loginMsg.textContent='Usuário criado. Enviamos um e-mail de verificação. A pessoa só conseguirá entrar depois de confirmar o e-mail.';}catch(e){document.getElementById('signup-error').textContent='Erro ao criar usuário: '+friendly(e.code)} }; 
-window.logout=()=>signOut(auth); window.switchTab=switchTab; window.doCheckin=doCheckin; window.saveMeal=saveMeal; window.deleteMeal=deleteMeal; window.setTodayMealDate=setTodayMealDate; window.renderMeals=renderMeals; window.saveWeight=saveWeight; window.saveMeasure=saveMeasure; window.changePassword=changePassword; window.openDrawer=openDrawer; window.closeDrawer=closeDrawer; window.askStartWorkout=askStartWorkout; window.startWorkoutConfirmed=startWorkoutConfirmed; window.toggleTimer=toggleTimer; window.resetTimer=resetTimer; window.finishWorkout=finishWorkout; window.cancelWorkout=cancelWorkout; window.toggleSet=toggleSet; window.openWorkoutEditor=openWorkoutEditor; window.addCustomExerciseRow=addCustomExerciseRow; window.removeCustomExerciseRow=removeCustomExerciseRow; window.fillWorkoutExample=fillWorkoutExample; window.advanceSeriesFlow=advanceSeriesFlow; window.openImportWorkout=openImportWorkout; window.saveImportedWorkout=saveImportedWorkout; window.fillWorkoutTemplate=fillWorkoutTemplate; window.copyWorkoutTemplate=copyWorkoutTemplate; window.downloadWorkoutTemplate=downloadWorkoutTemplate; window.savePhysicalProfile=savePhysicalProfile; window.loadAdminProfiles=loadAdminProfiles; window.toggleUserAccess=toggleUserAccess; window.openGoalModal=openGoalModal; window.openScheduleModal=openScheduleModal; window.toggleTrainingDay=toggleTrainingDay; window.addSequenceWorkout=addSequenceWorkout; window.removeSequenceWorkout=removeSequenceWorkout; window.moveSequenceWorkout=moveSequenceWorkout; window.saveTrainingSchedule=saveTrainingSchedule; window.autoFillScheduleSequence=autoFillScheduleSequence; window.saveGoal=saveGoal; window.saveCompleteProfile=saveCompleteProfile; window.saveCustomWorkout=saveCustomWorkout; window.deleteWorkout=deleteWorkout; window.closeModal=closeModal;
+window.signup=async()=>{try{const err=document.getElementById('signup-error');err.className='auth-error';err.textContent='';let email=val('signup-email'), password=val('signup-password'), name=val('signup-name'), sex=val('signup-sex'), goal=val('signup-goal')||'futebol', level=val('signup-level')||'iniciante', height=Number(val('signup-height').replace(',','.'))||1.68, weight=Number(val('signup-weight').replace(',','.'))||88;if(!email||!password||!name){throw {code:'custom/missing'}}let cred=await createUserWithEmailAndPassword(auth,email,password);let uid=cred.user.uid;await setDoc(doc(db,'users',uid),{uid,email,name,goal,level,blocked:false,emailVerified:false,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',uid,'profile','main'),{name,email,sex,goal,level,height,initialWeight:weight,start:today(),bestStreak:0,goalNote:'',appearanceMode:'dark',colorTheme:'original',emailVerified:false,blocked:false,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',uid,'weights',today()),{value:weight,date:today(),createdAt:serverTimestamp()},{merge:true});await sendEmailVerification(cred.user);await signOut(auth);showAuthForm('login');document.getElementById('login-email').value=email;document.getElementById('login-password').value='';const loginMsg=document.getElementById('login-error');loginMsg.className='auth-error oktxt';loginMsg.textContent='Usuário criado. Enviamos um e-mail de verificação. A pessoa só conseguirá entrar depois de confirmar o e-mail.';}catch(e){document.getElementById('signup-error').textContent='Erro ao criar usuário: '+friendly(e.code)} }; 
+window.logout=()=>signOut(auth); window.switchTab=switchTab; window.doCheckin=doCheckin; window.saveMeal=saveMeal; window.deleteMeal=deleteMeal; window.setTodayMealDate=setTodayMealDate; window.renderMeals=renderMeals; window.saveWeight=saveWeight; window.saveMeasure=saveMeasure; window.changePassword=changePassword; window.openDrawer=openDrawer; window.closeDrawer=closeDrawer; window.askStartWorkout=askStartWorkout; window.startWorkoutConfirmed=startWorkoutConfirmed; window.toggleTimer=toggleTimer; window.resetTimer=resetTimer; window.finishWorkout=finishWorkout; window.cancelWorkout=cancelWorkout; window.toggleSet=toggleSet; window.openWorkoutEditor=openWorkoutEditor; window.addCustomExerciseRow=addCustomExerciseRow; window.removeCustomExerciseRow=removeCustomExerciseRow; window.fillWorkoutExample=fillWorkoutExample; window.advanceSeriesFlow=advanceSeriesFlow; window.openImportWorkout=openImportWorkout; window.saveImportedWorkout=saveImportedWorkout; window.fillWorkoutTemplate=fillWorkoutTemplate; window.copyWorkoutTemplate=copyWorkoutTemplate; window.downloadWorkoutTemplate=downloadWorkoutTemplate; window.savePhysicalProfile=savePhysicalProfile; window.loadAdminProfiles=loadAdminProfiles; window.exportFullBackup=exportFullBackup; window.importFullBackup=importFullBackup; window.toggleUserAccess=toggleUserAccess; window.openGoalModal=openGoalModal; window.openScheduleModal=openScheduleModal; window.toggleTrainingDay=toggleTrainingDay; window.addSequenceWorkout=addSequenceWorkout; window.removeSequenceWorkout=removeSequenceWorkout; window.moveSequenceWorkout=moveSequenceWorkout; window.saveTrainingSchedule=saveTrainingSchedule; window.autoFillScheduleSequence=autoFillScheduleSequence; window.saveGoal=saveGoal; window.saveCompleteProfile=saveCompleteProfile; window.saveCustomWorkout=saveCustomWorkout; window.deleteWorkout=deleteWorkout; window.closeModal=closeModal;
 
-onAuthStateChanged(auth,async(u)=>{user=u;if(!u){showAuth();return}if(!u.emailVerified && !isAdminEmail(u.email)){try{await sendEmailVerification(u)}catch(_e){} alert('Antes de acessar, confirme seu e-mail. Enviamos um link de verificação para sua caixa de entrada. Confira também o spam.');await signOut(auth);return}showApp();await loadAll();if(isUserBlocked()){alert('Seu acesso ao sistema está bloqueado. Entre em contato com o administrador.');await signOut(auth);return}if(u.emailVerified){try{await setDoc(doc(db,'users',u.uid,'profile','main'),{emailVerified:true,updatedAt:serverTimestamp()},{merge:true})}catch(_e){}}renderAll();checkProfileComplete();});
+onAuthStateChanged(auth,async(u)=>{user=u;if(!u){showAuth();return}if(!u.emailVerified && !isAdminEmail(u.email)){try{await sendEmailVerification(u)}catch(_e){} alert('Antes de acessar, confirme seu e-mail. Enviamos um link de verificação para sua caixa de entrada. Confira também o spam.');await signOut(auth);return}showApp();await loadAll();if(isUserBlocked()){alert('Seu acesso ao sistema está bloqueado. Entre em contato com o administrador.');await signOut(auth);return}if(u.emailVerified){try{await setDoc(doc(db,'users',u.uid),{email:u.email||'',emailVerified:true,updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',u.uid,'profile','main'),{emailVerified:true,updatedAt:serverTimestamp()},{merge:true})}catch(_e){}}renderAll();checkProfileComplete();});
 function showAuthForm(mode){let isSignup=mode==='signup';document.getElementById('login-form').classList.toggle('hidden',isSignup);document.getElementById('signup-form').classList.toggle('hidden',!isSignup);document.getElementById('login-tab-btn').classList.toggle('primary',!isSignup);document.getElementById('signup-tab-btn').classList.toggle('primary',isSignup)}
 function showAuth(){document.getElementById('auth').classList.remove('hidden');document.getElementById('app').classList.add('hidden');showAuthForm('login')} function showApp(){document.getElementById('auth').classList.add('hidden');document.getElementById('app').classList.remove('hidden');document.getElementById('user-pill').textContent='Logado como '+user.email;document.getElementById('reset-email').value=user.email||''}
 function ref(path){return doc(db,'users',user.uid,...path)}
-async function loadAll(){let prof=await getDoc(ref(['profile','main']));if(!prof.exists()){data.start=today();await setDoc(ref(['profile','main']),{start:data.start,bestStreak:0,createdAt:serverTimestamp()},{merge:true});}else{Object.assign(data,prof.data());data.height=data.height?Number(data.height):null;data.initialWeight=data.initialWeight?Number(data.initialWeight):null;data.level=data.level||'iniciante';data.appearanceMode=data.appearanceMode||'dark';data.colorTheme=data.colorTheme||'original';data.trainingDays=Array.isArray(data.trainingDays)&&data.trainingDays.length?data.trainingDays:[1,2,3,4,5];data.workoutSequence=Array.isArray(data.workoutSequence)?data.workoutSequence:[]}data.checkins=await loadCol('checkins');data.meals=await loadCol('meals');data.weights=await loadCol('weights');data.measures=await loadCol('measures');data.sessions=await loadCol('sessions');data.customWorkouts=await loadCol('customWorkouts');await migrateCustomWorkoutRests()}
+async function syncUserRootDoc(){
+  if(!user)return;
+  try{
+    await setDoc(doc(db,'users',user.uid),{uid:user.uid,email:user.email||data.email||'',name:data.name||'',goal:data.goal||'personalizado',level:data.level||'iniciante',blocked:!!data.blocked,emailVerified:!!(user.emailVerified||data.emailVerified),updatedAt:serverTimestamp()},{merge:true});
+  }catch(e){console.warn('Não foi possível sincronizar documento raiz do usuário:',e)}
+}
+async function loadAll(){let prof=await getDoc(ref(['profile','main']));if(!prof.exists()){data.start=today();await setDoc(ref(['profile','main']),{start:data.start,bestStreak:0,createdAt:serverTimestamp()},{merge:true});}else{Object.assign(data,prof.data());data.height=data.height?Number(data.height):null;data.initialWeight=data.initialWeight?Number(data.initialWeight):null;data.level=data.level||'iniciante';data.appearanceMode=data.appearanceMode||'dark';data.colorTheme=data.colorTheme||'original';data.trainingDays=Array.isArray(data.trainingDays)&&data.trainingDays.length?data.trainingDays:[1,2,3,4,5];data.workoutSequence=Array.isArray(data.workoutSequence)?data.workoutSequence:[]}data.checkins=await loadCol('checkins');data.meals=await loadCol('meals');data.weights=await loadCol('weights');data.measures=await loadCol('measures');data.sessions=await loadCol('sessions');data.customWorkouts=await loadCol('customWorkouts');await migrateCustomWorkoutRests();await syncUserRootDoc()}
 async function loadCol(name){let snap=await getDocs(collection(db,'users',user.uid,name));return snap.docs.map(d=>({id:d.id,...d.data()}))}
-async function saveProfile(){let payload={start:data.start||today(),bestStreak:data.bestStreak||0,goalNote:data.goalNote||'',name:data.name||'',sex:data.sex||'',level:data.level||'iniciante',appearanceMode:data.appearanceMode||'dark',colorTheme:data.colorTheme||'original',recoveryEmail:data.recoveryEmail||'',securityQuestionsConfigured:!!data.securityQuestionsConfigured,trainingDays:Array.isArray(data.trainingDays)?data.trainingDays:[1,2,3,4,5],workoutSequence:Array.isArray(data.workoutSequence)?data.workoutSequence:[],updatedAt:serverTimestamp()};if(data.goal)payload.goal=data.goal;if(data.height)payload.height=Number(data.height);if(data.initialWeight)payload.initialWeight=Number(data.initialWeight);if(data.securityMotherHash)payload.securityMotherHash=data.securityMotherHash;if(data.securityBirthHash)payload.securityBirthHash=data.securityBirthHash;await setDoc(ref(['profile','main']),payload,{merge:true})}
+async function saveProfile(){let payload={start:data.start||today(),bestStreak:data.bestStreak||0,goalNote:data.goalNote||'',name:data.name||'',sex:data.sex||'',level:data.level||'iniciante',appearanceMode:data.appearanceMode||'dark',colorTheme:data.colorTheme||'original',recoveryEmail:data.recoveryEmail||'',securityQuestionsConfigured:!!data.securityQuestionsConfigured,trainingDays:Array.isArray(data.trainingDays)?data.trainingDays:[1,2,3,4,5],workoutSequence:Array.isArray(data.workoutSequence)?data.workoutSequence:[],updatedAt:serverTimestamp()};if(data.goal)payload.goal=data.goal;if(data.height)payload.height=Number(data.height);if(data.initialWeight)payload.initialWeight=Number(data.initialWeight);if(data.securityMotherHash)payload.securityMotherHash=data.securityMotherHash;if(data.securityBirthHash)payload.securityBirthHash=data.securityBirthHash;await setDoc(ref(['profile','main']),payload,{merge:true});await syncUserRootDoc()}
 function val(id){return document.getElementById(id).value.trim()} function num(id){return Number(document.getElementById(id).value)||0} function today(){let d=new Date();return toKey(d)} function toKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')} function brDate(s){return (s||'').split('-').reverse().join('/')} function friendly(c){return ({'auth/invalid-credential':'e-mail ou senha inválidos','auth/wrong-password':'senha atual incorreta','auth/weak-password':'senha muito fraca','auth/email-already-in-use':'esse e-mail já está cadastrado','auth/invalid-email':'e-mail inválido','auth/too-many-requests':'muitas tentativas; aguarde alguns minutos','auth/network-request-failed':'falha de conexão','custom/missing':'preencha nome, e-mail e senha','custom/security-incomplete':'preencha as duas perguntas de segurança'})[c]||c}
 
 function goalKey(){
@@ -534,7 +540,7 @@ function renderWorkouts(){
     box.innerHTML=`<div class="card fullrow"><h2>⚠️ <span>NENHUM TREINO CARREGADO</span></h2><p class="sub">Seu objetivo atual é <strong>${escapeHtml(goalKey())}</strong>. Clique em Definir objetivo para carregar uma biblioteca de treinos prontos, ou crie/importe um treino personalizado.</p><button class="btn primary" onclick="openGoalModal()">🎯 Definir objetivo</button></div>`;
     return;
   }
-  box.innerHTML=items.map(w=>{let isCustom=String(w.id||'').startsWith('custom_');return `<div class="workout-card"><h3>${escapeHtml(w.name)}</h3><strong>${escapeHtml(w.type||'')}</strong><p class="sub">${escapeHtml(w.desc||'Treino personalizado.')}</p><div class="chips"><span class="chip">${(w.exercises||[]).length} exercícios</span><span class="chip">${escapeHtml(w.met||5)} MET estimado</span><span class="chip">nível ${escapeHtml(data.level||'iniciante')}</span>${isCustom?'<span class="chip">personalizado</span>':'<span class="chip">treino pronto</span>'}</div><div class="workout-actions"><button class="btn primary" onclick="askStartWorkout('${w.id}')">Iniciar treino</button><button class="btn" onclick="openWorkoutEditor('${w.id}')">Editar treino</button><button class="btn danger" onclick="deleteWorkout('${w.id}')">Excluir treino</button></div></div>`}).join('')
+  box.innerHTML=items.map(w=>{let isCustom=String(w.id||'').startsWith('custom_');return `<div class="workout-card"><h3>${escapeHtml(w.name)}</h3><strong>${escapeHtml(w.type||'')}</strong><p class="sub">${escapeHtml(w.desc||'Treino personalizado.')}</p><div class="chips"><span class="chip">${(w.exercises||[]).length} exercícios</span><span class="chip">${escapeHtml(w.met||5)} MET estimado</span><span class="chip">nível ${data.level||'iniciante'}</span>${isCustom?'<span class="chip">personalizado</span>':'<span class="chip">treino pronto</span>'}</div><div class="workout-actions"><button class="btn primary" onclick="askStartWorkout('${w.id}')">Iniciar treino</button><button class="btn" onclick="openWorkoutEditor('${w.id}')">Editar treino</button><button class="btn danger" onclick="deleteWorkout('${w.id}')">Excluir treino</button></div></div>`}).join('')
 }
 async function deleteWorkout(id){let w=allWorkouts().find(x=>x.id===id);if(!w)return;if(!String(id).startsWith('custom_')){alert('Esse é um treino pronto do app. Por segurança ele não será excluído. Você pode criar e excluir seus treinos personalizados.');return}if(!confirm(`Excluir o treino "${w.name}"?`))return;await deleteDoc(doc(db,'users',user.uid,'customWorkouts',id));data.customWorkouts=data.customWorkouts.filter(x=>x.id!==id);renderWorkouts()}
 function askStartWorkout(id){activeWorkout=allWorkouts().find(w=>w.id===id);document.getElementById('confirm-title').textContent=activeWorkout.name;document.getElementById('confirm-text').textContent='Deseja iniciar treino?';openModal('confirm-modal')}
@@ -552,7 +558,7 @@ function startWorkoutConfirmed(){
     for(let j=0;j<totalSets;j++){sessionFlow.flat.push({exerciseIndex:i,setIndex:j,exercise:e});}
     let muscle=e[4]?`<br><strong>Músculo alvo:</strong> ${e[4]}`:'';
     let rest=e[5]?`<br><strong>Descanso:</strong> ${e[5]}`:'<br><strong>Descanso:</strong> 60s';
-    return `<div class="exercise" data-index="${i}"><div class="exercise-head"><h3>${i+1}. ${escapeHtml(e[0])}</h3><span class="exercise-status">Pendente</span></div><p class="sub"><strong>Séries:</strong> ${e[1]} · <strong>Tempo/Reps:</strong> ${e[2]}${muscle}${rest}<br><strong>Dica:</strong> ${escapeHtml(e[3]||'Execute com controle.')}</p><div class="sets">${Array.from({length:totalSets},(_,j)=>`<button class="set-dot" data-exercise="${i}" data-set="${j}" type="button">Série ${j+1}</button>`).join('')}</div></div>`
+    return `<div class="exercise" data-index="${i}"><div class="exercise-head"><h3>${i+1}. ${e[0]}</h3><span class="exercise-status">Pendente</span></div><p class="sub"><strong>Séries:</strong> ${e[1]} · <strong>Tempo/Reps:</strong> ${e[2]}${muscle}${rest}<br><strong>Dica:</strong> ${escapeHtml(e[3]||'Execute com controle.')}</p><div class="sets">${Array.from({length:totalSets},(_,j)=>`<button class="set-dot" data-exercise="${i}" data-set="${j}" type="button">Série ${j+1}</button>`).join('')}</div></div>`
   }).join('');
   document.getElementById('session-title').textContent=activeWorkout.name;
   document.getElementById('session-exercises').innerHTML=ex;
@@ -905,7 +911,7 @@ function isAdminEmail(email){return String(email||'').toLowerCase()==='adm_aalme
 function isAdmin(){const email=(user&&user.email?user.email.toLowerCase():'');return isAdminEmail(email)||data.role==='admin'}
 function isUserBlocked(){return !!data.blocked && !isAdmin()}
 function updateAdminVisibility(){let btn=document.getElementById('admin-menu-btn');if(btn)btn.classList.toggle('hidden',!isAdmin());renderAdminDiagnostic()}
-function renderAdminDiagnostic(extra=''){const el=document.getElementById('admin-diagnostic');if(!el)return;const email=(user&&user.email)||'não logado';el.innerHTML=`<strong>Diagnóstico admin</strong><br>E-mail logado: <strong>${escapeHtml(email)}</strong><br>Reconhecido como admin: <strong>${isAdmin()?'✅ SIM':'❌ NÃO'}</strong><br>Caminho usado: <code>users/{uid}/profile/main</code> via <code>collectionGroup('profile')</code>${extra?'<br>'+extra:''}`;}
+function renderAdminDiagnostic(extra=''){const el=document.getElementById('admin-diagnostic');if(!el)return;const email=(user&&user.email)||'não logado';el.innerHTML=`<strong>Diagnóstico admin</strong><br>E-mail logado: <strong>${escapeHtml(email)}</strong><br>Reconhecido como admin: <strong>${isAdmin()?'✅ SIM':'❌ NÃO'}</strong><br>Caminho usado: <code>users</code> + <code>collectionGroup('profile')</code> para compatibilidade com perfis antigos${extra?'<br>'+extra:''}`;}
 function getGoalLabel(g){let key=(g||'personalizado').toString();return (goalProfiles[key]?.title||key||'Não definido')}
 async function loadAdminProfiles(){
   const box=document.getElementById('admin-users'), msg=document.getElementById('admin-msg');
@@ -915,18 +921,59 @@ async function loadAdminProfiles(){
   msg.textContent='Carregando perfis...';
   box.innerHTML='';
   try{
-    const snap=await getDocs(collectionGroup(db,'profile'));
-    let rows=[];
-    snap.forEach(d=>{
-      if(d.id!=='main')return;
-      const parent=d.ref.parent.parent;
-      if(!parent)return;
-      const uid=parent.id;
-      const p=d.data()||{};
-      rows.push({uid,...p,email:p.email||'',name:p.name||'Sem nome',goal:p.goal||'personalizado',level:p.level||'',blocked:!!p.blocked});
+    const profileMap=new Map();
+
+    // Formato novo: users/{uid}
+    const usersSnap=await getDocs(collection(db,'users'));
+    usersSnap.docs.forEach(userDoc=>{
+      const root=userDoc.data()||{};
+      if(root.name || root.email || root.goal || root.uid){
+        profileMap.set(userDoc.id,{uid:userDoc.id,...root,_source:'users/{uid}'});
+      }
     });
+
+    // Formato antigo: users/{uid}/profile/main
+    const profSnap=await getDocs(collectionGroup(db,'profile'));
+    for(const profDoc of profSnap.docs){
+      if(profDoc.id!=='main') continue;
+      const parentUser=profDoc.ref.parent.parent;
+      if(!parentUser) continue;
+      const uid=parentUser.id;
+      const p=profDoc.data()||{};
+      const existing=profileMap.get(uid)||{};
+      profileMap.set(uid,{...existing,...p,uid,_source:existing._source?existing._source+' + profile/main':'profile/main'});
+      // Migração leve: cria/atualiza resumo no documento raiz para futuras consultas.
+      try{
+        await setDoc(doc(db,'users',uid),{
+          uid,
+          email:p.email||existing.email||'',
+          name:p.name||existing.name||'Sem nome',
+          goal:p.goal||existing.goal||'personalizado',
+          level:p.level||existing.level||'',
+          blocked:!!(p.blocked||existing.blocked),
+          emailVerified:!!(p.emailVerified||existing.emailVerified),
+          updatedAt:serverTimestamp(),
+          migratedFromProfileMain:true
+        },{merge:true});
+      }catch(_e){}
+    }
+
+    let rows=[...profileMap.values()].map(r=>({
+      uid:r.uid,
+      email:r.email||'',
+      name:r.name||'Sem nome',
+      goal:r.goal||'personalizado',
+      level:r.level||'',
+      blocked:!!r.blocked,
+      _source:r._source||''
+    }));
+
     rows.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
-    if(!rows.length){msg.textContent='Nenhum perfil encontrado.';return}
+    if(!rows.length){
+      msg.textContent='Nenhum perfil encontrado.';
+      box.innerHTML='<p class="sub">Não encontrei documentos em <code>users/{uid}</code> nem em <code>users/{uid}/profile/main</code>.</p>';
+      return;
+    }
     msg.textContent=rows.length+' perfil(is) encontrado(s).';
     box.innerHTML=`<div class="admin-row admin-head"><div>Nome</div><div>E-mail</div><div>Objetivo</div><div>Status</div><div>Ação</div></div>`+rows.map(r=>{
       const current=user&&r.uid===user.uid;
@@ -934,17 +981,102 @@ async function loadAdminProfiles(){
       const btn=current?'<span class="chip">Você</span>':`<button class="btn small ${r.blocked?'primary':'danger'}" onclick="toggleUserAccess('${r.uid}',${r.blocked?'false':'true'})">${r.blocked?'Ativar acesso':'Bloquear acesso'}</button>`;
       return `<div class="admin-row"><div><strong>${escapeHtml(r.name)}</strong></div><div>${escapeHtml(r.email||'Sem e-mail')}</div><div>${escapeHtml(getGoalLabel(r.goal))}${r.level?`<br><span class="chip">${escapeHtml(r.level)}</span>`:''}</div><div>${status}</div><div>${btn}</div></div>`;
     }).join('');
-  }catch(e){const err=friendly(e.code||e.message);renderAdminDiagnostic('Erro Firestore: <strong>'+escapeHtml(err)+'</strong>');msg.textContent='Erro ao carregar perfis: '+err+'. Verifique as regras do Firestore para permitir acesso administrativo.';}
+  }catch(e){
+    const err=friendly(e.code||e.message);
+    renderAdminDiagnostic('Erro Firestore: <strong>'+escapeHtml(err)+'</strong>');
+    msg.textContent='Erro ao carregar perfis: '+err+'. Confira se as regras permitem admin ler users e collectionGroup(profile).';
+  }
 }
 async function toggleUserAccess(uid,blocked){
   if(!isAdmin())return alert('Acesso restrito.');
   const action=blocked?'bloquear':'ativar';
   if(!confirm(`Deseja ${action} o acesso deste usuário?`))return;
-  await setDoc(doc(db,'users',uid,'profile','main'),{blocked:!!blocked,blockedAt:blocked?serverTimestamp():null,blockedBy:user.email||'',updatedAt:serverTimestamp()},{merge:true});
+  await setDoc(doc(db,'users',uid),{blocked:!!blocked,blockedAt:blocked?serverTimestamp():null,blockedBy:user.email||'',updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',uid,'profile','main'),{blocked:!!blocked,blockedAt:blocked?serverTimestamp():null,blockedBy:user.email||'',updatedAt:serverTimestamp()},{merge:true});
   await loadAdminProfiles();
 }
 function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 
+
+async function getKnownUserIdsForAdmin(){
+  const ids=new Set();
+  const usersSnap=await getDocs(collection(db,'users'));
+  usersSnap.docs.forEach(d=>ids.add(d.id));
+  try{
+    const profSnap=await getDocs(collectionGroup(db,'profile'));
+    profSnap.docs.forEach(d=>{const u=d.ref.parent.parent;if(u)ids.add(u.id)});
+  }catch(e){console.warn('Não foi possível ler collectionGroup profile para backup:',e)}
+  return [...ids];
+}
+async function readUserSubcollection(uid,name){
+  try{
+    const snap=await getDocs(collection(db,'users',uid,name));
+    return snap.docs.map(d=>({id:d.id,data:d.data()}));
+  }catch(e){return []}
+}
+async function exportFullBackup(){
+  if(!isAdmin())return alert('Acesso restrito ao administrador.');
+  const msg=document.getElementById('admin-msg');
+  if(msg)msg.textContent='Gerando backup completo...';
+  try{
+    const ids=await getKnownUserIdsForAdmin();
+    const backup={
+      app:'Plano de Treino',
+      version:'10.1',
+      exportedAt:new Date().toISOString(),
+      exportedBy:user?.email||'',
+      users:[]
+    };
+    const subcols=['profile','weights','checkins','meals','measures','sessions','customWorkouts'];
+    for(const uid of ids){
+      const rootSnap=await getDoc(doc(db,'users',uid));
+      const entry={uid,root:rootSnap.exists()?rootSnap.data():null,collections:{}};
+      for(const c of subcols){entry.collections[c]=await readUserSubcollection(uid,c)}
+      backup.users.push(entry);
+    }
+    const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+    const a=document.createElement('a');
+    const stamp=new Date().toISOString().slice(0,19).replaceAll(':','-');
+    a.href=URL.createObjectURL(blob);
+    a.download=`backup_plano_treino_v10_1_${stamp}.json`;
+    document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(a.href);
+    if(msg)msg.textContent='Backup exportado com '+backup.users.length+' usuário(s). Guarde o arquivo em local seguro.';
+  }catch(e){
+    if(msg)msg.textContent='Erro ao exportar backup: '+friendly(e.code||e.message);
+    alert('Erro ao exportar backup: '+(e.message||e.code));
+  }
+}
+async function importFullBackup(event){
+  if(!isAdmin())return alert('Acesso restrito ao administrador.');
+  const file=event?.target?.files?.[0];
+  if(!file)return;
+  const msg=document.getElementById('admin-msg');
+  try{
+    const text=await file.text();
+    const backup=JSON.parse(text);
+    if(!backup || !Array.isArray(backup.users))throw new Error('Arquivo de backup inválido.');
+    if(!confirm(`Importar backup com ${backup.users.length} usuário(s)? Isso vai mesclar/sobrescrever documentos existentes, sem apagar documentos extras.`))return;
+    if(msg)msg.textContent='Importando backup...';
+    for(const u of backup.users){
+      if(!u.uid)continue;
+      if(u.root)await setDoc(doc(db,'users',u.uid),u.root,{merge:true});
+      const cols=u.collections||{};
+      for(const [colName,docs] of Object.entries(cols)){
+        if(!Array.isArray(docs))continue;
+        for(const item of docs){
+          if(!item || !item.id || !item.data)continue;
+          await setDoc(doc(db,'users',u.uid,colName,item.id),item.data,{merge:true});
+        }
+      }
+    }
+    if(msg)msg.textContent='Backup importado com sucesso.';
+    await loadAdminProfiles();
+  }catch(e){
+    if(msg)msg.textContent='Erro ao importar backup: '+(e.message||friendly(e.code));
+    alert('Erro ao importar backup: '+(e.message||e.code));
+  }finally{
+    if(event?.target)event.target.value='';
+  }
+}
 async function changePassword(){let msg=document.getElementById('reset-msg');try{msg.className='';msg.textContent='';let cred=EmailAuthProvider.credential(val('reset-email'),val('reset-current'));await reauthenticateWithCredential(user,cred);await updatePassword(user,val('reset-new'));msg.className='oktxt';msg.textContent='Senha alterada com sucesso.'}catch(e){msg.className='error';msg.textContent='Erro: '+friendly(e.code)}}
 function switchTab(id){currentTab=id;document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));let tab=document.getElementById('tab-'+id);if(tab)tab.classList.add('active');if(id==='admin')loadAdminProfiles();window.scrollTo({top:0,behavior:'smooth'}) }
 function openDrawer(){document.getElementById('drawer').classList.add('active');document.getElementById('overlay').classList.add('active')}function closeDrawer(){document.getElementById('drawer').classList.remove('active');document.getElementById('overlay').classList.remove('active')}function openModal(id){document.getElementById(id).classList.add('active')}function closeModal(id){document.getElementById(id).classList.remove('active')}
