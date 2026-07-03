@@ -4,6 +4,16 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Plano de Treino v10.1</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#034694">
+<meta name="background-color" content="#07090C">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Campo de Guerra">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Campo de Guerra">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
 <style>
   :root{
@@ -64,6 +74,15 @@
   .exercise-form-row h3{font-family:'Bebas Neue';font-size:22px;color:var(--azul2);margin-bottom:10px}
 
   @media(max-width:860px){.top{flex-direction:column}.top-actions{margin-top:0;justify-content:flex-start}.tabs{margin-top:2px}.stats,.grid4{grid-template-columns:repeat(2,1fr)}.grid2,.grid3,.body-box{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.wide{grid-column:auto}.summary{grid-template-columns:repeat(2,1fr)}.title{font-size:62px}.checkin-area .btn{width:100%;padding:14px}.wrap{padding:24px 14px 60px}}
+
+  /* Ajustes PWA / aplicativo mobile */
+  html{min-height:100%;background:var(--fundo);overscroll-behavior-y:none}
+  body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);-webkit-tap-highlight-color:transparent}
+  @media(display-mode:standalone){
+    body{user-select:none;-webkit-user-select:none}
+    input,textarea{user-select:text;-webkit-user-select:text}
+  }
+
 </style>
 </head>
 <body class="mode-dark color-original">
@@ -1153,5 +1172,16 @@ async function changePassword(){let msg=document.getElementById('reset-msg');try
 function switchTab(id){currentTab=id;document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));let tab=document.getElementById('tab-'+id);if(tab)tab.classList.add('active');if(id==='admin')loadAdminProfiles();window.scrollTo({top:0,behavior:'smooth'}) }
 function openDrawer(){document.getElementById('drawer').classList.add('active');document.getElementById('overlay').classList.add('active')}function closeDrawer(){document.getElementById('drawer').classList.remove('active');document.getElementById('overlay').classList.remove('active')}function openModal(id){document.getElementById(id).classList.add('active')}function closeModal(id){document.getElementById(id).classList.remove('active')}
 </script>
+
+<script>
+  // Registro do Service Worker para instalar como aplicativo (PWA)
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js")
+        .catch((error) => console.log("Service Worker não registrado:", error));
+    });
+  }
+</script>
+
 </body>
 </html>
