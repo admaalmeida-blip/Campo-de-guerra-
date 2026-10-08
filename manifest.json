@@ -1,7 +1,7 @@
 {
   "name": "FORJA — Construindo sua melhor versão",
   "short_name": "FORJA",
-  "description": "Treinos, disciplina e evolução em uma jornada construída dia após dia.",
+  "description": "Treino diário, disciplina e evolução pessoal na FORJA.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

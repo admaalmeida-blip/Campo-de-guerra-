@@ -126,6 +126,22 @@
   .forja-auth-name{font-family:'Bebas Neue';font-size:42px;line-height:.9;letter-spacing:1px}
   .forja-auth-tagline{margin-top:7px;color:var(--texto2);font-size:12px;letter-spacing:.7px}
   .appbar-avatar{background-image:url('icon-192.png');background-size:cover;background-position:center;color:transparent}
+  .appbar-copy{border:0;background:transparent;color:inherit;text-align:left;padding:4px 0;cursor:pointer}
+  .appbar-copy:focus-visible{outline:2px solid var(--azul2);outline-offset:5px;border-radius:8px}
+  .forge-status-card{display:flex;align-items:center;justify-content:space-between;gap:14px;border-color:rgba(240,106,22,.42);background:linear-gradient(135deg,rgba(240,106,22,.10),rgba(17,21,27,.92))}
+  .forge-status-copy{min-width:0}.forge-status-label{font-size:9px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--azul2)}.forge-status-title{font-family:'Bebas Neue';font-size:27px;line-height:1.05;margin-top:4px}.forge-status-note{font-size:12px;color:var(--texto2);margin-top:5px;line-height:1.45}
+  .forge-status-mark{width:48px;height:48px;flex:0 0 48px;border-radius:15px;display:grid;place-items:center;font-size:23px;background:rgba(240,106,22,.12);border:1px solid rgba(240,106,22,.32)}
+  .forge-status-card.done{border-color:rgba(0,208,132,.42);background:linear-gradient(135deg,rgba(0,208,132,.10),rgba(17,21,27,.92))}.forge-status-card.done .forge-status-label{color:var(--ok)}
+  .forge-status-card.failed{border-color:rgba(255,82,82,.42);background:linear-gradient(135deg,rgba(255,82,82,.09),rgba(17,21,27,.92))}.forge-status-card.failed .forge-status-label{color:var(--danger)}
+  .forge-status-card.excused{border-color:rgba(255,209,102,.42)}.forge-status-card.excused .forge-status-label{color:var(--warn)}
+  .daily-history{display:flex;flex-direction:column;gap:9px}.daily-history-row{display:grid;grid-template-columns:84px 1fr auto;gap:10px;align-items:center;border:1px solid var(--borda);border-radius:13px;padding:11px;background:#080B0F}.daily-history-row strong{font-size:12px}.daily-history-row span{font-size:12px;color:var(--texto2)}
+  .summon-modal{z-index:120;background:radial-gradient(circle at 50% 12%,rgba(240,106,22,.22),rgba(0,0,0,.86) 48%)}
+  .summon-card{width:min(560px,100%);border-color:rgba(240,106,22,.58);background:radial-gradient(circle at 80% 0%,rgba(240,106,22,.15),transparent 34%),#0d0f12;box-shadow:0 35px 110px rgba(0,0,0,.82),0 0 45px rgba(240,106,22,.12)}
+  .summon-brand{display:flex;align-items:center;gap:13px;margin-bottom:18px}.summon-brand img{width:58px;height:58px;border-radius:16px}.summon-kicker{font-size:10px;font-weight:900;letter-spacing:3px;color:var(--azul2)}.summon-card h2{font-family:'Bebas Neue';font-size:43px;line-height:.95;margin-top:5px}.summon-workout{border:1px solid rgba(240,106,22,.34);border-radius:17px;padding:16px;background:rgba(240,106,22,.07);margin:16px 0}.summon-workout strong{display:block;font-size:18px}.summon-workout span{display:block;color:var(--texto2);font-size:12px;margin-top:5px;line-height:1.5}
+  .summon-actions{display:grid;gap:9px}.summon-actions .btn{width:100%;min-height:48px}.summon-actions .start{font-family:'Bebas Neue';font-size:21px;letter-spacing:1px}
+  .summon-excuses{margin-top:15px;border-top:1px solid var(--borda);padding-top:14px}.summon-excuses summary{cursor:pointer;color:var(--texto2);font-size:12px;font-weight:800;text-align:center;list-style:none}.summon-excuses summary::-webkit-details-marker{display:none}.summon-excuse-list{display:grid;gap:8px;margin-top:12px}.summon-excuse{width:100%;border:1px solid var(--borda);background:#090b0e;color:var(--texto);border-radius:13px;padding:12px;text-align:left;font-weight:700;cursor:pointer}.summon-excuse:hover{border-color:var(--azul2)}.summon-excuse.sick{color:var(--warn)}.summon-excuse.home{color:var(--ok);border-color:rgba(0,208,132,.3)}
+  .day-cell.forge-failed{border-color:rgba(255,82,82,.55);background:rgba(255,82,82,.09)}.day-cell.forge-failed .day-main{color:var(--danger);font-weight:900}.day-cell.forge-excused{border-color:rgba(255,209,102,.5);background:rgba(255,209,102,.08)}.day-cell.forge-excused .day-main{color:var(--warn);font-weight:900}
+  @media(max-width:720px){.forge-status-card{align-items:flex-start}.daily-history-row{grid-template-columns:72px 1fr}.daily-history-row .chip{grid-column:2}.summon-card{padding:19px}.summon-card h2{font-size:37px}}
 </style>
 </head>
 <body class="mode-dark color-original">
@@ -190,10 +206,10 @@
 <div id="app" class="wrap hidden">
   <header class="appbar">
     <button class="appbar-menu" type="button" onclick="openDrawer()" aria-label="Abrir menu"><svg aria-hidden="true" width="21" height="21" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round"><use href="#i-menu"></use></svg></button>
-    <div class="appbar-copy">
+    <button class="appbar-copy" type="button" onclick="switchTab('objetivo')" aria-label="Abrir objetivo atual">
       <div class="appbar-kicker" id="appbar-goal-name">Objetivo</div>
       <div class="appbar-title" id="current-screen-title">Início</div>
-    </div>
+    </button>
     <button class="appbar-avatar" id="user-initial" type="button" onclick="openDrawer()" aria-label="Abrir perfil">R</button>
   </header>
 
@@ -209,6 +225,8 @@
       <div class="stat"><div class="label">Sequência</div><div class="val" id="stat-streak">0</div><div class="unit">dias</div></div>
       <div class="stat"><div class="label">Progresso</div><div class="val" id="stat-pct">0%</div><div class="unit">do plano</div></div>
     </div>
+
+    <div id="daily-forge-status"></div>
 
     <div class="progress-stack">
       <div class="card">
@@ -276,7 +294,7 @@
     <div class="grid2" id="workout-list"></div>
   </section>
 
-  <section id="tab-objetivo" class="tab-content"><div class="section-title" id="objective-title">OBJETIVO</div><div id="objective-content"></div></section>
+  <section id="tab-objetivo" class="tab-content"><div class="screen-heading"><div><div class="screen-eyebrow">Seu compromisso</div><h1 id="objective-title">OBJETIVO</h1><p class="sub">A meta define sua jornada. A disciplina define o resultado.</p></div><button class="btn primary" onclick="openGoalModal()">Alterar objetivo</button></div><div id="objective-content"></div><div class="section-title">HISTÓRICO DA FORJA</div><div id="daily-forge-history" class="daily-history"></div></section>
 
   <section id="tab-configuracoes" class="tab-content"><div class="section-title">CONFIGURAÇÕES</div><div class="grid2"><div class="card"><h2>🔐 <span>REDEFINIR SENHA</span></h2><div class="field"><label>E-mail</label><input id="reset-email" type="email"></div><div class="field"><label>Senha atual</label><div class="password-wrap"><input id="reset-current" type="password" autocomplete="current-password"><button class="toggle-pass" type="button" onclick="togglePassword('reset-current', this)" aria-label="Mostrar ou ocultar senha atual">👁️</button></div></div><div class="field"><label>Nova senha</label><div class="password-wrap"><input id="reset-new" type="password" autocomplete="new-password"><button class="toggle-pass" type="button" onclick="togglePassword('reset-new', this)" aria-label="Mostrar ou ocultar nova senha">👁️</button></div></div><button class="btn primary" onclick="changePassword()">Salvar nova senha</button><div id="reset-msg"></div></div><div class="card"><h2>🛡️ <span>RECUPERAÇÃO ALTERNATIVA</span></h2><p class="sub">Use para deixar dados de verificação salvos. A recuperação principal continua sendo por e-mail do Firebase; estas respostas ficam como apoio de segurança e são salvas protegidas.</p><div class="field"><label>E-mail alternativo</label><input id="recovery-email" type="email" placeholder="exemplo@gmail.com"></div><div class="field"><label>Nome completo da mãe</label><div class="password-wrap"><input id="security-mother" type="password" autocomplete="off" placeholder="Digite para salvar/atualizar"><button class="toggle-pass" type="button" onclick="togglePassword('security-mother', this)">👁️</button></div></div><div class="field"><label>Data de nascimento</label><input id="security-birth" type="date"></div><button class="btn primary" onclick="saveRecoveryOptions()">Salvar recuperação alternativa</button><p class="sub" id="security-status" style="margin-top:10px">Status: não configurado</p><div id="recovery-msg"></div></div><div class="card"><h2>🧍 <span>PERFIL FÍSICO</span></h2><p class="sub">A altura fica salva no perfil. O peso atual vem automaticamente do último peso salvo na aba Peso.</p><div class="field"><label>Altura (m)</label><input id="settings-height" type="number" step="0.01" placeholder="1.68"></div><div class="field"><label>Peso atual</label><input id="settings-current-weight" type="text" readonly></div><button class="btn primary" onclick="savePhysicalProfile()">Salvar altura</button><div id="physical-msg"></div></div><div class="card"><h2>🎯 <span>OBJETIVO</span></h2><p class="sub">Você pode trocar o objetivo sem apagar histórico de treinos, peso, refeições ou medidas anteriores.</p><button class="btn primary" onclick="openGoalModal()">Alterar objetivo</button><p class="sub" style="margin-top:10px">Os treinos prontos serão atualizados conforme o novo objetivo. Seus treinos personalizados continuam salvos.</p></div><div class="card"><h2>🎨 <span>APARÊNCIA</span></h2><div class="field"><label>Modo</label><select id="appearance-mode"><option value="dark">Tema escuro</option><option value="light">Tema claro</option></select></div><div class="field"><label>Jogo de cores</label><select id="color-theme"><option value="original">Original — Azul e preto</option><option value="green">Verde e preto</option><option value="pink">Rosa e preto</option><option value="dark">Escuro neutro</option><option value="light">Claro azul</option></select></div><button class="btn primary" onclick="saveAppearance()">Salvar aparência</button><div id="appearance-msg"></div></div><div class="card"><h2>⚙️ <span>APP</span></h2><p class="sub">Dados sincronizados no Firebase por usuário.</p><button class="btn danger" onclick="logout()">Sair da conta</button></div></div></section>
 
@@ -313,6 +331,27 @@
     <button class="link" onclick="logout()"><span class="menu-icon tone-gray"><svg aria-hidden="true"><use href="#i-logout"></use></svg></span><span class="drawer-link-text">Sair da conta</span></button>
   </div>
 </aside>
+
+<div class="modal summon-modal" id="daily-summon-modal" role="dialog" aria-modal="true" aria-labelledby="daily-summon-title">
+  <div class="modal-card summon-card">
+    <div class="summon-brand"><img src="icon-192.png" alt=""><div><div class="summon-kicker">A FORJA TE CONVOCA</div><h2 id="daily-summon-title">HOJE TEM TREINO.</h2></div></div>
+    <p class="sub" style="margin:0">O ferro não se molda sozinho. Seu treino de hoje já está esperando.</p>
+    <div class="summon-workout"><strong id="daily-summon-workout">Treino do dia</strong><span id="daily-summon-meta">Carregando sua missão...</span></div>
+    <div class="summon-actions">
+      <button class="btn primary start" type="button" onclick="startDailyWorkout()">🔥 ENTRAR NA FORJA AGORA</button>
+      <button class="btn" type="button" onclick="deferDailySummon()">Prosseguir para a FORJA</button>
+    </div>
+    <details class="summon-excuses">
+      <summary>Não vou cumprir o treino hoje</summary>
+      <div class="summon-excuse-list">
+        <button class="summon-excuse home" type="button" onclick="chooseDailyOutcome('no_gym')">Não tenho como ir à academia — quero um treino em casa</button>
+        <button class="summon-excuse" type="button" onclick="chooseDailyOutcome('lazy')">Fui vencido pela preguiça e não vou treinar hoje</button>
+        <button class="summon-excuse" type="button" onclick="chooseDailyOutcome('excuse')">Criei uma desculpa convincente para não treinar</button>
+        <button class="summon-excuse sick" type="button" onclick="chooseDailyOutcome('sick')">Estou doente</button>
+      </div>
+    </details>
+  </div>
+</div>
 
 <div class="modal" id="confirm-modal"><div class="modal-card" style="max-width:420px"><div class="modal-head"><h2 id="confirm-title">Iniciar treino?</h2><button class="btn small" onclick="closeModal('confirm-modal')">X</button></div><p class="sub" id="confirm-text">Deseja iniciar treino?</p><div style="display:flex;gap:10px"><button class="btn primary full" onclick="startWorkoutConfirmed()">Sim</button><button class="btn full" onclick="closeModal('confirm-modal')">Não</button></div></div></div>
 <div class="modal" id="workout-modal"><div class="modal-card"><div class="modal-head"><h2 id="session-title">Treino</h2><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><button class="btn small danger" onclick="cancelWorkout()">Cancelar</button><button class="btn small" onclick="finishWorkout(false)">Finalizar agora</button></div></div><div class="timer" id="timer">00:00</div><div id="session-progress" class="session-progress"><strong id="session-progress-text">0/0 séries concluídas</strong><div class="bar"><div class="fill" id="session-progress-fill"></div></div><p class="sub" style="margin-top:8px">Clique em Play, execute a série atual e use Avançar. Entre séries, o descanso roda automaticamente; toque no botão de descanso para pular quando estiver pronto.</p></div><div style="display:flex;gap:10px;justify-content:center;margin-bottom:16px"><button class="btn primary" onclick="toggleTimer()" id="timer-btn">▶ Play</button><button class="btn" onclick="resetTimer()">Reset</button></div><div id="flow-card" class="flow-card"><div id="exercise-demo-stage" class="exercise-demo-stage" aria-live="polite"><div class="exercise-demo-top"><span class="exercise-demo-label">Demonstração</span><span class="exercise-demo-muscle" id="exercise-demo-muscle"></span></div><div id="exercise-demo-content"></div></div><div class="flow-title" id="flow-title">Pronto para começar</div><div class="flow-info" id="flow-info">Clique em Play e execute a primeira série.</div><div class="rest-count hidden" id="rest-count">60</div><button class="btn primary" id="advance-set-btn" onclick="advanceSeriesFlow()">Avançar para próxima série</button></div><div id="session-exercises"></div></div></div>
@@ -409,10 +448,11 @@ function formatRestSeconds(sec){
   return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
 }
 function normalizeRestValue(raw){ return formatRestSeconds(parseRestSeconds(raw)); }
-let user=null; let data={start:null,checkins:[],bestStreak:0,meals:[],dietPlan:[],dietChecks:[],weights:[],measures:[],sessions:[],customWorkouts:[],goal:'',goalNote:'',level:'iniciante',name:'',sex:'',height:null,initialWeight:null,appearanceMode:'dark',colorTheme:'original',recoveryEmail:'',securityMotherHash:'',securityBirthHash:'',securityQuestionsConfigured:false,role:'user',blocked:false,blockedAt:null,trainingDays:[1,2,3,4,5],workoutSequence:[]};
+let user=null; let data={start:null,checkins:[],bestStreak:0,meals:[],dietPlan:[],dietChecks:[],weights:[],measures:[],sessions:[],customWorkouts:[],dailyCommitments:[],goal:'',goalNote:'',level:'iniciante',name:'',sex:'',height:null,initialWeight:null,appearanceMode:'dark',colorTheme:'original',recoveryEmail:'',securityMotherHash:'',securityBirthHash:'',securityQuestionsConfigured:false,role:'user',blocked:false,blockedAt:null,trainingDays:[1,2,3,4,5],workoutSequence:[]};
 let activeWorkout=null, timerInt=null, seconds=0, running=false, currentTab='progresso';
 let sessionFlow=null, restInt=null, restRemaining=60;
 let editingWorkoutId=null;
+let dailyMidnightTimer=null;
 
 const goalProfiles={
  futebol:{short:'DE FUTEBOL',title:'FUTEBOL EM 6 MESES',tab:'TREINOS DE FUTEBOL',final:'🏆 Futebol!',subtitle:'6 meses para voltar a jogar no seu máximo · progresso salvo na nuvem',objective:[['⚡','MÊS 1–2: BASE','Mobilidade, fôlego e ativação para tirar a perna pesada.'],['🏋️','MÊS 3–4: FORÇA E ARRANQUE','Força específica, estabilidade, mudança de direção e primeiro passo.'],['🏆','MÊS 5–6: CAMPO','Resistência, velocidade e retorno progressivo ao jogo.']]},
@@ -443,6 +483,15 @@ const exerciseCatalog=[
     tip:'Eleve o peito, mantenha os ombros longe das orelhas e puxe a barra em direção à parte superior do peito usando as costas.',demo:'assets/exercises/lat-pulldown-demo.webp'
   }
 ];
+const HOME_RESCUE_WORKOUT={id:'forja_home_rescue',name:'FORJA EM CASA — 12 MINUTOS',type:'Resgate / Corpo livre',met:7.2,desc:'Treino curto sem equipamento. A academia fechou; sua disciplina não.',isHomeRescue:true,exercises:[
+  ['Polichinelo','2','40s','Aqueça o corpo e mantenha um ritmo firme.'],
+  ['Agachamento livre','3','15 reps','Joelhos acompanham os pés e o tronco fica firme.'],
+  ['Flexão adaptada','3','8–12 reps','Use os joelhos no chão se necessário, sem perder o alinhamento.'],
+  ['Afundo alternado','2','10 cada perna','Dê um passo estável e controle a descida.'],
+  ['Mountain climber','3','30s','Mantenha o quadril baixo e o abdômen ativo.'],
+  ['Ponte de glúteo','3','15 reps','Contraia o glúteo no topo.'],
+  ['Prancha','2','30–45s','Respire e mantenha o corpo alinhado.']
+]};
 let exerciseLibraryTargetRow=null;
 function normalizeSearchText(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim()}
 function getCatalogExercise(id){return exerciseCatalog.find(x=>x.id===id)||null}
@@ -562,9 +611,9 @@ window.showAuthForm=showAuthForm;
 window.login=async()=>{try{document.getElementById('login-error').textContent='';await signInWithEmailAndPassword(auth,val('login-email'),val('login-password'));}catch(e){document.getElementById('login-error').textContent='Erro ao entrar: '+friendly(e.code)}};
 window.forgotPassword=async()=>{let box=document.getElementById('login-error');try{box.className='auth-error oktxt';box.textContent='';let email=val('login-email');if(!email){throw {code:'custom/email'}}await sendPasswordResetEmail(auth,email);box.textContent='Enviamos um link de recuperação para seu e-mail. Confira também a caixa de spam.';}catch(e){box.className='auth-error';box.textContent=e.code==='custom/email'?'Digite seu e-mail primeiro.':'Erro ao enviar recuperação: '+friendly(e.code)}};
 window.signup=async()=>{try{const err=document.getElementById('signup-error');err.className='auth-error';err.textContent='';let email=val('signup-email'), password=val('signup-password'), name=val('signup-name'), sex=val('signup-sex'), goal=val('signup-goal')||'futebol', level=val('signup-level')||'iniciante', height=Number(val('signup-height').replace(',','.'))||1.68, weight=Number(val('signup-weight').replace(',','.'))||88;if(!email||!password||!name){throw {code:'custom/missing'}}let cred=await createUserWithEmailAndPassword(auth,email,password);let uid=cred.user.uid;await setDoc(doc(db,'users',uid),{uid,email,name,goal,level,blocked:false,emailVerified:false,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',uid,'profile','main'),{name,email,sex,goal,level,height,initialWeight:weight,start:today(),bestStreak:0,goalNote:'',appearanceMode:'dark',colorTheme:'original',emailVerified:false,blocked:false,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',uid,'weights',today()),{value:weight,date:today(),createdAt:serverTimestamp()},{merge:true});await sendEmailVerification(cred.user);await signOut(auth);showAuthForm('login');document.getElementById('login-email').value=email;document.getElementById('login-password').value='';const loginMsg=document.getElementById('login-error');loginMsg.className='auth-error oktxt';loginMsg.textContent='Usuário criado. Enviamos um e-mail de verificação. A pessoa só conseguirá entrar depois de confirmar o e-mail.';}catch(e){document.getElementById('signup-error').textContent='Erro ao criar usuário: '+friendly(e.code)} }; 
-window.logout=()=>signOut(auth); window.switchTab=switchTab; window.doCheckin=doCheckin; window.saveMeal=saveMeal; window.deleteMeal=deleteMeal; window.setTodayMealDate=setTodayMealDate; window.renderMeals=renderMeals; window.openImportDiet=openImportDiet; window.fillDietTemplate=fillDietTemplate; window.copyDietTemplate=copyDietTemplate; window.saveImportedDiet=saveImportedDiet; window.toggleDietMeal=toggleDietMeal; window.saveWeight=saveWeight; window.saveBodyHeight=saveBodyHeight; window.saveMeasure=saveMeasure; window.changePassword=changePassword; window.openDrawer=openDrawer; window.closeDrawer=closeDrawer; window.askStartWorkout=askStartWorkout; window.startWorkoutConfirmed=startWorkoutConfirmed; window.toggleTimer=toggleTimer; window.resetTimer=resetTimer; window.finishWorkout=finishWorkout; window.cancelWorkout=cancelWorkout; window.toggleSet=toggleSet; window.openWorkoutEditor=openWorkoutEditor; window.addCustomExerciseRow=addCustomExerciseRow; window.removeCustomExerciseRow=removeCustomExerciseRow; window.fillWorkoutExample=fillWorkoutExample; window.advanceSeriesFlow=advanceSeriesFlow; window.openExerciseLibrary=openExerciseLibrary; window.closeExerciseLibrary=closeExerciseLibrary; window.renderExerciseLibrary=renderExerciseLibrary; window.selectExerciseFromLibrary=selectExerciseFromLibrary; window.handleExerciseNameEdit=handleExerciseNameEdit; window.openImportWorkout=openImportWorkout; window.saveImportedWorkout=saveImportedWorkout; window.fillWorkoutTemplate=fillWorkoutTemplate; window.copyWorkoutTemplate=copyWorkoutTemplate; window.downloadWorkoutTemplate=downloadWorkoutTemplate; window.savePhysicalProfile=savePhysicalProfile; window.loadAdminProfiles=loadAdminProfiles; window.exportFullBackup=exportFullBackup; window.exportDatabaseStructure=exportDatabaseStructure; window.importFullBackup=importFullBackup; window.toggleUserAccess=toggleUserAccess; window.openGoalModal=openGoalModal; window.openScheduleModal=openScheduleModal; window.toggleTrainingDay=toggleTrainingDay; window.addSequenceWorkout=addSequenceWorkout; window.removeSequenceWorkout=removeSequenceWorkout; window.moveSequenceWorkout=moveSequenceWorkout; window.saveTrainingSchedule=saveTrainingSchedule; window.autoFillScheduleSequence=autoFillScheduleSequence; window.saveGoal=saveGoal; window.saveCompleteProfile=saveCompleteProfile; window.saveCustomWorkout=saveCustomWorkout; window.deleteWorkout=deleteWorkout; window.closeModal=closeModal;
+window.logout=()=>signOut(auth); window.switchTab=switchTab; window.doCheckin=doCheckin; window.saveMeal=saveMeal; window.deleteMeal=deleteMeal; window.setTodayMealDate=setTodayMealDate; window.renderMeals=renderMeals; window.openImportDiet=openImportDiet; window.fillDietTemplate=fillDietTemplate; window.copyDietTemplate=copyDietTemplate; window.saveImportedDiet=saveImportedDiet; window.toggleDietMeal=toggleDietMeal; window.saveWeight=saveWeight; window.saveBodyHeight=saveBodyHeight; window.saveMeasure=saveMeasure; window.changePassword=changePassword; window.openDrawer=openDrawer; window.closeDrawer=closeDrawer; window.askStartWorkout=askStartWorkout; window.startWorkoutConfirmed=startWorkoutConfirmed; window.toggleTimer=toggleTimer; window.resetTimer=resetTimer; window.finishWorkout=finishWorkout; window.cancelWorkout=cancelWorkout; window.toggleSet=toggleSet; window.openWorkoutEditor=openWorkoutEditor; window.addCustomExerciseRow=addCustomExerciseRow; window.removeCustomExerciseRow=removeCustomExerciseRow; window.fillWorkoutExample=fillWorkoutExample; window.advanceSeriesFlow=advanceSeriesFlow; window.openExerciseLibrary=openExerciseLibrary; window.closeExerciseLibrary=closeExerciseLibrary; window.renderExerciseLibrary=renderExerciseLibrary; window.selectExerciseFromLibrary=selectExerciseFromLibrary; window.handleExerciseNameEdit=handleExerciseNameEdit; window.openImportWorkout=openImportWorkout; window.saveImportedWorkout=saveImportedWorkout; window.fillWorkoutTemplate=fillWorkoutTemplate; window.copyWorkoutTemplate=copyWorkoutTemplate; window.downloadWorkoutTemplate=downloadWorkoutTemplate; window.savePhysicalProfile=savePhysicalProfile; window.loadAdminProfiles=loadAdminProfiles; window.exportFullBackup=exportFullBackup; window.exportDatabaseStructure=exportDatabaseStructure; window.importFullBackup=importFullBackup; window.toggleUserAccess=toggleUserAccess; window.openGoalModal=openGoalModal; window.openScheduleModal=openScheduleModal; window.toggleTrainingDay=toggleTrainingDay; window.addSequenceWorkout=addSequenceWorkout; window.removeSequenceWorkout=removeSequenceWorkout; window.moveSequenceWorkout=moveSequenceWorkout; window.saveTrainingSchedule=saveTrainingSchedule; window.autoFillScheduleSequence=autoFillScheduleSequence; window.saveGoal=saveGoal; window.saveCompleteProfile=saveCompleteProfile; window.saveCustomWorkout=saveCustomWorkout; window.deleteWorkout=deleteWorkout; window.closeModal=closeModal; window.startDailyWorkout=startDailyWorkout; window.deferDailySummon=deferDailySummon; window.chooseDailyOutcome=chooseDailyOutcome; window.openDailySummonFromStatus=openDailySummonFromStatus;
 
-onAuthStateChanged(auth,async(u)=>{user=u;if(!u){showAuth();return}if(!u.emailVerified && !isAdminEmail(u.email)){try{await sendEmailVerification(u)}catch(_e){} alert('Antes de acessar, confirme seu e-mail. Enviamos um link de verificação para sua caixa de entrada. Confira também o spam.');await signOut(auth);return}showApp();await loadAll();if(isUserBlocked()){alert('Seu acesso ao sistema está bloqueado. Entre em contato com o administrador.');await signOut(auth);return}if(u.emailVerified){try{await setDoc(doc(db,'users',u.uid),{email:u.email||'',emailVerified:true,updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',u.uid,'profile','main'),{emailVerified:true,updatedAt:serverTimestamp()},{merge:true})}catch(_e){}}renderAll();checkProfileComplete();});
+onAuthStateChanged(auth,async(u)=>{user=u;if(!u){showAuth();return}if(!u.emailVerified && !isAdminEmail(u.email)){try{await sendEmailVerification(u)}catch(_e){} alert('Antes de acessar, confirme seu e-mail. Enviamos um link de verificação para sua caixa de entrada. Confira também o spam.');await signOut(auth);return}showApp();await loadAll();if(isUserBlocked()){alert('Seu acesso ao sistema está bloqueado. Entre em contato com o administrador.');await signOut(auth);return}if(u.emailVerified){try{await setDoc(doc(db,'users',u.uid),{email:u.email||'',emailVerified:true,updatedAt:serverTimestamp()},{merge:true});await setDoc(doc(db,'users',u.uid,'profile','main'),{emailVerified:true,updatedAt:serverTimestamp()},{merge:true})}catch(_e){}}renderAll();if(checkProfileComplete())await initializeDailyForge();});
 function showAuthForm(mode){let isSignup=mode==='signup';document.getElementById('login-form').classList.toggle('hidden',isSignup);document.getElementById('signup-form').classList.toggle('hidden',!isSignup);document.getElementById('login-tab-btn').classList.toggle('primary',!isSignup);document.getElementById('signup-tab-btn').classList.toggle('primary',isSignup)}
 function showAuth(){document.getElementById('auth').classList.remove('hidden');document.getElementById('app').classList.add('hidden');showAuthForm('login')} function showApp(){document.getElementById('auth').classList.add('hidden');document.getElementById('app').classList.remove('hidden');document.getElementById('user-pill').textContent='Logado como '+user.email;document.getElementById('reset-email').value=user.email||'';let initial=document.getElementById('user-initial');if(initial)initial.textContent=(data.name||user.email||'U').trim().charAt(0).toUpperCase()}
 function ref(path){return doc(db,'users',user.uid,...path)}
@@ -574,7 +623,7 @@ async function syncUserRootDoc(){
     await setDoc(doc(db,'users',user.uid),{uid:user.uid,email:user.email||data.email||'',name:data.name||'',goal:data.goal||'personalizado',level:data.level||'iniciante',blocked:!!data.blocked,emailVerified:!!(user.emailVerified||data.emailVerified),updatedAt:serverTimestamp()},{merge:true});
   }catch(e){console.warn('Não foi possível sincronizar documento raiz do usuário:',e)}
 }
-async function loadAll(){let prof=await getDoc(ref(['profile','main']));if(!prof.exists()){data.start=today();await setDoc(ref(['profile','main']),{start:data.start,bestStreak:0,createdAt:serverTimestamp()},{merge:true});}else{Object.assign(data,prof.data());data.height=data.height?Number(data.height):null;data.initialWeight=data.initialWeight?Number(data.initialWeight):null;data.level=data.level||'iniciante';data.appearanceMode=data.appearanceMode||'dark';data.colorTheme=data.colorTheme||'original';data.trainingDays=Array.isArray(data.trainingDays)&&data.trainingDays.length?data.trainingDays:[1,2,3,4,5];data.workoutSequence=Array.isArray(data.workoutSequence)?data.workoutSequence:[];data.dietPlan=Array.isArray(data.dietPlan)?data.dietPlan:[]}data.checkins=await loadCol('checkins');data.meals=await loadCol('meals');data.dietChecks=await loadCol('dietChecks');data.weights=await loadCol('weights');data.measures=await loadCol('measures');data.sessions=await loadCol('sessions');data.customWorkouts=await loadCol('customWorkouts');await migrateCustomWorkoutRests();await syncUserRootDoc()}
+async function loadAll(){let prof=await getDoc(ref(['profile','main']));if(!prof.exists()){data.start=today();await setDoc(ref(['profile','main']),{start:data.start,bestStreak:0,createdAt:serverTimestamp()},{merge:true});}else{Object.assign(data,prof.data());data.height=data.height?Number(data.height):null;data.initialWeight=data.initialWeight?Number(data.initialWeight):null;data.level=data.level||'iniciante';data.appearanceMode=data.appearanceMode||'dark';data.colorTheme=data.colorTheme||'original';data.trainingDays=Array.isArray(data.trainingDays)&&data.trainingDays.length?data.trainingDays:[1,2,3,4,5];data.workoutSequence=Array.isArray(data.workoutSequence)?data.workoutSequence:[];data.dietPlan=Array.isArray(data.dietPlan)?data.dietPlan:[]}data.checkins=await loadCol('checkins');data.meals=await loadCol('meals');data.dietChecks=await loadCol('dietChecks');data.weights=await loadCol('weights');data.measures=await loadCol('measures');data.sessions=await loadCol('sessions');data.customWorkouts=await loadCol('customWorkouts');data.dailyCommitments=await loadCol('dailyCommitments');await migrateCustomWorkoutRests();await syncUserRootDoc()}
 async function loadCol(name){let snap=await getDocs(collection(db,'users',user.uid,name));return snap.docs.map(d=>({id:d.id,...d.data()}))}
 async function saveProfile(){let payload={start:data.start||today(),bestStreak:data.bestStreak||0,goalNote:data.goalNote||'',name:data.name||'',sex:data.sex||'',level:data.level||'iniciante',appearanceMode:data.appearanceMode||'dark',colorTheme:data.colorTheme||'original',recoveryEmail:data.recoveryEmail||'',securityQuestionsConfigured:!!data.securityQuestionsConfigured,trainingDays:Array.isArray(data.trainingDays)?data.trainingDays:[1,2,3,4,5],workoutSequence:Array.isArray(data.workoutSequence)?data.workoutSequence:[],dietPlan:Array.isArray(data.dietPlan)?data.dietPlan:[],updatedAt:serverTimestamp()};if(data.goal)payload.goal=data.goal;if(data.height)payload.height=Number(data.height);if(data.initialWeight)payload.initialWeight=Number(data.initialWeight);if(data.securityMotherHash)payload.securityMotherHash=data.securityMotherHash;if(data.securityBirthHash)payload.securityBirthHash=data.securityBirthHash;await setDoc(ref(['profile','main']),payload,{merge:true});await syncUserRootDoc()}
 function val(id){return document.getElementById(id).value.trim()} function num(id){return Number(document.getElementById(id).value)||0} function today(){let d=new Date();return toKey(d)} function toKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')} function brDate(s){return (s||'').split('-').reverse().join('/')} function friendly(c){return ({'auth/invalid-credential':'e-mail ou senha inválidos','auth/wrong-password':'senha atual incorreta','auth/weak-password':'senha muito fraca','auth/email-already-in-use':'esse e-mail já está cadastrado','auth/invalid-email':'e-mail inválido','auth/too-many-requests':'muitas tentativas; aguarde alguns minutos','auth/network-request-failed':'falha de conexão','custom/missing':'preencha nome, e-mail e senha','custom/security-incomplete':'preencha as duas perguntas de segurança'})[c]||c}
@@ -631,7 +680,7 @@ async function saveBodyHeight(){
     if(msg){msg.className='oktxt';msg.textContent='Altura salva. IMC atualizado.'}
   }catch(e){if(msg){msg.className='auth-error';msg.textContent=e.message||'Erro ao salvar altura.'}}
 }
-function renderGoalUI(){let p=profile();let menuGoal=(p.short||'OBJETIVO').replace(/^DE\s+/,'');let drawerGoal=document.getElementById('drawer-goal-title');if(drawerGoal)drawerGoal.textContent=menuGoal;let appbarGoal=document.getElementById('appbar-goal-name');if(appbarGoal)appbarGoal.textContent=menuGoal;let title=document.getElementById('app-title-goal');if(title)title.textContent=p.short;let sub=document.getElementById('app-subtitle');if(sub)sub.textContent=p.subtitle;let card=document.getElementById('goal-card-title');if(card)card.textContent=p.title;let labels=document.getElementById('goal-labels');if(labels)labels.innerHTML=`<span>Início</span><span>Mês 2 – Base</span><span>Mês 4 – Evolução</span><span>${escapeHtml(p.final)}</span>`;let wt=document.getElementById('workouts-title');if(wt)wt.textContent=p.tab;let ot=document.getElementById('objective-title');if(ot)ot.textContent='OBJETIVO: '+p.title;let oc=document.getElementById('objective-content');if(oc){oc.innerHTML=p.objective.map(x=>`<div class="card"><h2>${x[0]} <span>${escapeHtml(x[1])}</span></h2><p class="sub">${escapeHtml(x[2])}</p></div>`).join('')+(data.goalNote?`<div class="card"><h2>📝 <span>META PESSOAL</span></h2><p class="sub">${escapeHtml(data.goalNote)}</p></div>`:'')}}
+function renderGoalUI(){let p=profile()||goalProfiles.futebol;let objective=Array.isArray(p.objective)&&p.objective.length?p.objective:goalProfiles.futebol.objective;let menuGoal=(p.short||'OBJETIVO').replace(/^DE\s+/,'');let drawerGoal=document.getElementById('drawer-goal-title');if(drawerGoal)drawerGoal.textContent=menuGoal;let appbarGoal=document.getElementById('appbar-goal-name');if(appbarGoal)appbarGoal.textContent=menuGoal;let title=document.getElementById('app-title-goal');if(title)title.textContent=p.short;let sub=document.getElementById('app-subtitle');if(sub)sub.textContent=p.subtitle;let card=document.getElementById('goal-card-title');if(card)card.textContent=p.title;let labels=document.getElementById('goal-labels');if(labels)labels.innerHTML=`<span>Início</span><span>Mês 2 – Base</span><span>Mês 4 – Evolução</span><span>${escapeHtml(p.final)}</span>`;let wt=document.getElementById('workouts-title');if(wt)wt.textContent=p.tab;let ot=document.getElementById('objective-title');if(ot)ot.textContent='OBJETIVO: '+p.title;let oc=document.getElementById('objective-content');if(oc){oc.innerHTML=objective.map(x=>`<div class="card"><h2>${x[0]} <span>${escapeHtml(x[1])}</span></h2><p class="sub">${escapeHtml(x[2])}</p></div>`).join('')+(data.goalNote?`<div class="card"><h2>📝 <span>META PESSOAL</span></h2><p class="sub">${escapeHtml(data.goalNote)}</p></div>`:'')}}
 
 function normalizeSecurityText(v){return (v||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ')}
 async function sha256Text(v){const enc=new TextEncoder().encode(v);const buf=await crypto.subtle.digest('SHA-256',enc);return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('')}
@@ -670,7 +719,7 @@ async function saveRecoveryOptions(){
   }
 }
 
-function renderAll(){applyAppearance();setDefaultDates();renderGoalUI();renderRecoverySettings();renderStats();buildCalendar();renderMeals();renderDietChecklist();renderWeights();renderMeasures();renderBody();renderWorkouts();renderSessions();updateAdminVisibility();let initial=document.getElementById('user-initial');if(initial)initial.textContent=(data.name||user?.email||'U').trim().charAt(0).toUpperCase();}
+function renderAll(){applyAppearance();setDefaultDates();renderGoalUI();renderRecoverySettings();renderStats();buildCalendar();renderMeals();renderDietChecklist();renderWeights();renderMeasures();renderBody();renderWorkouts();renderSessions();renderDailyForgeStatus();renderDailyForgeHistory();updateAdminVisibility();let initial=document.getElementById('user-initial');if(initial)initial.textContent=(data.name||user?.email||'U').trim().charAt(0).toUpperCase();}
 function setDefaultDates(){['meal-date','weight-date','measure-date'].forEach(id=>{if(!document.getElementById(id).value)document.getElementById(id).value=today()})}
 function calcStreak(){let checked=data.checkins.map(x=>x.id);let s=0,d=new Date();while(checked.includes(toKey(d))){s++;d.setDate(d.getDate()-1)}return s}
 function renderStats(){let streak=calcStreak();data.bestStreak=Math.max(data.bestStreak||0,streak);saveProfile();let pct=Math.round((data.checkins.length/TOTAL_DAYS)*100);let days=document.getElementById('stat-dias'),st=document.getElementById('stat-streak'),pc=document.getElementById('stat-pct'),big=document.getElementById('streak-big'),best=document.getElementById('best-streak'),bar=document.getElementById('prog-bar');if(days)days.textContent=data.checkins.length;if(st)st.textContent=streak;if(pc)pc.textContent=pct+'%';if(big)big.textContent=streak;if(best)best.textContent=data.bestStreak;if(bar){bar.style.width=Math.max(2,pct)+'%';bar.textContent=pct+'%'}renderBody()}
@@ -705,6 +754,122 @@ function getWorkoutForCalendarDate(dateObj){
   const idx=trainingIndexUntil(dateObj);
   return list[idx % list.length];
 }
+function dailyCommitmentFor(key=today()){return (data.dailyCommitments||[]).find(x=>x.id===key||x.date===key)||null}
+function sessionForDate(key){return (data.sessions||[]).find(x=>x.date===key)||null}
+function completedCheckinForDate(key){return (data.checkins||[]).find(x=>(x.id===key||x.date===key)&&(x.source==='treino_finalizado'||x.sessionId||x.workout))||null}
+function dailyOutcomeMeta(status){
+  const map={
+    pending:{label:'MISSÃO PENDENTE',title:'A FORJA ESTÁ ESPERANDO',note:'O treino de hoje ainda precisa ser concluído.',icon:'🔥',className:''},
+    deferred:{label:'AINDA PENDENTE',title:'VOCÊ ADIOU. NÃO ABANDONOU.',note:'Conclua o treino antes das 23:59 para fechar o dia.',icon:'⏳',className:''},
+    no_gym_pending:{label:'PLANO DE RESGATE',title:'TREINO EM CASA LIBERADO',note:'Sem academia não é sem treino. O circuito curto está disponível.',icon:'🏠',className:''},
+    completed:{label:'MISSÃO CUMPRIDA',title:'FERRO BATIDO. DIA CONCLUÍDO.',note:'Treino finalizado e registrado na FORJA.',icon:'✓',className:'done'},
+    home_completed:{label:'MISSÃO CUMPRIDA EM CASA',title:'SEM ACADEMIA. SEM DESCULPA.',note:'O treino de resgate foi concluído.',icon:'✓',className:'done'},
+    sick:{label:'AUSÊNCIA ABONADA',title:'RECUPERE-SE E VOLTE MAIS FORTE.',note:'Doença registrada. Este dia não entra como falha.',icon:'✚',className:'excused'},
+    lazy:{label:'FALHA ASSUMIDA',title:'VENCIDO PELA PREGUIÇA.',note:'A escolha foi registrada. Amanhã a FORJA chama de novo.',icon:'×',className:'failed'},
+    excuse:{label:'FALHA ASSUMIDA',title:'UMA DESCULPA VENCEU O TREINO.',note:'A escolha foi registrada. Amanhã não vale repetir.',icon:'×',className:'failed'},
+    auto_missed:{label:'FALHA AUTOMÁTICA',title:'O DIA ACABOU SEM TREINO.',note:'Às 23:59, a FORJA registrou: “Fui vencido pela preguiça”.',icon:'×',className:'failed'}
+  };
+  return map[status]||map.pending;
+}
+async function saveDailyCommitment(status,extra={}){
+  const key=today();
+  const previous=dailyCommitmentFor(key)||{};
+  const item={...previous,id:key,date:key,status,workoutId:extra.workoutId??previous.workoutId??'',workoutName:extra.workoutName??previous.workoutName??'',reason:extra.reason??previous.reason??'',source:extra.source??previous.source??'app',updatedAtMs:Date.now()};
+  await setDoc(doc(db,'users',user.uid,'dailyCommitments',key),{date:key,status:item.status,workoutId:item.workoutId,workoutName:item.workoutName,reason:item.reason,source:item.source,updatedAtMs:item.updatedAtMs,updatedAt:serverTimestamp()},{merge:true});
+  data.dailyCommitments=(data.dailyCommitments||[]).filter(x=>x.id!==key&&x.date!==key);data.dailyCommitments.push(item);
+  renderDailyForgeStatus();renderDailyForgeHistory();buildCalendar();
+  return item;
+}
+async function ensureDailyChallengeStart(){
+  if(data.dailyChallengeStartedAt)return data.dailyChallengeStartedAt;
+  data.dailyChallengeStartedAt=today();
+  await setDoc(ref(['profile','main']),{dailyChallengeStartedAt:data.dailyChallengeStartedAt,updatedAt:serverTimestamp()},{merge:true});
+  return data.dailyChallengeStartedAt;
+}
+async function reconcileDailyForge(){
+  const startKey=await ensureDailyChallengeStart();
+  const todayKey=today();
+  const writes=[];
+  let d=new Date(startKey+'T00:00:00');
+  const end=new Date(todayKey+'T00:00:00');
+  while(d<end){
+    const key=toKey(d), existing=dailyCommitmentFor(key);
+    if(isTrainingDow(d.getDay())&&(!existing||['pending','deferred','no_gym_pending'].includes(existing.status))){
+      const session=sessionForDate(key),check=completedCheckinForDate(key),planned=getWorkoutForCalendarDate(new Date(d));
+      const status=(session||check)?'completed':'auto_missed';
+      const item={id:key,date:key,status,workoutId:planned?.id||'',workoutName:session?.name||check?.workout||planned?.name||'',reason:status==='auto_missed'?'Fui vencido pela preguiça e não vou treinar hoje':'',source:status==='auto_missed'?'automatic_2359':'treino_finalizado',updatedAtMs:Date.now()};
+      data.dailyCommitments=(data.dailyCommitments||[]).filter(x=>x.id!==key&&x.date!==key);data.dailyCommitments.push(item);
+      writes.push(setDoc(doc(db,'users',user.uid,'dailyCommitments',key),{date:key,status:item.status,workoutId:item.workoutId,workoutName:item.workoutName,reason:item.reason,source:item.source,updatedAtMs:item.updatedAtMs,updatedAt:serverTimestamp()},{merge:true}));
+    }
+    d.setDate(d.getDate()+1);
+  }
+  if(writes.length)await Promise.all(writes);
+  const now=new Date();
+  if(now.getHours()===23&&now.getMinutes()>=59)await markTodayMissedIfPending();
+}
+async function markTodayMissedIfPending(){
+  const planned=getWorkoutForCalendarDate(new Date());
+  if(!planned||sessionForDate(today())||completedCheckinForDate(today()))return;
+  const current=dailyCommitmentFor(today());
+  if(current&&['completed','home_completed','sick','lazy','excuse','auto_missed'].includes(current.status))return;
+  await saveDailyCommitment('auto_missed',{workoutId:planned.id,workoutName:planned.name,reason:'Fui vencido pela preguiça e não vou treinar hoje',source:'automatic_2359'});
+  closeModal('daily-summon-modal');
+}
+function scheduleDailyDeadline(){
+  clearTimeout(dailyMidnightTimer);
+  const now=new Date(),deadline=new Date();deadline.setHours(23,59,0,0);
+  if(deadline<=now)deadline.setDate(deadline.getDate()+1);
+  dailyMidnightTimer=setTimeout(async()=>{await markTodayMissedIfPending();scheduleDailyDeadline()},Math.max(1000,deadline-now));
+}
+function renderDailyForgeStatus(){
+  const box=document.getElementById('daily-forge-status');if(!box)return;
+  const planned=getWorkoutForCalendarDate(new Date());
+  if(!planned){box.innerHTML=`<div class="card forge-status-card done"><div class="forge-status-copy"><div class="forge-status-label">RECUPERAÇÃO PROGRAMADA</div><div class="forge-status-title">HOJE É DIA DE DESCANSO.</div><div class="forge-status-note">Recuperar também faz parte da evolução. Amanhã a FORJA volta a chamar.</div></div><div class="forge-status-mark">◷</div></div>`;return;}
+  let current=dailyCommitmentFor(today());
+  if((sessionForDate(today())||completedCheckinForDate(today()))&&(!current||!['completed','home_completed'].includes(current.status)))current={status:'completed'};
+  const meta=dailyOutcomeMeta(current?.status||'pending');
+  box.innerHTML=`<button class="card forge-status-card ${meta.className}" type="button" onclick="openDailySummonFromStatus()" style="width:100%;color:inherit;text-align:left;cursor:pointer"><div class="forge-status-copy"><div class="forge-status-label">${escapeHtml(meta.label)}</div><div class="forge-status-title">${escapeHtml(meta.title)}</div><div class="forge-status-note">${escapeHtml(meta.note)}</div></div><div class="forge-status-mark">${escapeHtml(meta.icon)}</div></button>`;
+}
+function renderDailyForgeHistory(){
+  const box=document.getElementById('daily-forge-history');if(!box)return;
+  const items=[...(data.dailyCommitments||[])].sort((a,b)=>String(b.date||b.id).localeCompare(String(a.date||a.id))).slice(0,30);
+  box.innerHTML=items.length?items.map(x=>{const meta=dailyOutcomeMeta(x.status);return `<div class="daily-history-row"><strong>${escapeHtml(brDate(x.date||x.id))}</strong><span>${escapeHtml(meta.title)}${x.workoutName?`<br>${escapeHtml(x.workoutName)}`:''}</span><span class="chip">${escapeHtml(meta.label)}</span></div>`}).join(''):'<p class="sub">O histórico da convocação começa hoje.</p>';
+}
+function showDailySummon(force=false){
+  const planned=getWorkoutForCalendarDate(new Date());if(!planned)return;
+  const current=dailyCommitmentFor(today());
+  if(!force&&(sessionForDate(today())||completedCheckinForDate(today())||current&&['completed','home_completed','sick','lazy','excuse','auto_missed'].includes(current.status)))return;
+  document.getElementById('daily-summon-workout').textContent=current?.status==='no_gym_pending'?HOME_RESCUE_WORKOUT.name:planned.name;
+  const chosen=current?.status==='no_gym_pending'?HOME_RESCUE_WORKOUT:planned;
+  document.getElementById('daily-summon-meta').textContent=`${(chosen.exercises||[]).length} exercícios · ${chosen.type||'Treino do dia'} · nível ${data.level||'iniciante'}`;
+  openModal('daily-summon-modal');
+}
+function openDailySummonFromStatus(){
+  const current=dailyCommitmentFor(today());
+  if(current&&['completed','home_completed','sick','lazy','excuse','auto_missed'].includes(current.status)){switchTab('objetivo');return;}
+  showDailySummon(true);
+}
+async function initializeDailyForge(){
+  await reconcileDailyForge();renderDailyForgeStatus();renderDailyForgeHistory();scheduleDailyDeadline();
+  setTimeout(()=>showDailySummon(false),180);
+}
+async function deferDailySummon(){
+  const planned=getWorkoutForCalendarDate(new Date());
+  await saveDailyCommitment('deferred',{workoutId:planned?.id||'',workoutName:planned?.name||'',source:'adiado'});closeModal('daily-summon-modal');
+}
+async function startDailyWorkout(){
+  const planned=getWorkoutForCalendarDate(new Date())||allWorkouts()[0];if(!planned)return;
+  closeModal('daily-summon-modal');activeWorkout=planned;startWorkoutConfirmed();
+}
+async function chooseDailyOutcome(choice){
+  const planned=getWorkoutForCalendarDate(new Date());
+  if(choice==='no_gym'){
+    await saveDailyCommitment('no_gym_pending',{workoutId:HOME_RESCUE_WORKOUT.id,workoutName:HOME_RESCUE_WORKOUT.name,reason:'Não tenho como ir à academia',source:'treino_resgate'});
+    closeModal('daily-summon-modal');activeWorkout=HOME_RESCUE_WORKOUT;document.getElementById('confirm-title').textContent=HOME_RESCUE_WORKOUT.name;document.getElementById('confirm-text').textContent='12 minutos, sem equipamento e sem desculpa. Começar agora?';openModal('confirm-modal');return;
+  }
+  const reasons={lazy:'Fui vencido pela preguiça e não vou treinar hoje',excuse:'Criei uma desculpa convincente para não treinar',sick:'Estou doente'};
+  await saveDailyCommitment(choice,{workoutId:planned?.id||'',workoutName:planned?.name||'',reason:reasons[choice]||'',source:'declarado'});closeModal('daily-summon-modal');
+}
 function workoutLabelForDate(key,dateObj,checked){
   const session=[...data.sessions].filter(s=>s.date===key).sort((a,b)=>String(b.id||'').localeCompare(String(a.id||'')))[0];
   if(session?.name)return shortWorkoutName(session.name);
@@ -713,9 +878,9 @@ function workoutLabelForDate(key,dateObj,checked){
   const planned=getWorkoutForCalendarDate(dateObj);
   return planned?shortWorkoutName(planned.name):'Descanso';
 }
-function buildCalendar(){let grid=document.getElementById('calendar-grid');grid.innerHTML='';let start=new Date((data.start||today())+'T00:00:00');let checked=data.checkins.map(x=>x.id);let months=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];let days=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];let cur=-1,row,section,d=new Date(start);for(let i=0;i<TOTAL_DAYS;i++){let key=toKey(d);if(d.getMonth()!==cur){cur=d.getMonth();let lab=document.createElement('div');lab.className='week-label';lab.textContent=months[cur]+' '+d.getFullYear();grid.appendChild(lab);let hdr=document.createElement('div');hdr.className='days-grid';days.forEach(x=>{let e=document.createElement('div');e.style.cssText='text-align:center;color:var(--texto2);font-size:10px;font-weight:900';e.textContent=x;hdr.appendChild(e)});grid.appendChild(hdr);section=document.createElement('div');grid.appendChild(section);row=document.createElement('div');row.className='days-grid';section.appendChild(row);for(let p=0;p<d.getDay();p++)row.appendChild(document.createElement('div'))}if(row.children.length===7){row=document.createElement('div');row.className='days-grid';section.appendChild(row)}let done=checked.includes(key);let label=workoutLabelForDate(key,new Date(d),done);let isRest=!isTrainingDow(d.getDay());let cell=document.createElement('div');cell.className='day-cell';cell.innerHTML=`<div class="day-main">${done?'✓':d.getDate()}</div>${label?`<div class="day-workout">${escapeHtml(label)}</div>`:''}`;if(done)cell.classList.add('checked');if(isRest&&!done)cell.classList.add('rest-day');if(key===today())cell.classList.add('today');if(key>today())cell.classList.add('future');else cell.onclick=()=>toggleDay(key);row.appendChild(cell);d.setDate(d.getDate()+1)}}
+function buildCalendar(){let grid=document.getElementById('calendar-grid');grid.innerHTML='';let start=new Date((data.start||today())+'T00:00:00');let checked=data.checkins.map(x=>x.id);let months=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];let days=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];let cur=-1,row,section,d=new Date(start);for(let i=0;i<TOTAL_DAYS;i++){let key=toKey(d);if(d.getMonth()!==cur){cur=d.getMonth();let lab=document.createElement('div');lab.className='week-label';lab.textContent=months[cur]+' '+d.getFullYear();grid.appendChild(lab);let hdr=document.createElement('div');hdr.className='days-grid';days.forEach(x=>{let e=document.createElement('div');e.style.cssText='text-align:center;color:var(--texto2);font-size:10px;font-weight:900';e.textContent=x;hdr.appendChild(e)});grid.appendChild(hdr);section=document.createElement('div');grid.appendChild(section);row=document.createElement('div');row.className='days-grid';section.appendChild(row);for(let p=0;p<d.getDay();p++)row.appendChild(document.createElement('div'))}if(row.children.length===7){row=document.createElement('div');row.className='days-grid';section.appendChild(row)}let daily=dailyCommitmentFor(key),done=checked.includes(key)||['completed','home_completed'].includes(daily?.status);let failed=['lazy','excuse','auto_missed'].includes(daily?.status),excused=daily?.status==='sick';let label=failed?'Falta registrada':excused?'Doença · abonado':workoutLabelForDate(key,new Date(d),done);let isRest=!isTrainingDow(d.getDay());let cell=document.createElement('div');cell.className='day-cell';cell.innerHTML=`<div class="day-main">${done?'✓':failed?'×':excused?'✚':d.getDate()}</div>${label?`<div class="day-workout">${escapeHtml(label)}</div>`:''}`;if(done)cell.classList.add('checked');if(failed)cell.classList.add('forge-failed');if(excused)cell.classList.add('forge-excused');if(isRest&&!done)cell.classList.add('rest-day');if(key===today())cell.classList.add('today');if(key>today())cell.classList.add('future');row.appendChild(cell);d.setDate(d.getDate()+1)}}
 async function toggleDay(key){let exists=data.checkins.find(x=>x.id===key);if(exists){await deleteDoc(doc(db,'users',user.uid,'checkins',key));data.checkins=data.checkins.filter(x=>x.id!==key)}else{await setDoc(doc(db,'users',user.uid,'checkins',key),{date:key,createdAt:serverTimestamp()});data.checkins.push({id:key,date:key})}renderAll()}
-async function doCheckin(){let key=today();if(data.checkins.find(x=>x.id===key)){document.getElementById('checkin-msg').textContent='Hoje já está marcado. Bora manter a sequência.';return}await toggleDay(key);document.getElementById('checkin-msg').textContent='✅ Check-in salvo na nuvem!'}
+async function doCheckin(){let key=today();if(data.checkins.find(x=>x.id===key)){document.getElementById('checkin-msg').textContent='Hoje já está marcado. Missão cumprida.';return}document.getElementById('checkin-msg').textContent='O check-in só é liberado ao finalizar um treino.';showDailySummon(true)}
 
 function setTodayMealDate(){document.getElementById('meal-date').value=today();renderMeals()}
 
@@ -899,7 +1064,7 @@ async function finishWorkout(auto=false){
   if(!total){clearInterval(timerInt);clearInterval(restInt);running=false;restInt=null;renderActiveExerciseDemo(null);closeModal('workout-modal');return}
   if(!auto && done<total && !confirm(`Você concluiu ${done}/${total} séries. Finalizar mesmo assim?`))return;
   clearInterval(timerInt);clearInterval(restInt);running=false;restInt=null;let btn=document.getElementById('timer-btn');if(btn)btn.textContent='▶ Play';
-  let minutes=Math.max(1,Math.round(seconds/60));let weight=Number(latestWeightValue())||Number(data.initialWeight)||88;let kcal=Math.round(((activeWorkout.met||5)*3.5*weight/200)*minutes);let id=Date.now().toString();let completedExercises=[...document.querySelectorAll('#session-exercises .exercise.done')].length;let totalExercises=[...document.querySelectorAll('#session-exercises .exercise')].length;let session={id,date:today(),name:activeWorkout.name,minutes,setsDone:done,setsTotal:total,exercisesDone:completedExercises,exercisesTotal:totalExercises,kcal,autoFinished:auto,createdAt:Date.now()};await setDoc(doc(db,'users',user.uid,'sessions',id),session);data.sessions.push(session);let checkKey=today();if(!data.checkins.find(x=>x.id===checkKey)){await setDoc(doc(db,'users',user.uid,'checkins',checkKey),{date:checkKey,source:'treino_finalizado',workout:activeWorkout.name,sessionId:id,createdAt:serverTimestamp()});data.checkins.push({id:checkKey,date:checkKey,source:'treino_finalizado'});let msg=document.getElementById('checkin-msg');if(msg)msg.textContent='✅ Check-in automático: treino finalizado!'}sessionFlow=null;renderActiveExerciseDemo(null);closeModal('workout-modal');alert(`${auto?'Treino finalizado automaticamente!':'Treino finalizado!'}\nTempo: ${minutes} min\nSéries: ${done}/${total}\nExercícios: ${completedExercises}/${totalExercises}\nCalorias estimadas: ${kcal} kcal\nCheck-in de hoje marcado automaticamente.`);renderAll()
+  let minutes=Math.max(1,Math.round(seconds/60));let weight=Number(latestWeightValue())||Number(data.initialWeight)||88;let kcal=Math.round(((activeWorkout.met||5)*3.5*weight/200)*minutes);let id=Date.now().toString();let completedExercises=[...document.querySelectorAll('#session-exercises .exercise.done')].length;let totalExercises=[...document.querySelectorAll('#session-exercises .exercise')].length;let session={id,date:today(),name:activeWorkout.name,minutes,setsDone:done,setsTotal:total,exercisesDone:completedExercises,exercisesTotal:totalExercises,kcal,autoFinished:auto,homeRescue:!!activeWorkout.isHomeRescue,createdAt:Date.now()};await setDoc(doc(db,'users',user.uid,'sessions',id),session);data.sessions.push(session);let checkKey=today();if(!data.checkins.find(x=>x.id===checkKey)){await setDoc(doc(db,'users',user.uid,'checkins',checkKey),{date:checkKey,source:'treino_finalizado',workout:activeWorkout.name,sessionId:id,createdAt:serverTimestamp()});data.checkins.push({id:checkKey,date:checkKey,source:'treino_finalizado',workout:activeWorkout.name,sessionId:id});let msg=document.getElementById('checkin-msg');if(msg)msg.textContent='✅ Check-in automático: treino finalizado!'}await saveDailyCommitment(activeWorkout.isHomeRescue?'home_completed':'completed',{workoutId:activeWorkout.id,workoutName:activeWorkout.name,source:'treino_finalizado'});sessionFlow=null;renderActiveExerciseDemo(null);closeModal('workout-modal');alert(`${auto?'Treino finalizado automaticamente!':'Treino finalizado!'}\nTempo: ${minutes} min\nSéries: ${done}/${total}\nExercícios: ${completedExercises}/${totalExercises}\nCalorias estimadas: ${kcal} kcal\nCheck-in de hoje marcado automaticamente.`);renderAll()
 }
 function renderSessions(){let list=[...data.sessions].sort((a,b)=>b.id.localeCompare(a.id));document.getElementById('session-list').innerHTML=list.length?list.map(s=>`<div class="item"><div><div class="item-title">${escapeHtml(brDate(s.date))} · ${escapeHtml(s.name)}</div><div class="chips"><span class="chip">${escapeHtml(s.minutes)} min</span><span class="chip">${escapeHtml(s.setsDone)}/${escapeHtml(s.setsTotal)} séries</span><span class="chip">${escapeHtml(s.exercisesDone||0)}/${escapeHtml(s.exercisesTotal||0)} exercícios</span><span class="chip">${escapeHtml(s.kcal)} kcal estimadas</span></div></div></div>`).join(''):'<p class="sub">Nenhum treino finalizado ainda.</p>'}
 function openWorkoutEditor(id=null){
@@ -1218,7 +1383,9 @@ function checkProfileComplete(){
     document.getElementById('complete-height').value=data.height||'';
     document.getElementById('complete-weight').value=data.initialWeight||'';
     openModal('complete-profile-modal');
+    return false;
   }
+  return true;
 }
 async function saveCompleteProfile(){
   let msg=document.getElementById('complete-profile-msg');
@@ -1236,6 +1403,7 @@ async function saveCompleteProfile(){
     if(!existingWeight){await setDoc(doc(db,'users',user.uid,'weights',today()),{value:data.initialWeight,date:today(),createdAt:serverTimestamp()},{merge:true});data.weights.push({id:today(),value:data.initialWeight,date:today()});}
     closeModal('complete-profile-modal');
     renderAll();
+    await initializeDailyForge();
     alert('Perfil salvo! Os treinos foram carregados de acordo com o objetivo escolhido.');
   }catch(e){msg.textContent=e.message||('Erro: '+e.code);}
 }
@@ -1485,8 +1653,9 @@ async function importFullBackup(event){
   }
 }
 async function changePassword(){let msg=document.getElementById('reset-msg');try{msg.className='';msg.textContent='';let cred=EmailAuthProvider.credential(val('reset-email'),val('reset-current'));await reauthenticateWithCredential(user,cred);await updatePassword(user,val('reset-new'));msg.className='oktxt';msg.textContent='Senha alterada com sucesso.'}catch(e){msg.className='error';msg.textContent='Erro: '+friendly(e.code)}}
-function switchTab(id){const titles={progresso:'Início',treinos:'Treinos',alimentacao:'Alimentação',peso:'Peso',medidas:'Medidas',corpo:'Corpo / IMC',diario:'Histórico de treinos',situacao:'Situação atual',objetivo:'Objetivo',configuracoes:'Configurações',admin:'Administrador'};currentTab=id;document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav-target').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));let tab=document.getElementById('tab-'+id);if(tab)tab.classList.add('active');let title=document.getElementById('current-screen-title');if(title)title.textContent=titles[id]||'FORJA';let more=document.querySelector('.bottom-nav-btn:last-child');if(more)more.classList.toggle('active',!['progresso','treinos','alimentacao','corpo'].includes(id));if(id==='admin')loadAdminProfiles();window.scrollTo({top:0,behavior:'smooth'}) }
+function switchTab(id){const titles={progresso:'Início',treinos:'Treinos',alimentacao:'Alimentação',peso:'Peso',medidas:'Medidas',corpo:'Corpo / IMC',diario:'Histórico de treinos',situacao:'Situação atual',objetivo:'Objetivo',configuracoes:'Configurações',admin:'Administrador'};currentTab=id;document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav-target').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));let tab=document.getElementById('tab-'+id);if(tab)tab.classList.add('active');let title=document.getElementById('current-screen-title');if(title)title.textContent=titles[id]||'FORJA';let more=document.querySelector('.bottom-nav-btn:last-child');if(more)more.classList.toggle('active',!['progresso','treinos','alimentacao','corpo'].includes(id));if(id==='objetivo'){renderGoalUI();renderDailyForgeHistory()}if(id==='admin')loadAdminProfiles();closeDrawer();window.scrollTo({top:0,behavior:'smooth'}) }
 function openDrawer(){document.getElementById('drawer').classList.add('active');document.getElementById('overlay').classList.add('active')}function closeDrawer(){document.getElementById('drawer').classList.remove('active');document.getElementById('overlay').classList.remove('active')}function openModal(id){document.getElementById(id).classList.add('active')}function closeModal(id){document.getElementById(id).classList.remove('active')}
+document.addEventListener('visibilitychange',async()=>{if(document.visibilityState==='visible'&&user){await reconcileDailyForge();renderDailyForgeStatus();renderDailyForgeHistory();showDailySummon(false)}});
 </script>
 
 <script>
