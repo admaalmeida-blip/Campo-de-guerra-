@@ -1,12 +1,12 @@
 {
-  "name": "Campo de Guerra",
-  "short_name": "Campo",
-  "description": "Plano de treino, check-in, evolução corporal e acompanhamento.",
+  "name": "FORJA — Construindo sua melhor versão",
+  "short_name": "FORJA",
+  "description": "Treinos, disciplina e evolução em uma jornada construída dia após dia.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#07090C",
-  "theme_color": "#034694",
+  "theme_color": "#D85A12",
   "orientation": "portrait",
   "icons": [
     {
